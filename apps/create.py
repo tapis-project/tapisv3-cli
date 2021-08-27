@@ -10,7 +10,7 @@ client.get_tokens()
 
 def create_app() -> None:
     app_definition = json.loads(open(app_definition_file, "r").read())
-    client.apps.createApp(**app_definition)
+    client.apps.createAppVersion(**app_definition)
 
     return
 

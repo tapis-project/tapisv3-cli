@@ -5,6 +5,8 @@
     "host":"",
     "defaultAuthnMethod":"",
     "canExec":true,
+    "jobWorkingDir":"",
+    "effectiveUserId": "",
     "jobRuntimes": [
         {
             "runtimeType": "DOCKER",

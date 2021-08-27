@@ -1,6 +1,15 @@
 #! bin/bash
 
-config_file=./.configs/tacc_credentials.txt
+config_file=./configs/tacc_credentials
+
+# Create config file if one does not exist
+if [[ ! -f "${config_file}" ]]; then
+    touch $config_file
+    printf "Creating credentials file"
+    echo "TACC_USERNAME=" > "${config_file}"
+    echo "TACC_PASSWORD=" >> "${config_file}"
+fi
+
 
 function create_tacc_credentials() {
     printf "\nTACC Cloud credentials not found.\nProvide TACC username and password.\n"

@@ -15,5 +15,7 @@ def list_files() -> None:
     for file in files:
         print(file.name)
 
+    return
+
 if __name__ == "__main__":
     list_files()

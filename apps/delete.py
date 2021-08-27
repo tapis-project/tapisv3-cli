@@ -4,22 +4,20 @@ import sys
 
 tacc_username = sys.argv[1]
 tacc_password = sys.argv[2]
-system_id = sys.argv[3]
+app_id = sys.argv[3]
 
 # Authenticate
 client = Tapis(base_url= "https://tacc.tapis.io", username=tacc_username, password=tacc_password)
 client.get_tokens()
 
-# print(dir(client.systems))
-
-def disable_app() -> None:
+def delete_app() -> None:
     try:
-        system = client.systems.deleteSystem(systemId=system_id)
-        print(f"Deleted system with id '{system_id}'")
+        app = client.apps.deleteApp(appId=app_id)
+        print(f"Deleted app with id '{app_id}'")
         return
     except InvalidInputError:
-        print(f"System not found with id '{system_id}'")
+        print(f"App not found with id '{app_id}'")
         return
 
 if __name__ == "__main__":
-    disable_app()
+    delete_app()

@@ -15,10 +15,14 @@ def update_app() -> None:
 
     try:
         # Update select attributes defined by the system definition file.
-        client.systems.patchApp(**system_definition)
+        client.apps.patchApp(**app_definition)
         return
     except InvalidInputError as e:
         print(f"Invalid Input Error: '{e.message}'")
+    except:
+        e = sys.exc_info()[0]
+        print( f"Error: {e}" )
+        
 
 if __name__ == "__main__":
     update_app()

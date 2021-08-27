@@ -7,7 +7,7 @@ if ! bash ./auth/configure.sh; then
 fi
 
 # Expose configs
-. .configs/tacc_credentials.txt
+. configs/tacc_credentials
 
 python3 ./$1/$2.py $TACC_USERNAME $TACC_PASSWORD "${@:3}"
 

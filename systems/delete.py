@@ -14,7 +14,7 @@ client.get_tokens()
 
 def delete_system() -> None:
     try:
-        system = client.systems.deleteSystem(systemId=system_id)
+        client.systems.deleteSystem(systemId=system_id)
         print(f"Deleted system with id '{system_id}'")
         return
     except InvalidInputError:

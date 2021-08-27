@@ -33,6 +33,4 @@ if [[ -z "$TACC_USERNAME" ]] || [[ -z "$TACC_PASSWORD" ]]; then
     exit
 fi
 
-printf "\n✓ TACC cloud credentials found\n"
-
 exit

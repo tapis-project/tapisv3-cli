@@ -1,4 +1,3 @@
-from os import system
 from tapipy.tapis import Tapis
 import sys, json
 

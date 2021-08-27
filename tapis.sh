@@ -9,5 +9,5 @@ fi
 # Expose configs
 . .configs/tacc_credentials.txt
 
-python3 ./$1/$2.py $TACC_USERNAME $TACC_PASSWORD $3
+python3 ./$1/$2.py $TACC_USERNAME $TACC_PASSWORD "${@:3}"
 

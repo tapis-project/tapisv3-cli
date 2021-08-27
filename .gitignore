@@ -1,3 +1,6 @@
 # Auth credentials
 configs/tacc_credentials
-data
+templates/definitions
+
+# Text editors and IDEs
+.vscode

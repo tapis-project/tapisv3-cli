@@ -7,7 +7,7 @@ system_id = sys.argv[3]
 path = sys.argv[4] if len(sys.argv) > 4 else "/"
 
 # Authenticate
-client = Tapis(base_url= "https://tacc.tapis.io", username=tacc_username, password=tacc_password)
+client = Tapis(base_url= "https://tacc.develop.tapis.io", username=tacc_username, password=tacc_password)
 client.get_tokens()
 
 def list_files() -> None:

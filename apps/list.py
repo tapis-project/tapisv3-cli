@@ -5,7 +5,7 @@ tacc_username = sys.argv[1]
 tacc_password = sys.argv[2]
 
 # Authenticate
-client = Tapis(base_url= "https://tacc.tapis.io", username=tacc_username, password=tacc_password)
+client = Tapis(base_url= "https://tacc.develop.tapis.io", username=tacc_username, password=tacc_password)
 client.get_tokens()
 
 def list_systems() -> None:

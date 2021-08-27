@@ -1,0 +1,14 @@
+{
+    "id": "",
+    "appType": "",
+    "runtime": "",
+    "name": "",
+    "description": "",
+    "containerImage": "",
+    "version": "",
+    "jobAttributes": {
+        "execSystemId": "",
+        "execSystemInputDir": ""
+    }
+  }
+  

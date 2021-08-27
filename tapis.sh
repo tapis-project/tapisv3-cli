@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # Check for TACC credentials. If they don't exist, prompt
 # the user to create them.

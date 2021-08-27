@@ -1,4 +1,4 @@
-#! bin/bash
+#!/bin/bash
 
 config_file=./configs/tacc_credentials
 

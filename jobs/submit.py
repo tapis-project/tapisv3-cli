@@ -1,22 +1,22 @@
 from tapipy.tapis import Tapis
 from tapipy.errors import InvalidInputError
 import sys
-
 tacc_username = sys.argv[1]
 tacc_password = sys.argv[2]
-system_id = sys.argv[3]
+job_name = sys.argv[3]
+app_id = sys.argv[4]
+app_version = sys.argv[5]
 
-# Authenticate
 client = Tapis(base_url= "https://tacc.develop.tapis.io", username=tacc_username, password=tacc_password)
 client.get_tokens()
 
-def get() -> None:
+def submit_job() -> None:
     try:
-        system = client.systems.getSystem(systemId=system_id)
-        print(system)
+        client.jobs.submitJob(name=job_name, appId=app_id, appVersion=app_version)
         return
-    except InvalidInputError:
-        print(f"Sytem not found with id '{system_id}'")
+    except InvalidInputError as e:
+        print(e.message)
+
 
 if __name__ == "__main__":
-    get_system_by_id()
+    submit_job()

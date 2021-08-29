@@ -12,7 +12,7 @@ client.get_tokens()
 
 def delete_app() -> None:
     try:
-        app = client.apps.deleteApp(appId=app_id)
+        client.apps.deleteApp(appId=app_id)
         print(f"Deleted app with id '{app_id}'")
         return
     except InvalidInputError:

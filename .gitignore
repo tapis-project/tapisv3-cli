@@ -1,6 +1,11 @@
 # Auth credentials
 configs/tacc_credentials
-templates/definitions
+
+# Definitions for tapis entities
+definitions
+
+# Setup script for dev env
+setup.sh
 
 # Text editors and IDEs
 .vscode

@@ -1,0 +1,2 @@
+class CommandSet:
+    pass

@@ -11,7 +11,7 @@ class Jobs(Command):
             "--test": []
         })
 
-    def get(client, id) -> None:
+    def get(self, client, id) -> None:
         try:
             job = client.jobs.getJob(jobId=id)
             print(job)
@@ -19,11 +19,11 @@ class Jobs(Command):
         except InvalidInputError:
             print(f"Job not found with id '{id}'")
 
-    def list(client) -> None:
+    def list(self, client) -> None:
         jobs = client.jobs.getJobList()
         print(jobs)
 
-    def submit(client, name, id, version) -> None:
+    def submit(self, client, name, id, version) -> None:
         try:
             client.jobs.submitJob(name=name, appId=id, appVersion=version)
             return

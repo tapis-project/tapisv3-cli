@@ -26,8 +26,8 @@ function create_tacc_credentials() {
         read -s password;
         printf "\n\n✓ TACC credentials created successfully\n\n"
 
-        echo "TACC_USERNAME=${username}" > "${config_file}"
-        echo "TACC_PASSWORD=${password}" >> "${config_file}"
+        echo "TACC_USERNAME='${username}'" > "${config_file}"
+        echo "TACC_PASSWORD='${password}'" >> "${config_file}"
 
         return;
     fi

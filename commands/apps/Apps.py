@@ -14,13 +14,13 @@ class Apps(Command):
             "--test": []
         })
 
-    def create(client, definition_file) -> None:
+    def create(self, client, definition_file) -> None:
         definition = json.loads(open(definition_file, "r").read())
         client.apps.createAppVersion(**definition)
 
         return
 
-    def delete(client, id) -> None:
+    def delete(self, client, id) -> None:
         try:
             client.apps.deleteApp(appId=id)
             print(f"Deleted app with id '{id}'")
@@ -29,7 +29,7 @@ class Apps(Command):
             print(f"App not found with id '{id}'")
             return
 
-    def get(client, id) -> None:
+    def get(self, client, id) -> None:
         try:
             app = client.apps.getApp(appId=id)
             print(app)
@@ -37,7 +37,7 @@ class Apps(Command):
         except InvalidInputError:
             print(f"App not found with id '{id}'")
 
-    def list(client) -> None:
+    def list(self, client) -> None:
         apps = client.apps.getApps()
         if len(apps) > 0:
             for app in apps:
@@ -47,7 +47,7 @@ class Apps(Command):
         print(f"No apps found for user '{client.username}'")
         return
 
-    def undelete(client, app) -> None:
+    def undelete(self, client, app) -> None:
         try:
             client.apps.undeleteApp(appId=id)
             print(f"Recovered app with id '{id}'")
@@ -56,7 +56,7 @@ class Apps(Command):
             print(f"Deleted app not found with id '{id}'")
             return
 
-    def update(client, definition_file) -> None:
+    def update(self, client, definition_file) -> None:
         app_definition = json.loads(open(definition_file, "r").read())
 
         try:

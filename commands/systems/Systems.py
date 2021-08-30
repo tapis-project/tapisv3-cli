@@ -12,13 +12,13 @@ class Systems(Command):
             "--test": []
         })
 
-    def create(client, system_definition_file) -> None:
+    def create(self, client, system_definition_file) -> None:
         system_definition = json.loads(open(system_definition_file, "r").read())
         client.systems.createSystem(**system_definition)
 
         return
 
-    def delete(client, system_id) -> None:
+    def delete(self, client, system_id) -> None:
         try:
             client.systems.deleteSystem(systemId=system_id)
             print(f"Deleted system with id '{system_id}'")
@@ -45,7 +45,7 @@ class Systems(Command):
         print(f"No systems found for user '{client.username}")
         return
 
-    def undelete(client, system_id) -> None:
+    def undelete(self, client, system_id) -> None:
         try:
             client.systems.undeleteSystem(systemId=system_id)
             print(f"Recovered system with id '{system_id}'")
@@ -54,7 +54,7 @@ class Systems(Command):
             print(f"Deleted system not found with id '{system_id}'")
             return
 
-    def update(client, system_definition_file) -> None:
+    def update(self, client, system_definition_file) -> None:
         system_definition = json.loads(open(system_definition_file, "r").read())
 
         try:

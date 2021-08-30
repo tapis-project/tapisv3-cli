@@ -33,7 +33,7 @@ class Systems(Command):
             print(system)
             return
         except InvalidInputError:
-            print(f"Sytem not found with id '{system_id}'")
+            print(f"System not found with id '{system_id}'")
 
     def list(self, client) -> None:
         systems = client.systems.getSystems()
@@ -42,7 +42,7 @@ class Systems(Command):
                 print(system.id)
             return
 
-        print(f"No systems found for user 'xxx'")
+        print(f"No systems found for user '{client.username}'")
         return
 
     def undelete(client, system_id) -> None:

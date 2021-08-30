@@ -42,7 +42,7 @@ class Systems(Command):
                 print(system.id)
             return
 
-        print(f"No systems found for user '{client.username}")
+        print(f"No systems found for user '{client.username}'")
         return
 
     def undelete(self, client, system_id) -> None:

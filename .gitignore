@@ -9,3 +9,6 @@ setup.sh
 
 # Text editors and IDEs
 .vscode
+
+# Cached Python bytecode
+__pycache__

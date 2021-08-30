@@ -14,21 +14,21 @@ class Resolver:
         options = self.parse_options(args[1:])
         self.command.set_options(options)
 
-        # Set the action on the command
+        # Set the action on the command.
         self.command.set_action(args[self.action_index])
 
-        # Return the command with action and options set
+        # Return the command with action and options set.
         # Every element in the args list after the action index are arguments
-        # for the command
+        # for the command.
         return (self.command, args[self.action_index+1:])
 
     def parse_options(self, args):
-        # Regex pattern for options
+        # Regex pattern for options.
         option_pattern = re.compile(r"^[-]{1,2}[a-z]+[a-z_]*$")
 
-        # First arg in the args list is the command
+        # First arg in the args list is the command.
         # For every option found in the args list, increment the action_index
-        # by 1. If none are found, then the action name is it index 1
+        # by 1. If none are found, then the action name is at index 1.
         options = []
         for option in args:
             if re.match(option_pattern, option):
@@ -39,6 +39,5 @@ class Resolver:
 
         return options
             
-
     def set_command(self, command):
         self.command = command

@@ -2,7 +2,7 @@ import json
 import sys
 
 from core.Command import Command
-from tapipy.errors import InvalidInputError
+from tapipy.errors import InvalidInputError, ServerDownError
 
 class Apps(Command):
     def __init__(self):
@@ -15,10 +15,12 @@ class Apps(Command):
         })
 
     def create(self, client, definition_file) -> None:
-        definition = json.loads(open(definition_file, "r").read())
-        client.apps.createAppVersion(**definition)
-
-        return
+        try:
+            definition = json.loads(open(definition_file, "r").read())
+            client.apps.createAppVersion(**definition)
+            return
+        except ServerDownError as e:
+            print(e)         
 
     def delete(self, client, id) -> None:
         try:

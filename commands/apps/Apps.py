@@ -1,5 +1,4 @@
-import json
-import sys
+import json, sys, inspect
 
 from core.Command import Command
 from tapipy.errors import InvalidInputError
@@ -47,7 +46,7 @@ class Apps(Command):
         print(f"No apps found for user '{client.username}'")
         return
 
-    def undelete(self, client, app) -> None:
+    def undelete(self, client, id) -> None:
         try:
             client.apps.undeleteApp(appId=id)
             print(f"Recovered app with id '{id}'")

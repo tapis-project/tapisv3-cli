@@ -42,11 +42,7 @@ class Systems(Command):
                 print(system.id)
             return
 
-<<<<<<< HEAD
         print(f"No systems found for user '{client.username}")
-=======
-        print(f"No systems found for user '{client.username}'")
->>>>>>> 5e2031d9b74ecccfc18c358d4044585fb5f32e16
         return
 
     def undelete(client, system_id) -> None:
@@ -55,9 +51,6 @@ class Systems(Command):
             print(f"Recovered system with id '{system_id}'")
             return
         except InvalidInputError:
-<<<<<<< HEAD
-            print(f"System not found with id '{system_id}'")
-=======
             print(f"Deleted system not found with id '{system_id}'")
             return
 
@@ -73,4 +66,3 @@ class Systems(Command):
         except:
             e = sys.exc_info()[0]
             print( f"Error: {e}" )
->>>>>>> fd5e17fba5b02e5455b828ddedd9ccb54c1b669f

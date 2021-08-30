@@ -30,13 +30,13 @@ class Apps(Command):
             print(f"App not found with id '{id}'")
             return
 
-    def get(self, client, id) -> None:
+    def get(self, client, id, version) -> None:
         try:
-            app = client.apps.getApp(appId=id)
+            app = client.apps.getApp(appId=id, appVersion=version)
             print(app)
             return
-        except InvalidInputError:
-            print(f"App not found with id '{id}'")
+        except InvalidInputError as e:
+            print(f"{e.message}")
 
     def list(self, client) -> None:
         apps = client.apps.getApps()

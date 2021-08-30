@@ -11,4 +11,4 @@ setup.sh
 .vscode
 
 # Cached Python bytecode
-__pycache__
+*/__pycache__

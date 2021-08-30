@@ -66,3 +66,7 @@ class Systems(Command):
         except:
             e = sys.exc_info()[0]
             print( f"Error: {e}" )
+
+    def update_creds(self, client, credentials_file):
+        print(client.systems)
+        # client.systems.createUserCredential(credentials_file)

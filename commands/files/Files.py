@@ -6,13 +6,13 @@ class Files(Command):
     def __init__(self):
         Command.__init__(self)
 
-    def create(client, system_definition_file) -> None:
+    def create(self, client, system_definition_file) -> None:
         system_definition = json.loads(open(system_definition_file, "r").read())
         client.files.insert(**system_definition)
 
         return
 
-    def delete(client, system_id, path) -> None:
+    def delete(self, client, system_id, path) -> None:
         try:
             client.files.delete(systemId=system_id, path=path)
             print(f"Deleted file '{path}' in system '{system_id}'")

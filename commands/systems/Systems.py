@@ -65,7 +65,7 @@ class Systems(Command):
             print(f"Invalid Input Error: '{e.message}'")
         except:
             e = sys.exc_info()[0]
-            print( f"Error: {e}" )
+            self.logger.error( f"{e}" )
 
     def update_creds(self, client, credentials_file):
         print(client.systems)

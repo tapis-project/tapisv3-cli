@@ -1,6 +1,6 @@
 from tapipy.tapis import Tapis
 from core.Logger import Logger
-import sys
+import sys, inspect
 
 class Command:
     options_set = { "--default": [] }

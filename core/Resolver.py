@@ -10,7 +10,7 @@ class Resolver:
         self.logger = Logger()
 
     def resolve(self, args: list) -> None:
-        # Import the command module class and instantiate the class
+        # Import the command module and instantiate the class
         module = None
         try:
             module = import_module( f"commands.{args[0]}.{args[0].capitalize()}", "./" )

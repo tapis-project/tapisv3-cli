@@ -31,10 +31,15 @@ class Apps(Command):
     def get(self, client, id, version) -> None:
         try:
             app = client.apps.getApp(appId=id, appVersion=version)
-            print(app)
+            self.logger.log(app)
             return
         except InvalidInputError as e:
-            print(f"{e.message}")
+            self.logger.error(f"{e.message}")
+            self.exit(1)
+        except:
+            e = sys.exc_info()[0]
+            self.logger.error(f"{e.message}")
+            self.exit(1)
 
     def list(self, client) -> None:
         apps = client.apps.getApps()
@@ -61,9 +66,12 @@ class Apps(Command):
         try:
             # Update select attributes defined by the system definition file.
             client.apps.patchApp(**app_definition)
+            self.logger.success(f"App {app_definition['appId']} has been updated")
             return
         except InvalidInputError as e:
-            print(f"Invalid Input Error: '{e.message}'")
+            self.logger.error(f"Invalid Input Error: '{e.message}'")
+            self.exit(1)
         except:
             e = sys.exc_info()[0]
-            print( f"Error: {e}" )
+            self.logger.error( f"{e}" )
+            self.exit(1)

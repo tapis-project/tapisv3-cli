@@ -13,7 +13,13 @@ class Command:
         self.logger = Logger()
 
     def help(self, *args):
-        self.logger.warning(f"Help command for {type(self).__name__} has not yet been supported")
+        self.logger.warn(f"Help command for {type(self).__name__} has not yet been supported")
+
+    # Run the list method on child class, then use return value
+    # to run get action
+    # TODO Implement bash dialog
+    def select(self, *args):
+        self.logger.warn(f"Select command for {type(self).__name__} has not yet been supported")
 
     def set_action(self, action: str) -> None:
         if action not in dir(self):

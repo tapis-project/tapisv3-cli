@@ -1,5 +1,4 @@
-import json, sys, inspect
-
+import json, sys
 from core.Command import Command
 from tapipy.errors import InvalidInputError, ServerDownError
 
@@ -9,8 +8,7 @@ class Apps(Command):
         self.set_option_set({
             "-f": [ "path_to_file" ],
             "-u": [ "url" ],
-            "-j": [ "json" ],
-            "--test": []
+            "-j": [ "json" ]
         })
 
     def create(self, client, definition_file) -> None:

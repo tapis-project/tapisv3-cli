@@ -1,13 +1,23 @@
 from importlib import import_module
-import re
+from core.Logger import Logger
+import re, sys
 
 class Resolver:
     action_index = 1
+    logger = None
+
+    def __init__(self):
+        self.logger = Logger()
 
     def resolve(self, args: list) -> None:
         # Import the command module class and instantiate the class
-        # @TODO Check if class exists in module
-        module = import_module( f"commands.{args[0]}.{args[0].capitalize()}", "./" )
+        module = None
+        try:
+            module = import_module( f"commands.{args[0]}.{args[0].capitalize()}", "./" )
+        except ModuleNotFoundError:
+            self.logger.error(f"Invalid Command. '{args[0]}' command not implemented")
+            sys.exit(1)
+
         self.set_command(getattr(module, f"{args[0].capitalize()}")())
 
         # Set the options on the command.

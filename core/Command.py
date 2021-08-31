@@ -1,22 +1,24 @@
 from tapipy.tapis import Tapis
+from core.Logger import Logger
 import sys
 
 class Command:
     options_set = { "--default": [] }
     options = []
     action = "help"
+    logger = None
+    exit = sys.exit
 
     def __init__(self):
-        # @TODO import option set if one exists
-        pass
+        self.logger = Logger()
 
     def help(self, *args):
-        print(f"Help command for {type(self).__name__} has not yet been supported")
+        self.logger.warning(f"Help command for {type(self).__name__} has not yet been supported")
 
     def set_action(self, action: str) -> None:
         if action not in dir(self):
-            raise ValueError(f"Command {type(self).__name__} has no action '{action}'")
-
+            self.logger.error(f"Command {type(self).__name__} has no action '{action}'")
+            self.exit(1)
         self.action = action
 
     def set_option_set(self, option_set: dict = {}):

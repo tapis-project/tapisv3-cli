@@ -12,9 +12,15 @@ class Systems(TapisCommand):
             "--test": []
         })
 
-    def create(self, client, system_definition_file) -> None:
-        system_definition = json.loads(open(system_definition_file, "r").read())
+    def create(self, client, definition_file: str) -> None:
+        system_definition = json.loads(open(definition_file, "r").read())
         client.systems.createSystem(**system_definition)
+
+        return
+
+    def create_user_creds(self, client, system_definition_file) -> None:
+        system_definition = json.loads(open(system_definition_file, "r").read())
+        client.systems.createUserCredential(**system_definition)
 
         return
 
@@ -34,6 +40,14 @@ class Systems(TapisCommand):
             return
         except InvalidInputError:
             print(f"System not found with id '{system_id}'")
+
+    def get_credentials(self, client):
+            self.logger.warn("get_credentials not implemented")
+
+    def get_permissions(self, client, system_id, username):
+            creds = client.systems.getUserPerms(systemId=system_id, userName=username)
+            self.logger.log(creds)
+            return
 
     def list(self, client) -> None:
         systems = client.systems.getSystems()

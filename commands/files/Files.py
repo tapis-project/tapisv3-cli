@@ -1,10 +1,10 @@
-from core.Command import Command
+from core.TapisCommand import TapisCommand
 from tapipy.errors import InvalidInputError
 import json
 
-class Files(Command):
+class Files(TapisCommand):
     def __init__(self):
-        Command.__init__(self)
+        TapisCommand.__init__(self)
 
     def create(self, client, system_definition_file) -> None:
         system_definition = json.loads(open(system_definition_file, "r").read())

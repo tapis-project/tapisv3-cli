@@ -1,9 +1,9 @@
-from core.Command import Command
+from core.TapisCommand import TapisCommand
 from tapipy.errors import InvalidInputError
 
-class Jobs(Command):
+class Jobs(TapisCommand):
     def __init__(self):
-        Command.__init__(self)
+        TapisCommand.__init__(self)
         self.set_option_set({
             "-f": [ "path_to_file" ],
             "-u": [ "url" ],

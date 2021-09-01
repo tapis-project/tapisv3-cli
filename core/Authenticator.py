@@ -2,13 +2,14 @@ from tapipy.tapis import Tapis
 from core.Logger import Logger
 from typing import Union
 import sys
+from configs import settings
 
 class Authenticator:
     tenant = ""
     # @TODO add support for other authentication methods
     auth_methods = ["PASSWORD"]
 
-    def __init__(self, tenant="https://tacc.develop.tapis.io"):
+    def __init__(self, tenant=settings.TENANT):
         self.tenant = tenant
         self.logger = Logger()
 

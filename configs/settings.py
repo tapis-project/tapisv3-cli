@@ -4,3 +4,5 @@ MODULES = [
     "files",
     "apps"
 ]
+
+TENANT = "https://tacc.staging.tapis.io"

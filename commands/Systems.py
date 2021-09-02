@@ -86,6 +86,6 @@ class Systems(TapisCommand):
             e = sys.exc_info()[0]
             self.logger.error( f"{e}" )
 
-    def update_creds(self, client, credentials_file):
-        print(client.systems)
-        client.systems.createUserCredential(credentials_file)
+    def update_creds(self, client, file):
+        creds = json.loads(open(file, "r").read())
+        client.systems.createUserCredential(**creds)

@@ -12,6 +12,11 @@ class Systems(TapisCommand):
             "--test": []
         })
 
+    def change_owner(self, client, system_id, username):
+        client.systems.changeSystemOwner(systemId=system_id, userName=username)
+        
+        return
+
     def create(self, client, definition_file: str) -> None:
         system_definition = json.loads(open(definition_file, "r").read())
         client.systems.createSystem(**system_definition)

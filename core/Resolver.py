@@ -13,7 +13,7 @@ class Resolver:
         # Import the command module and instantiate the class
         module = None
         try:
-            module = import_module( f"commands.{args[0]}.{args[0].capitalize()}", "./" )
+            module = import_module( f"commands.{args[0].capitalize()}", "./" )
         except ModuleNotFoundError:
             self.logger.error(f"Invalid Command. '{args[0]}' command not implemented")
             sys.exit(1)

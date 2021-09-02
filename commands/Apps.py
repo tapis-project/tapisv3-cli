@@ -28,7 +28,20 @@ class Apps(TapisCommand):
             print(f"App not found with id '{id}'")
             return
 
-    def get(self, client, id, version) -> None:
+    def get(self, client, id) -> None:
+        try:
+            app = client.apps.getAppLatestVersion(appId=id)
+            self.logger.log(app)
+            return
+        except InvalidInputError as e:
+            self.logger.error(f"{e.message}")
+            self.exit(1)
+        except:
+            e = sys.exc_info()[0]
+            self.logger.error(f"{e.message}")
+            self.exit(1)
+
+    def getversion(self, client, id, version) -> None:
         try:
             app = client.apps.getApp(appId=id, appVersion=version)
             self.logger.log(app)

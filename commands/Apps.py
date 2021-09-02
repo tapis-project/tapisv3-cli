@@ -14,7 +14,8 @@ class Apps(TapisCommand):
     def create(self, client, definition_file) -> None:
         try:
             definition = json.loads(open(definition_file, "r").read())
-            client.apps.createAppVersion(**definition)
+            app = client.apps.createAppVersion(**definition)
+            self.logger.success(f"App '{app.id}' created")
             return
         except ServerDownError as e:
             print(e)         

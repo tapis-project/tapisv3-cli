@@ -1,6 +1,9 @@
 # Auth credentials
 configs/tacc_credentials
 
+# Auth credentials
+configs/tacc_credentials
+
 # Definitions for tapis entities
 definitions
 
@@ -9,6 +12,7 @@ setup.sh
 
 # Text editors and IDEs
 .vscode
+.DS_Store
 
 # Cached Python bytecode
-*/__pycache__
+**/*/__pycache__

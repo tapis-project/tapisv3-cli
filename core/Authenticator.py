@@ -18,6 +18,17 @@ class Authenticator:
         auth_method: str = settings.DEFAULT_AUTH_METHOD
     ) -> Union[Tapis, None]:
 
+        # If there are no credentials in the credentials dict, run the configure
+        # method. If configure method fails, exit the script.
+        if not bool(self.config.credentials):
+            try:
+                self.config.configure()
+            except ValueError as e:
+                print(f"Error: {e.message}")
+                return None
+            except SystemExit as e:
+                return None
+
         # Authenticate using the provided auth method. Raise exception
         # if provided credentials do not meet requirements
         if auth_method == settings.PASSWORD:

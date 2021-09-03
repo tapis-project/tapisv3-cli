@@ -1,4 +1,3 @@
-from core.Authenticator import Authenticator as Auth
 from core.Resolver import Resolver
 import sys
 

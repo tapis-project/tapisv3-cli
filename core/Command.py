@@ -33,6 +33,6 @@ class Command:
     def set_options(self, options: list):
         self.options = options
 
-    def execute(self, client: Tapis, args) -> None:
+    def execute(self, args) -> None:
         method = getattr(self, self.action)
-        method(client, *args)
+        method(*args)

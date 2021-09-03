@@ -11,27 +11,27 @@ class Apps(TapisCommand):
             "-j": [ "json" ]
         })
 
-    def create(self, client, definition_file) -> None:
+    def create(self, definition_file) -> None:
         try:
             definition = json.loads(open(definition_file, "r").read())
-            client.apps.createAppVersion(**definition)
+            self.client.apps.createAppVersion(**definition)
             self.logger.success(f"App \'{definition['id']}\' created")
             return
         except ServerDownError as e:
             print(e)         
 
-    def delete(self, client, id) -> None:
+    def delete(self, id) -> None:
         try:
-            client.apps.deleteApp(appId=id)
+            self.client.apps.deleteApp(appId=id)
             print(f"Deleted app with id '{id}'")
             return
         except InvalidInputError:
             print(f"App not found with id '{id}'")
             return
 
-    def get(self, client, id) -> None:
+    def get(self, id) -> None:
         try:
-            app = client.apps.getAppLatestVersion(appId=id)
+            app = self.client.apps.getAppLatestVersion(appId=id)
             self.logger.log(app)
             return
         except InvalidInputError as e:
@@ -42,9 +42,9 @@ class Apps(TapisCommand):
             self.logger.error(f"{e.message}")
             self.exit(1)
 
-    def getversion(self, client, id, version) -> None:
+    def getversion(self, id, version) -> None:
         try:
-            app = client.apps.getApp(appId=id, appVersion=version)
+            app = self.client.apps.getApp(appId=id, appVersion=version)
             self.logger.log(app)
             return
         except InvalidInputError as e:
@@ -55,31 +55,31 @@ class Apps(TapisCommand):
             self.logger.error(f"{e.message}")
             self.exit(1)
 
-    def list(self, client) -> None:
-        apps = client.apps.getApps()
+    def list(self) -> None:
+        apps = self.client.apps.getApps()
         if len(apps) > 0:
             for app in apps:
                 print(app.id)
             return
 
-        print(f"No apps found for user '{client.username}'")
+        print(f"No apps found for user '{self.client.username}'")
         return
 
-    def undelete(self, client, id) -> None:
+    def undelete(self, id) -> None:
         try:
-            client.apps.undeleteApp(appId=id)
+            self.client.apps.undeleteApp(appId=id)
             print(f"Recovered app with id '{id}'")
             return
         except InvalidInputError:
             print(f"Deleted app not found with id '{id}'")
             return
 
-    def update(self, client, definition_file) -> None:
+    def update(self, definition_file) -> None:
         app_definition = json.loads(open(definition_file, "r").read())
 
         try:
             # Update select attributes defined by the system definition file.
-            client.apps.patchApp(**app_definition)
+            self.client.apps.patchApp(**app_definition)
             self.logger.success(f"App {app_definition['appId']} has been updated")
             return
         except InvalidInputError as e:

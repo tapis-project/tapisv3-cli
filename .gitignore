@@ -1,8 +1,6 @@
 # Auth credentials
 configs/tacc_credentials
-
-# Auth credentials
-configs/tacc_credentials
+configs/credentials.ini
 
 # Definitions for tapis entities
 definitions

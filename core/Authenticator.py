@@ -3,29 +3,41 @@ from core.Logger import Logger
 from typing import Union
 import sys
 from configs import settings
+from core.Configuration import Configuration
 
 class Authenticator:
     tenant = ""
-    # @TODO add support for other authentication methods
-    auth_methods = ["PASSWORD"]
+    auth_methods = settings.AUTH_METHODS
 
     def __init__(self, tenant=settings.TENANT):
         self.tenant = tenant
         self.logger = Logger()
+        self.config = Configuration()
 
     def authenticate(self,
-        credentials: dict, auth_method: str = "PASSWORD"
+        auth_method: str = settings.DEFAULT_AUTH_METHOD
     ) -> Union[Tapis, None]:
+
+        # If there are no credentials in the credentials dict, run the configure
+        # method. If configure method fails, exit the script.
+        if not bool(self.config.credentials):
+            try:
+                self.config.configure()
+            except ValueError as e:
+                print(f"Error: {e.message}")
+                return None
+            except SystemExit as e:
+                return None
 
         # Authenticate using the provided auth method. Raise exception
         # if provided credentials do not meet requirements
-        if auth_method == "PASSWORD":
-            self.validate_credentials(auth_method, credentials)
+        if auth_method == settings.PASSWORD:
+            self.validate_credentials(auth_method, self.config.credentials)
             try:
                 client = Tapis(
                     base_url= self.tenant,
-                    username=credentials["username"],
-                    password=credentials["password"]
+                    username=self.config.credentials["username"],
+                    password=self.config.credentials["password"]
                 )
                 client.get_tokens()
 
@@ -34,7 +46,8 @@ class Authenticator:
                 e = sys.exec_info[0]
                 self.logger.log(e.message)
         else:
-            return None
+            raise ValueError(f"Invlaid auth_method: {auth_method}. Valid auth_method: {settings.AUTH_METHODS}")
+
 
     def validate_credentials(self,
         auth_method: str, credentials: dict

@@ -4,6 +4,7 @@ configs/credentials.ini
 
 # Definitions for tapis entities
 definitions
+**/*/definitions
 
 # Setup script for dev env
 setup.sh

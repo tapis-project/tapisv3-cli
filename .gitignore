@@ -1,6 +1,7 @@
 # Auth credentials
-configs/tacc_credentials
-configs/credentials.ini
+src/configs/*
+!src/configs/settings.py
+!src/configs/options.py
 
 # Definitions for tapis entities
 definitions

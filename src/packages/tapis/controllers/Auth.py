@@ -55,8 +55,7 @@ class Auth(Controller):
                 return
 
             # Prompt user for username and password
-            print("\nTACC credentials not found.\nProvide TACC username and password.\n")
-            
+            self.logger.log("\nTACC credentials not found.\nProvide TACC username and password.\n")
             prompt.yes_no("Continue? [y/n]: ")
 
             # Prompt the username to create a username and password

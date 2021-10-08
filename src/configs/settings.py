@@ -12,7 +12,7 @@ of development for a feature or for testing purposes. For example:
 NOTE: The TACC tenant in production is tacc.tapis.io, not tacc.prod.tapis.io!
 """
 
-APP_REGISTRY = [
+PACKAGES = [
     "core",
     "tapis"
 ]

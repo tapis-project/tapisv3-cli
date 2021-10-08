@@ -14,7 +14,7 @@ from utils.module_loader import class_loader as load
 from utils.Logger import Logger
 from core.OptionSet import OptionSet
 from core.AbstractView import AbstractView
-from options.options_sets import option_registrar
+from shared.options.options_sets import option_registrar
 
 class Controller:
     """ 
@@ -173,7 +173,7 @@ class Controller:
         return pos_args
 
     def set_view(self, name: str, data: Any) -> None:
-        view_class = load(f"views.{name}", name)
+        view_class = load(f"shared.views.{name}", name)
         if view_class is None:
             raise Exception("View '{name}' does not exist")
 

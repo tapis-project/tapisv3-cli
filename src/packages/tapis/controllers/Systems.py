@@ -2,7 +2,7 @@
 
 import json
 
-from core.TapisController import TapisController
+from packages.tapis.TapisController import TapisController
 from tapipy.errors import InvalidInputError
 
 

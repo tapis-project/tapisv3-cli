@@ -7,6 +7,7 @@ from configs import settings
 from configparser import ConfigParser
 from getpass import getpass
 from utils.Logger import Logger
+from configs.templates.core import template
 
 
 class Configuration:
@@ -41,7 +42,8 @@ class Configuration:
         # create it.
         if not os.path.isfile(settings.CONFIG_FILE):
             print(f"Creating config file '{settings.CONFIG_FILE}'\n")
-            self.config["credentials"] = {}
+            for key, val in template.items():
+                self.config[key] = val
             with open(settings.CONFIG_FILE, "w") as file:
                 self.config.write(file)
 

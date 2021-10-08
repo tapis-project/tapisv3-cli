@@ -41,9 +41,9 @@ class Router:
         
         # The first step of command resolution is to check if a 
         # user-defined controller exists by the name provided in args.
-        if find_spec(f"controllers.{controller_name.capitalize()}") is not None:
+        if find_spec(f"packages.tapis.controllers.{controller_name.capitalize()}") is not None:
             # Import the controller
-            module = import_module( f"controllers.{controller_name.capitalize()}", "./" )
+            module = import_module( f"packages.tapis.controllers.{controller_name.capitalize()}", "./" )
             controller_class: type[Controller] = getattr(module, f"{controller_name.capitalize()}")
 
             if not hasattr(controller_class, cmd_name):

@@ -2,6 +2,7 @@
 src/configs/*
 !src/configs/settings.py
 !src/configs/options.py
+!src/configs/templates/
 
 # Definitions for tapis entities
 definitions

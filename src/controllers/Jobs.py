@@ -12,6 +12,9 @@ class Jobs(TapisController):
     def __init__(self):
         TapisController.__init__(self)
 
+    def cancel(self, uuid) -> None:
+        pass
+
     def download(self, uuid, output_path) -> None:
         """Downloads the output of a completed job."""
         try:

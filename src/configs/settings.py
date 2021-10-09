@@ -1,4 +1,4 @@
-""" 
+"""
 All settings and configurable variables, such as environment varaibles, go here.
 
 There are two tenants within TAPIS: tacc and dev
@@ -31,7 +31,7 @@ DEFAULT_AUTH_METHOD = PASSWORD
 # See docstring for info on the below.
 ENVS = [ "develop", "staging", "prod" ]
 
-ENV = "prod"
+ENV = "develop"
 TENANT = "tacc"
 
 ENV = ENV + "." if (ENV != "prod") else ""

@@ -2,8 +2,9 @@
 
 import json
 
-from core.TapisController import TapisController
 from tapipy.errors import InvalidInputError
+
+from core.TapisController import TapisController
 
 
 class Systems(TapisController):
@@ -15,14 +16,14 @@ class Systems(TapisController):
         """Check if a system is currently enabled."""
         try:
             system = self.client.systems.isEnabled(systemId=system_id)
-            status = "enabled" if system.aBool else "disabled" 
+            status = "enabled" if system.aBool else "disabled"
             self.logger.info(f"The system '{system_id}'' is {status}\n")
             return
         except InvalidInputError:
             self.logger.error(f"System not found with id '{system_id}'\n")
 
     def change_owner(self, system_id, username) -> None:
-        """ 
+        """
         Change the owner of a system (you may lose access to a system if you
         change the owner to another user and they don't grant you permissions).
         """
@@ -47,7 +48,7 @@ class Systems(TapisController):
         system_definition = json.loads(open(system_definition_file, "r").read())
         self.client.systems.createUserCredential(**system_definition)
         self.logger.info(f"User credentials created for user '{system_definition['userName']}'\n")
-        
+
         return
 
     def delete(self, system_id) -> None:
@@ -70,8 +71,8 @@ class Systems(TapisController):
             self.logger.success(f"The system '{system_id}' was disabled\n")
             return
         except InvalidInputError:
-            self.logger.error(f"System not found with id '{system_id}'\n")   
-            return       
+            self.logger.error(f"System not found with id '{system_id}'\n")
+            return
 
     def enable(self, system_id) -> None:
         """Mark (all versions of) a system as available for use."""
@@ -80,8 +81,8 @@ class Systems(TapisController):
             self.logger.success(f"The system '{system_id}' was enabled\n")
             return
         except InvalidInputError:
-            self.logger.error(f"System not found with id '{system_id}'\n")     
-            return   
+            self.logger.error(f"System not found with id '{system_id}'\n")
+            return
 
     def get(self, system_id) -> None:
         """Retrieve the details of an system's latest version."""
@@ -100,7 +101,7 @@ class Systems(TapisController):
         self.logger.warn("get_credentials not implemented\n")
 
         return
- 
+
     def getperms(self, system_id, username) -> None:
         """Get the permissions that a specified user has on a target system."""
         creds = self.client.systems.getUserPerms(systemId=system_id, userName=username)
@@ -136,7 +137,7 @@ class Systems(TapisController):
     def patch(self, system_definition_file) -> None:
         """
         Update selected attributes of a system using a system definition
-        JSON file containing only the required and specified attributes. 
+        JSON file containing only the required and specified attributes.
         """
         system_definition = json.loads(open(system_definition_file, "r").read())
 

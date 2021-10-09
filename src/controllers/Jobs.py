@@ -3,8 +3,9 @@
 from datetime import datetime
 import json
 
-from core.TapisController import TapisController
 from tapipy.errors import InvalidInputError
+
+from core.TapisController import TapisController
 
 
 class Jobs(TapisController):
@@ -13,13 +14,21 @@ class Jobs(TapisController):
         TapisController.__init__(self)
 
     def cancel(self, uuid) -> None:
-        pass
+        """Cancel a job that has been submitted."""
+        try:
+            self.client.jobs.cancelJob(jobUuid=uuid)
+            self.logger.newline(1)
+            self.logger.complete(f"Job '{uuid}' successfully cancelled\n")
+            return
+        except InvalidInputError as e:
+            self.logger.error(f"{e.message}\n")
+            return
 
     def download(self, uuid, output_path) -> None:
         """Downloads the output of a completed job."""
         try:
             self.client.jobs.getJobOutputDownload(jobUuid=uuid, outputPath=output_path)
-            self.logger.complete(f"\nDownload complete for job '{uuid}'\n")
+            self.logger.complete(f"Download complete for job '{uuid}'\n")
             return
         except InvalidInputError as e:
             self.logger.error(f"{e.message}\n")
@@ -47,6 +56,24 @@ class Jobs(TapisController):
             self.logger.error(f"Job not found with UUID '{uuid}'\n")
             self.exit(1)
 
+    def list(self) -> None:
+        """Retrieve the current list of submitted jobs."""
+        jobs = self.client.jobs.getJobList()
+        self.logger.log(jobs)
+
+        return
+
+    def output(self, uuid, output_path) -> None:
+        """Displays the output files produced from a completed job."""
+        try:
+            self.client.jobs.getJobOutputList(jobUuid=uuid, outputPath=output_path)
+            self.logger.newline(1)
+            self.logger.complete(f"Download complete for job '{uuid}'\n")
+            return
+        except InvalidInputError as e:
+            self.logger.error(f"{e.message}\n")
+            return
+
     def status(self, uuid) -> None:
         """Retrieve the current operational status of a specified job."""
         try:
@@ -57,13 +84,6 @@ class Jobs(TapisController):
         except InvalidInputError:
             self.logger.error(f"Job not found with UUID '{uuid}'\n")
             self.exit(1)
-
-    def list(self) -> None:
-        """Retrieve the current list of submitted jobs."""
-        jobs = self.client.jobs.getJobList()
-        self.logger.log(jobs)
-
-        return
 
     def submit(self, app_id, app_version, *args) -> None:
         """Submit a job to be run using a specified application and its version."""
@@ -87,7 +107,8 @@ class Jobs(TapisController):
         """ 
         Submit a job using a custom job JSON definition file. 
         The job request body can contain more file inputs than are specified
-        in the application, as long as strictFileInputs is set to 'false'.
+        in the application, as long as strictFileInputs is set to 'false' in
+        the system.
         """
         job_request = json.loads(open(job_definition_file, "r").read())
 
@@ -101,7 +122,7 @@ class Jobs(TapisController):
 
     def resubmit(self, uuid) -> None:
         """Re-submit a job using a specified job UUID."""
-        # TODO Some error
+        # TODO Some error -> With the tables on the Java side?
         try:
             self.client.jobs.resubmitJob(jobuuid=uuid)
             self.logger.info(f"Job resubmitted. UUID: {uuid}\n")

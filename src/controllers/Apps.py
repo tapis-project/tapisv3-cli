@@ -3,8 +3,9 @@
 import json
 import sys
 
-from core.TapisController import TapisController
 from tapipy.errors import InvalidInputError, ServerDownError
+
+from core.TapisController import TapisController
 
 
 class Apps(TapisController):

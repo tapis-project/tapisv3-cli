@@ -3,8 +3,8 @@
 import os
 import sys
 
-from configs import settings
 from configparser import ConfigParser
+from configs import settings
 from getpass import getpass
 from utils.Logger import Logger
 

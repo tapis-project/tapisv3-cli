@@ -9,6 +9,7 @@ from configs import settings
 from core.Controller import Controller
 from core.Authenticator import Authenticator as Auth
 
+
 class TapisController(Controller):
     """A TAPIS-specific Controller."""
     client: Union[Tapis, None] = None
@@ -17,7 +18,7 @@ class TapisController(Controller):
         Controller.__init__(self)
         try:
             self.client = Auth().authenticate()
-            if self.client == None:
+            if self.client is None:
                 self.exit()
         except SystemExit:
             self.exit()

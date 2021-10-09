@@ -2,15 +2,16 @@
 
 import os
 
-from core.TapisController import TapisController
 from tapipy.errors import InvalidInputError
+
+from core.TapisController import TapisController
 
 
 class Files(TapisController):
     """Contains all of the CRUD functions associated with files."""
     def __init__(self):
         TapisController.__init__(self)
-        
+
     def delete(self, system_id, path) -> None:
         """Deletes the specified file from the target system."""
         try:
@@ -35,7 +36,6 @@ class Files(TapisController):
         
     def list(self, system_id, path) -> None:
         """List every file on the target system."""
-        # BUG Seems to be breaking a LOT... very rarely works.
         files = self.client.files.listFiles(systemId=system_id, path=path)
         for file in files:
             print(file.name)
@@ -51,7 +51,7 @@ class Files(TapisController):
 
         NOTE: The Tapipy client hasn't yet implemented the insert method in the
         files module. The upload method on the Tapis class handles this instead.
-        """    
+        """
         try:
             self.client.upload(
                 system_id = system_id,

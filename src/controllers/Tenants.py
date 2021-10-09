@@ -1,7 +1,8 @@
 """Handles TAPIS functionality related to tenants."""
 
-from core.TapisController import TapisController
 from tapipy.errors import InvalidInputError
+
+from core.TapisController import TapisController
 
 
 class Tenants(TapisController):

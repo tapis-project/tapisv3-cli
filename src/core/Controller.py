@@ -1,5 +1,5 @@
 """
-Handles the command setting, command execution, and command help 
+Handles the command setting, command execution, and command help
 functionality for the TAPIS CLI (adaptable to use non-TAPIS commands
 if the user creates new ones and a parser for non-TAPIS categories).
 """
@@ -7,17 +7,17 @@ if the user creates new ones and a parser for non-TAPIS categories).
 import re
 import sys
 import types
-
 from typing import List, Dict, Any
 
-from utils.module_loader import class_loader as load
-from utils.Logger import Logger
-from core.OptionSet import OptionSet
 from core.AbstractView import AbstractView
+from core.OptionSet import OptionSet
 from options.options_sets import option_registrar
+from utils.Logger import Logger
+from utils.module_loader import class_loader as load
+
 
 class Controller:
-    """ 
+    """
     Each category has the same methods available to get/set/execute.
     If the user wants to add non-TAPIS categories and commands, the new parser
     should inherit from this category. See 'TapipyCategory.py' for an example.
@@ -57,7 +57,7 @@ class Controller:
         - tapis apps create [path/to/definition/file]
         - tapis jobs submit [appName] [appVersion]
         \nCommands:"""
-        
+
         print(self.help.__doc__)
         methods = self.get_methods(self)
         for method in methods:
@@ -65,7 +65,7 @@ class Controller:
 
     def set_command(self, command: str) -> None:
         """
-        Sets the command to be executed in a specific category. 
+        Sets the command to be executed in a specific category.
         EX: apps = category, list = command
         """
         if command not in dir(self):
@@ -74,17 +74,21 @@ class Controller:
         self.command = command
 
         return
-    
+
     def set_cmd_options(self, cmd_options: list) -> None:
+        """Sets the options for a command."""
         self.cmd_options = cmd_options
 
         return
 
     def set_kw_args(self, kw_args: Dict[str, str]) -> None:
+        """Sets the keyword arguments for a command."""
         self.kw_args = kw_args
+
         return
 
     def invoke(self, args: List[str]) -> None:
+        """Passes input args to the command."""
         if self.override_exec:
             return
 
@@ -115,12 +119,13 @@ class Controller:
         return methods
 
     def parse_args(self, args: list[str]):
+        """Parses the arguments found in the input CLI command."""
         pos_args = []
         arg_opt_indices = []
         option_names = self.option_set.get_names()
 
         for index, arg in enumerate(args):
-            # This line will skip the indices of arg option parameters 
+            # This line will skip the indices of arg option parameters
             # that were added in previous iterations
             if index in arg_opt_indices:
                 continue
@@ -138,7 +143,7 @@ class Controller:
             # Gets the option by name from the OptionSet
             option = self.option_set.get_by_name(arg)
 
-            # Make a list of the params and calculate the len
+            # Make a list of the params and calculate the length of the list
             params = list(option.params.keys()) if option.params is not {} else []
             params_len = len(params)
 
@@ -150,13 +155,13 @@ class Controller:
             # If there are fewer remaining args than params, raise an exception
             if len(remaining_args) < params_len:
                 raise Exception(f"Option {arg} expects {params_len} params: {params}. Only {len(remaining_args)} params providied")
-            
+
             # Calculate the indices of the args that correspond to the current
             # option's params
             next_arg_index = index + 1
             last_arg_index = next_arg_index + params_len
             arg_option_vals = args[next_arg_index:last_arg_index]
-            
+
             # Add the to the arg_opt_indices list so that we can skip it
             # in subsequent iterations
             for index in range(next_arg_index, last_arg_index):
@@ -169,17 +174,14 @@ class Controller:
                 self.arg_options[arg][params[index]] = val
 
             continue
-        
+
         return pos_args
 
     def set_view(self, name: str, data: Any) -> None:
+        """Loads a view if it exists"""
         view_class = load(f"views.{name}", name)
         if view_class is None:
             raise Exception("View '{name}' does not exist")
 
         self.view = view_class(data)
-
         return
-
-            
-            

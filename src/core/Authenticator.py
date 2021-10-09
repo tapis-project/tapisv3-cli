@@ -3,9 +3,10 @@
 import sys
 from typing import Union
 
+from tapipy.tapis import Tapis
+
 from configs import settings
 from core.Configuration import Configuration
-from tapipy.tapis import Tapis
 from utils.Logger import Logger
 
 
@@ -22,13 +23,13 @@ class Authenticator:
 
     def authenticate(self, auth_method: str = settings.DEFAULT_AUTH_METHOD) -> Union[Tapis, None]:
         """
-        The user is authenticated by the TAPIS client. 
+        The user is authenticated by the TAPIS client.
         Only password authentication is implemented for now.
         """
         # If there are no credentials in the credentials dict, throw error
         if not bool(self.config.credentials):
-            # Add the credentials from the config 
-            # file to this Configuration object's credentials dict
+            # Add the credentials from the config file to
+            # this Configuration object's credentials dict.
             self.logger.error("Tapis CLI not configured. Run the following command to add your credentials:")
             self.logger.log("`tapis auth configure`\n")
             sys.exit(1)
@@ -46,7 +47,7 @@ class Authenticator:
                 client.get_tokens()
                 return client
             except:
-                e = sys.exc_info[0]
+                e = sys.exc_info()[0]
                 self.logger.log(e.message)
         else:
             raise ValueError(f"Invalid auth_method: {auth_method}. Valid auth_method: {settings.AUTH_METHODS}\n")
@@ -59,10 +60,10 @@ class Authenticator:
 
         return
 
-    def keys_in_dict(self, keys: list, dict: dict) -> bool:
+    def keys_in_dict(self, keys: list, creds_dict: dict) -> bool:
         """Iterates through the dictionary of known keys to find user credentials."""
         for key in keys:
-            if key not in dict:
+            if key not in creds_dict:
                 return False
 
         return True

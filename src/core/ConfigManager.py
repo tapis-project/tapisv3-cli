@@ -7,7 +7,7 @@ from getpass import getpass
 from utils.Logger import Logger
 
 
-class Configuration:
+class ConfigManager:
     """
     Writes user credentials to the configs.ini based on the AUTH_METHOD 
     provided in the settings.py file.
@@ -17,14 +17,14 @@ class Configuration:
     credentials: dict = {}
 
     def __init__(self):
-        # Intialize and set the configparser to the Configuration object and
+        # Intialize and set the configparser to the ConfigManager object and
         # get the credentials from the config file.
         self.config = ConfigParser()
         self.config.read(settings.CONFIG_FILE)
         self.logger = Logger()
 
         # Add the credentials from the config file to 
-        # this Configuration object's credentials dict.
+        # this ConfigManager object's credentials dict.
         if "credentials" in self.config.sections():
             for key in self.config["credentials"]:
                 self.credentials[key] = self.config["credentials"][key]
@@ -52,7 +52,7 @@ class Configuration:
                 self.config.write(file)
 
         # Add the credentials from the config 
-        # file to this Configuration object's credentials dict
+        # file to this ConfigManager object's credentials dict
         for key in self.config["credentials"]:
             self.credentials[key] = self.config["credentials"][key]
 
@@ -90,7 +90,7 @@ class Configuration:
             with open(settings.CONFIG_FILE, "w") as file:
                 self.config.write(file)
 
-            # Set the username and password in the Configuration's credientials dict
+            # Set the username and password in the ConfigManager's credientials dict
             self.credentials = {"username": username, "password": password}
 
             return

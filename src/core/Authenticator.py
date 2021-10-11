@@ -4,7 +4,7 @@ from typing import Union
 from tapipy.tapis import Tapis
 
 from configs import settings
-from core.Configuration import Configuration
+from core.ConfigManager import ConfigManager
 from utils.Logger import Logger
 
 
@@ -17,7 +17,7 @@ class Authenticator:
         self.base_url = base_url
         self.auth_methods = settings.AUTH_METHODS
         self.logger = Logger()
-        self.config = Configuration()
+        self.config = ConfigManager()
 
     def authenticate(self, auth_method: str = settings.DEFAULT_AUTH_METHOD) -> Union[Tapis, None]:
         """

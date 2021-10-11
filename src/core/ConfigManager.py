@@ -1,7 +1,7 @@
-from configs import settings
+from conf import settings
 from configparser import ConfigParser
 from utils.Logger import Logger
-from configs.templates.core import template
+from conf.templates.core import template
 
 
 class ConfigManager:

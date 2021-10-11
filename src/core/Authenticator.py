@@ -3,7 +3,7 @@ from typing import Union
 
 from tapipy.tapis import Tapis
 
-from configs import settings
+from conf import settings
 from core.ConfigManager import ConfigManager
 from utils.Logger import Logger
 

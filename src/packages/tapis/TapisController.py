@@ -3,7 +3,7 @@ from typing import Union
 
 from tapipy.tapis import Tapis
 
-from configs import settings
+from conf import settings
 from core.Controller import Controller
 from core.Authenticator import Authenticator as Auth
 

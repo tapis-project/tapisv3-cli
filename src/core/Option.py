@@ -1,12 +1,21 @@
+"""Defines the structure and available attributes for an Option."""
+
 from enum import Enum
 from typing import Dict, Any
 
+
 class HandlerContext(Enum):
+    """Handlers deal with each enum type in their own regard."""
     GENERIC = "generic"
     ARGS = "args"
     RESULT = "result"
 
+
 class Option:
+    """
+    All of the possible option attributes are listed below,
+    but Options don't need to use every attribute.
+    """
     def __init__(self,
         name: str,
         aliases: list = [],

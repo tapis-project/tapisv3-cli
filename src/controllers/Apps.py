@@ -1,10 +1,9 @@
-"""Handles TAPIS functionality related to applications."""
-
 import json
 import sys
 
-from core.TapisController import TapisController
 from tapipy.errors import InvalidInputError, ServerDownError
+
+from core.TapisController import TapisController
 
 
 class Apps(TapisController):

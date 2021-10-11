@@ -1,6 +1,3 @@
-"""Handles the error/success/info logging and sets their printed styles."""
-
-
 class Styles:
     """The colors associated with the logging messages."""
     DEBUG = '\033[95m'
@@ -15,7 +12,7 @@ class Styles:
 
 
 class Logger:
-    """Contains the various log categories and their printed messages."""
+    """Handles the error/success/info logging and sets their printed styles."""
     def complete(self, message):
         """Typically used for signifying that a task is done."""
         print(f"{Styles.SUCCESS}{Styles.BOLD}✓{Styles.RESET} {message}")

@@ -1,5 +1,3 @@
-"""Handles TAPIS functionality related to applications."""
-
 import json
 import sys
 

@@ -1,5 +1,3 @@
-"""Handles abstract class method inheritance in the CLI."""
-
 from abc import ABC, abstractclassmethod
 
 

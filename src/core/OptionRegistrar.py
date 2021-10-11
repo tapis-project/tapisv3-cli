@@ -1,5 +1,3 @@
-"""The OptionRegistrar can be used to register new options in a controller."""
-
 from typing import List, Dict
 
 from core.Option import Option

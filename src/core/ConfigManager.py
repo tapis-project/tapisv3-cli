@@ -1,5 +1,3 @@
-"""Handles the setup of authorization credentials."""
-
 import os
 import sys
 

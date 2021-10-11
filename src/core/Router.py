@@ -1,5 +1,3 @@
-"""Handles the resolving (parsing) of commands and their options."""
-
 import random
 import re
 import string

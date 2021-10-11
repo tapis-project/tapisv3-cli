@@ -1,5 +1,3 @@
-"""Handles the checking and authentication of user credentials."""
-
 import sys
 from typing import Union
 

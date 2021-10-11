@@ -1,5 +1,3 @@
-"""Used for displaying the return data from a Tapis command in its raw format."""
-
 from typing import Any
 
 from core.AbstractView import AbstractView

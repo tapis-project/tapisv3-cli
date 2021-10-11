@@ -1,5 +1,3 @@
-"""A controller for working with Tapipy as defined in the OpenAPI specs."""
-
 import options.handlers
 
 from configs import settings

@@ -1,6 +1,3 @@
-"""Handles errors associated with CLI functionality and inputs."""
-
-
 class CLIBaseError(Exception):
     """The basic error class that more specific errors may inherit from."""
     def __init__(self, message):

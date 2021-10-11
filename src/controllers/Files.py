@@ -1,5 +1,3 @@
-"""Handles TAPIS functionality related to files."""
-
 import os
 
 from tapipy.errors import InvalidInputError

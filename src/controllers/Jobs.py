@@ -1,5 +1,3 @@
-"""Handles TAPIS functionaloty related to jobs."""
-
 from datetime import datetime
 import json
 

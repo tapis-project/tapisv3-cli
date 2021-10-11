@@ -1,5 +1,3 @@
-"""Used for displaying the return data from a Tapis command in table format."""
-
 from typing import Union, Dict, List
 
 from tabulate import tabulate

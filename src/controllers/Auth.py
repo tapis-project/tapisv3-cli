@@ -1,5 +1,3 @@
-"""Handles the configuring of credentials."""
-
 from core.Controller import Controller
 from core.Configuration import Configuration
 

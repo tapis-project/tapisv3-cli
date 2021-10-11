@@ -1,5 +1,3 @@
-"""Handles the functionality of TAPIS commands specifically."""
-
 import re
 from typing import Union
 

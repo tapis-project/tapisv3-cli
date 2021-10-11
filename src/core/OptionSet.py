@@ -1,5 +1,3 @@
-"""Allows the user to look at and query the available options."""
-
 from typing import List
 
 from core.Option import Option

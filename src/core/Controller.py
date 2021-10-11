@@ -1,9 +1,3 @@
-"""
-Handles the command setting, command execution, and command help
-functionality for the TAPIS CLI (adaptable to use non-TAPIS commands
-if the user creates new ones and a parser for non-TAPIS categories).
-"""
-
 import re
 import sys
 import types
@@ -18,6 +12,10 @@ from utils.module_loader import class_loader as load
 
 class Controller:
     """
+    Handles the command setting, command execution, and command help
+    functionality for the TAPIS CLI (adaptable to use non-TAPIS commands
+    if the user creates new ones and a parser for non-TAPIS categories).
+
     Each category has the same methods available to get/set/execute.
     If the user wants to add non-TAPIS categories and commands, the new parser
     should inherit from this category. See 'TapipyCategory.py' for an example.

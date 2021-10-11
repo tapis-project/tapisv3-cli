@@ -1,5 +1,3 @@
-"""Handles TAPIS functionality related to systems."""
-
 import json
 
 from tapipy.errors import InvalidInputError

@@ -10,7 +10,7 @@ class Auth(Controller):
     """Configurations are parsed here."""
     def __init__(self):
         Controller.__init__(self)
-        self.config = ConfigManager()
+        self.conf = ConfigManager()
 
     def configure(self):
         """
@@ -22,18 +22,18 @@ class Auth(Controller):
         # create it.
         if not os.path.isfile(settings.CONFIG_FILE):
             self.logger.log(f"Creating config file '{settings.CONFIG_FILE}'\n")
-            self.config.create_config_file()
+            self.conf.create_config_file()
 
         # Create the credentials section if it doesn't exsit. (It's possible 
         # that the credentials section has been erased even though
         # the file exists)
-        if not self.config.has_section("credentials"):
-            self.config.add_section("credentials")
+        if not self.conf.has_section("credentials"):
+            self.conf.add_section("credentials")
         
 
         # Add the credentials from the config 
         # file to this Configuration object's credentials dict
-        for key in self.config.credentials:
+        for key in self.conf.credentials:
             self.credentials[key] = self.parser["credentials"][key]
 
         # If the AUTH_METHOD doesn't have one of the values in AUTH_METHODS,
@@ -47,8 +47,8 @@ class Auth(Controller):
 
             # Fetch the username and password from the configs.ini if
             # they exist.
-            username = None if not hasattr(self.config.credentials, "username") else self.config.credentials["username"]
-            password = None if not hasattr(self.config.credentials, "password") else self.config.credentials["password"]
+            username = None if not hasattr(self.conf.credentials, "username") else self.conf.credentials["username"]
+            password = None if not hasattr(self.conf.credentials, "password") else self.conf.credentials["password"]
 
             # If username and password exist, return nothing.
             if bool(username) and bool(password):
@@ -63,11 +63,11 @@ class Auth(Controller):
             password = prompt.not_none("Password 🔒: ", secret=True)
 
             # Save the credentials
-            self.config.add("credentials", "username", username)
-            self.config.add("credentials", "password", password)
+            self.conf.add("credentials", "username", username)
+            self.conf.add("credentials", "password", password)
 
             # Set the username and password in the Configuration's credientials dict
-            self.config.credentials = {"username": username, "password": password}
+            self.conf.credentials = {"username": username, "password": password}
 
             return
 

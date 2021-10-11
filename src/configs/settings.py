@@ -13,7 +13,6 @@ NOTE: The TACC tenant in production is tacc.tapis.io, not tacc.prod.tapis.io!
 """
 
 PACKAGES = [
-    "core",
     "tapis"
 ]
 

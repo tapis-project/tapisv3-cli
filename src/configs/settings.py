@@ -1,4 +1,4 @@
-""" 
+"""
 All settings and configurable variables, such as environment varaibles, go here.
 
 There are two tenants within TAPIS: tacc and dev

@@ -4,6 +4,7 @@ from configs import settings
 from core.Controller import Controller
 from core.Authenticator import Authenticator as Auth
 
+
 class TapipyController(Controller):
     """
     Handles the parsing and execution of commands specified in the OpenAPI specs.
@@ -16,9 +17,10 @@ class TapipyController(Controller):
 
     def __init__(self):
         Controller.__init__(self)
+        self.command = None
         try:
             self.client = Auth().authenticate()
-            if self.client == None:
+            if self.client is None:
                 self.exit()
         except SystemExit:
             self.exit()
@@ -37,12 +39,12 @@ class TapipyController(Controller):
                 # ignore it
                 if option.name not in self.cmd_options and option.name not in self.arg_options:
                     continue
-                
+
                 # If the current option from the option set HAS been provided but there is
                 # no handler specified, ignore it
                 if option.handler == None or not hasattr(shared.options.handlers, option.handler):
                     continue
-                
+
                 # Register the handler
                 handlers[option.context].append(getattr(shared.options.handlers, option.handler))
             
@@ -60,8 +62,8 @@ class TapipyController(Controller):
 
             for handler in handlers["result"]:
                 result = handler(self, result)
-            
-            if self.view == None:
+
+            if self.view is None:
                 self.set_view("TapisResultTableView", result)
 
             self.view.render()

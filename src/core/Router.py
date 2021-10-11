@@ -1,5 +1,6 @@
-"""Handles the resolving (parsing) of commands and their options."""
-import re, random, string
+import random
+import re
+import string
 
 from importlib.util import find_spec
 from importlib import import_module
@@ -8,6 +9,7 @@ from typing import List, Tuple, Dict
 from core.Controller import Controller
 from core.TapipyController import TapipyController
 from utils.Logger import Logger
+
 
 class Router:
     """
@@ -32,14 +34,13 @@ class Router:
 
     def resolve(self, args: List[str]) -> Tuple[Controller, List[str]]:
         """The command is resolved here."""
-
         # Controller name
         controller_name: str = args.pop(0)
 
         # Parse the arguments and extract the values
         (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
-        
-        # The first step of command resolution is to check if a 
+
+        # The first step of command resolution is to check if a
         # user-defined controller exists by the name provided in args.
         if find_spec(f"packages.tapis.controllers.{controller_name.capitalize()}") is not None:
             # Import the controller
@@ -47,7 +48,7 @@ class Router:
             controller_class: type[Controller] = getattr(module, f"{controller_name.capitalize()}")
 
             if not hasattr(controller_class, cmd_name):
-                # If the command being invoked doesn't exist on the controller, 
+                # If the command being invoked doesn't exist on the controller,
                 # instantiate an TapipyController
                 controller = TapipyController()
                 # Set the resource, operation, and options
@@ -57,7 +58,7 @@ class Router:
                 controller.set_kw_args(kw_args)
 
                 return (controller, args)
-            
+
             # The controller class has a method by the command name.
             # Instantiate the controller class
             controller = controller_class()
@@ -81,8 +82,7 @@ class Router:
         controller.set_kw_args(kw_args)
 
         return (controller, args)
-        
-        
+
     def parse_cmd_options(self, args: List[str]) -> Tuple[List[str], List[str]]:
         """Parse the options that precede the command"""
         # Regex pattern for options.
@@ -97,7 +97,7 @@ class Router:
                 self.command_index += 1
                 continue
             break
-        
+
         # Remove the cmd_options from the args
         for index in sorted(option_indices, reverse=True):
             args.pop(index)
@@ -105,6 +105,7 @@ class Router:
         return (cmd_options, args)
 
     def parse_kw_args(self, args: List[str]) -> Tuple[Dict[str, str], List[str]]:
+        """Keyword arguments are parsed specifically."""
         # Escape spaces in args
         escaped_args = self.escape_args(args)
 
@@ -137,6 +138,7 @@ class Router:
             Dict[str, str],
             List[str]
         ]:
+        """Options are parsed form the args to resolve the args."""
         # Parse the options from the args. This also determines the
         # index of the command name via self.command_index
         (cmd_options, args) = self.parse_cmd_options(args)
@@ -154,21 +156,27 @@ class Router:
             args
         )
 
-    def args_to_str(self, args):
+    def args_to_str(self, args) -> string:
+        """Converts arguments to 'string' type for easier parsing."""
         arg_str = ""
         for arg in args:
             arg_str = arg_str + " " + str(arg)
 
         return arg_str.lstrip(" ")
 
-    def escape_args(self, args: List[str]):
+    def escape_args(self, args: List[str]) -> list:
+        """
+        A list of args is taken and all spaces are replaced with the
+        space replacement defined in the class initialization.
+        """
         escaped_args = []
         for arg in args:
             escaped_args.append(arg.replace(" ", self.space_replacement))
 
         return escaped_args
 
-    def unescape_matches(self, matches: Dict[str, str]):
+    def unescape_matches(self, matches: Dict[str, str]) -> dict:
+        """Replaces 'space replacements' (defined in the class initialization) with spaces."""
         unescaped_matches = {}
         for key, value in matches.items():
             key = key.replace(self.space_replacement, " ")

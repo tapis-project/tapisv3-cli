@@ -4,6 +4,7 @@ from core.Controller import Controller
 from core.ConfigManager import ConfigManager
 from utils.Prompt import prompt
 import conf.settings as settings
+from packages.tapis.settings import ENVS
 
 
 class Auth(Controller):
@@ -55,7 +56,7 @@ class Auth(Controller):
                 return
 
             # Prompt user for username and password
-            self.logger.log("\nTACC credentials not found.\nProvide TACC username and password.\n")
+            self.logger.log("\nTapis credentials not found.\nProvide a username and password.\n")
             prompt.yes_no("Continue? [y/n]: ")
 
             # Prompt the username to create a username and password
@@ -69,8 +70,32 @@ class Auth(Controller):
             # Set the username and password in the Configuration's credientials dict
             self.conf.credentials = {"username": username, "password": password}
 
+            # Set env and tenant
+            env = prompt.validate_choices("Tapis Env: ", ENVS, prompt.not_none)
+            self.env(env)
+
+            tenant = prompt.not_none("Tapis Tenant: " )
+            self.tenant(tenant)
+
             return
 
         # The user has misconfigured their settings.py. Let them know.
         else:
             raise ValueError(f"AUTH_METHOD provided in the settings.py is invalid. Available AUTH_METHODS: {settings.AUTH_METHODS}\n")
+
+    def env(self, env):
+        if env not in ENVS:
+            self.logger.error(f"Configuration Error: '{env}' is not a valid ENV. Valid Envs: {ENVS}")
+        
+        # Create a section for tapis based configs if it doesn't exist
+        if not self.conf.has_section("tapis"):
+            self.conf.add_section("tapis")
+        
+        self.conf.add("tapis", "env", env)
+
+    def tenant(self, tenant):
+        # Create a section for tapis based configs if it doesn't exist
+        if not self.conf.has_section("tapis"):
+            self.conf.add_section("tapis")
+        
+        self.conf.add("tapis", "tenant", tenant)

@@ -5,9 +5,8 @@ template = {
         "user": "",
         "auth_method": "PASSWORD"
     },
-    "tapis.defaults": {
+    "tapis": {
         "tenant": "tacc",
-        "env": "prod",
-        "base_url": "https://tacc.tapis.io"
+        "env": "prod"
     }
 }

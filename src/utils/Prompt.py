@@ -40,4 +40,14 @@ class Prompt:
             print("Invalid option required. Must type 'y' for yes or 'n' for no.\n")
             sys.exit(1)
 
+    # Recursively calls a callback until the value provided by a user matches
+    # the permitted values
+    def validate_choices(self, message, choices: list, callback: callable):
+        value = callback(message)
+        if value not in choices:
+            print(f"Invalid value '{value}': Choose one of the permitted values: {choices}")
+            return callback(message)
+
+        return value
+
 prompt = Prompt()

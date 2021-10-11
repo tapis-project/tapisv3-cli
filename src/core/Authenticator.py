@@ -4,6 +4,7 @@ from typing import Union
 from tapipy.tapis import Tapis
 
 from conf import settings
+from packages.tapis.settings import BASE_URL
 from core.ConfigManager import ConfigManager
 from utils.Logger import Logger
 
@@ -13,7 +14,7 @@ class Authenticator:
     base_url: str
     auth_methods: str
 
-    def __init__(self, base_url=settings.BASE_URL):
+    def __init__(self, base_url=BASE_URL):
         self.base_url = base_url
         self.auth_methods = settings.AUTH_METHODS
         self.logger = Logger()

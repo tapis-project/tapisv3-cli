@@ -7,19 +7,22 @@ from conf.templates.core import template
 
 class ConfigManager:
     """
-    Writes user credentials to the configs.ini based on the AUTH_METHOD 
-    provided in the settings.py file.
+    Manages the setting, getting, and checking of all package-based configs
     """
-    auth_method: str = settings.AUTH_METHOD
-    config: ConfigParser = None
-    credentials: dict = {}
+    auth_method: str
+    config: ConfigParser
+    credentials: dict
+    package: str
 
     def __init__(self):
         # Intialize and set the configparser to the Configuration object and
         # get the credentials from the config file.
+        self.auth_method = settings.AUTH_METHOD
         self.parser = ConfigParser()
         self.parser.read(settings.CONFIG_FILE)
         self.logger = Logger()
+        self.package = None
+        self.credentials = {}
 
         # Add the credentials from the config file to 
         # this Configuration object's credentials dict.
@@ -45,10 +48,10 @@ class ConfigManager:
                 self.parser.write(file)
 
     def has_section(self, section):
-        if section in self.parser.sections():
-            return True
-
-        return False
-
+        return section in self.parser.sections()
+    
+    def has_key(self, section, key):
+        return (self.has_section(section) and key in self.parser[section])
+                
     def get(self, section, key):
         return self.parser[section][key]

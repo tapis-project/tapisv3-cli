@@ -1,7 +1,7 @@
 ### Overview:
 
 ### Github Issue Links:
-[Task <task#>](https://github.com/nathandf/tapis-cli/issues/<task#>)
+[Task <task#>](https://github.com/tapis-project/tapisv3-cli/issues/<task#>)
 
 ### Summary of changes:
 -

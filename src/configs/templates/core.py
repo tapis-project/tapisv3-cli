@@ -3,7 +3,7 @@ template = {
     "defaults": {
         "package": "tapis",
         "user": "",
-        "auth_method": "password"
+        "auth_method": "PASSWORD"
     },
     "tapis.defaults": {
         "tenant": "tacc",

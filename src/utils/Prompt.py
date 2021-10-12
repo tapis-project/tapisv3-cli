@@ -2,6 +2,10 @@ import sys
 from getpass import getpass
 
 class Prompt:
+    def __init__(self):
+        self.no_vals = ["N", "n", "no", "No", "NO"]
+        self.yes_vals = ["Y", "y", "yes", "Yes", "YES"]
+
     def not_none(self, message: str, secret: bool = False) -> str:
         """
         Prompts the user for input described in the message. If secret is set
@@ -32,10 +36,12 @@ class Prompt:
         # If user selects 'no' then exit the script, if the user selects 'yes'
         # then pass to continue the script, otherwise exit the script if the
         # user doesn't provide any valid selections.
-        if yn == "n" or yn == "N":
-            sys.exit(1)
-        elif yn == "y" or yn == "Y":
-            return
+        if yn in self.no_vals:
+            if exit == True:
+                sys.exit(1)
+            return False
+        elif yn in self.yes_vals:
+            return True
         else:
             print("Invalid option required. Must type 'y' for yes or 'n' for no.\n")
             sys.exit(1)

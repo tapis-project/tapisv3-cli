@@ -38,10 +38,10 @@ class Router:
 
     def resolve(self, args: List[str]) -> Tuple[Controller, List[str]]:
         """The command is resolved here."""
-        # Controller name
+        # Controller name is the first argument
         controller_name: str = args.pop(0)
 
-        # Parse the arguments and extract the values
+        # Parse the rest of the arguments and extract the values
         (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
 
         # Fetch the default package from the configs
@@ -52,10 +52,40 @@ class Router:
         ):
             package = self.conf.get("current", "package")
 
-        # The first step of command resolution is to check if a
-        # user-defined controller exists by the name provided in args.
-        if find_spec(f"packages.{package}.controllers.{controller_name.capitalize()}") is not None:
-            # Import the controller
+        ################### STEPS TO CONTROLLER RESOLUTION ####################
+        """
+        - Check the 'core' package for a controller with a method 
+        that corresponds to the provded args. Dispatch if found.
+
+        - If a core controller is not found, check the 'current' 
+        package(found in the configs) for a controller with a method 
+        that corresponds to the provided args
+        
+        - If a current package controller or method is not found, dispatch 
+        the current OpenApiController (TapipyController)
+        """
+        #######################################################################
+        core_controller_ns = "packages.core.controllers"
+        if find_spec(f"{core_controller_ns}.{controller_name.capitalize()}") is not None:
+            module = import_module(f"{core_controller_ns}.{controller_name.capitalize()}", "./" )
+            controller_class: type[Controller] = getattr(module, f"{controller_name.capitalize()}")
+
+            if hasattr(controller_class, cmd_name):
+                # The controller class has a method by the command name.
+                # Instantiate the controller class
+                controller = controller_class()
+
+                # Set the options and command
+                controller.set_command(cmd_name)
+                controller.set_cmd_options(cmd_options)
+                controller.set_kw_args(kw_args)
+
+                # Return the controller with command and options set.
+                return (controller, args)
+
+        package_controller_ns = f"packages.{package}.controllers"
+        if find_spec(f"{package_controller_ns}.{controller_name.capitalize()}") is not None:
+            # Import the current package controller
             module = import_module(f"packages.{package}.controllers.{controller_name.capitalize()}", "./" )
             controller_class: type[Controller] = getattr(module, f"{controller_name.capitalize()}")
 

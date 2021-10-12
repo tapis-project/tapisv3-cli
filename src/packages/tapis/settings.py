@@ -1,4 +1,4 @@
-from core.ConfigManager import ConfigManager
+from utils.ConfigManager import ConfigManager
 
 conf = ConfigManager()
 

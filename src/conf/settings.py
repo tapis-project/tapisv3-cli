@@ -1,6 +1,11 @@
 PACKAGES = [
+    "core",
     "tapis"
 ]
+
+DEFAULT_PACKAGE = "core"
+
+PACKAGES_DIR = "packages/"
 
 AUTH_METHOD = "PASSWORD"
 

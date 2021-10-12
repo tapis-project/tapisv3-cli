@@ -77,6 +77,9 @@ class Auth(Controller):
             tenant = prompt.not_none("Tapis Tenant: " )
             self.tenant(tenant)
 
+            # Set the current package to tapis
+            self.conf.add("current", "package", "tapis")
+
             return
 
         # The user has misconfigured their settings.py. Let them know.

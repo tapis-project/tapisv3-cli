@@ -8,7 +8,9 @@ from typing import List, Tuple, Dict
 
 from core.Controller import Controller
 from core.TapipyController import TapipyController
+from core.ConfigManager import ConfigManager
 from utils.Logger import Logger
+from conf.settings import DEFAULT_PACKAGE
 
 
 class Router:
@@ -18,6 +20,7 @@ class Router:
     """
     command_index: int
     logger: type[Logger]
+    conf: ConfigManager
     tag_value_pattern: str
     kw_arg_tag_pattern: str
     cmd_option_pattern: str
@@ -26,6 +29,7 @@ class Router:
     def __init__(self):
         self.command_index = 0
         self.logger = Logger()
+        self.conf = ConfigManager()
         self.tag_value_pattern = r"([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)"
         self.kw_arg_tag_pattern = r"[-]{2}([\w]{1}[\w]*)"
         self.cmd_option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
@@ -40,11 +44,19 @@ class Router:
         # Parse the arguments and extract the values
         (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
 
+        # Fetch the default package from the configs
+        package = DEFAULT_PACKAGE
+        if (
+            self.conf.has_key("current", "package")
+            and bool(self.conf.get("current", "package"))
+        ):
+            package = self.conf.get("current", "package")
+
         # The first step of command resolution is to check if a
         # user-defined controller exists by the name provided in args.
-        if find_spec(f"packages.tapis.controllers.{controller_name.capitalize()}") is not None:
+        if find_spec(f"packages.{package}.controllers.{controller_name.capitalize()}") is not None:
             # Import the controller
-            module = import_module( f"packages.tapis.controllers.{controller_name.capitalize()}", "./" )
+            module = import_module(f"packages.{package}.controllers.{controller_name.capitalize()}", "./" )
             controller_class: type[Controller] = getattr(module, f"{controller_name.capitalize()}")
 
             if not hasattr(controller_class, cmd_name):
@@ -110,7 +122,8 @@ class Router:
         escaped_args = self.escape_args(args)
 
         # Regex pattern for keyword args and their values
-        pattern = re.compile(rf"(?<=[\s]){self.kw_arg_tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*", re.MULTILINE | re.UNICODE)
+        regex = rf"(?<=[\s]){self.kw_arg_tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*"
+        pattern = re.compile(regex, re.MULTILINE | re.UNICODE)
         escaped_matches = dict(pattern.findall(" " + self.args_to_str(escaped_args)))
         unescaped_matches = self.unescape_matches(escaped_matches)
 

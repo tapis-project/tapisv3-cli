@@ -8,7 +8,7 @@ from typing import List, Tuple, Dict
 
 from core.Controller import Controller
 from core.TapipyController import TapipyController
-from core.ConfigManager import ConfigManager
+from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
 from conf.settings import DEFAULT_PACKAGE
 

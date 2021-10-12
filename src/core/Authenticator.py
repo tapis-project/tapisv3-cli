@@ -5,7 +5,7 @@ from tapipy.tapis import Tapis
 
 from conf import settings
 from packages.tapis.settings import BASE_URL
-from core.ConfigManager import ConfigManager
+from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
 
 

@@ -1,7 +1,7 @@
 import os, shutil
 
 from core.Controller import Controller
-from core.ConfigManager import ConfigManager
+from utils.ConfigManager import ConfigManager
 from utils.Prompt import prompt
 from conf.settings import PACKAGES, PACKAGES_DIR
 

@@ -1,7 +1,7 @@
 import os
 
 from core.Controller import Controller
-from core.ConfigManager import ConfigManager
+from utils.ConfigManager import ConfigManager
 import conf.settings as settings
 
 

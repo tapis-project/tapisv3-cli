@@ -1,7 +1,7 @@
 import os
 
 from core.Controller import Controller
-from core.ConfigManager import ConfigManager
+from utils.ConfigManager import ConfigManager
 from utils.Prompt import prompt
 import conf.settings as settings
 from packages.tapis.settings import ENVS

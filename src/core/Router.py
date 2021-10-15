@@ -1,6 +1,4 @@
-import random
-import re
-import string
+import random, re, string, sys
 
 from importlib.util import find_spec
 from importlib import import_module
@@ -42,7 +40,11 @@ class Router:
         controller_name: str = args.pop(0)
 
         # Parse the rest of the arguments and extract the values
-        (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
+        try:
+            (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
+        except Exception as e:
+            self.logger.error(e)
+            sys.exit()
 
         # Fetch the default package from the configs
         package = DEFAULT_PACKAGE
@@ -187,6 +189,9 @@ class Router:
         (cmd_options, args) = self.parse_cmd_options(args)
 
         # Get the command for the controller from the modified args list.
+        if len(args) < 1:
+            raise Exception("No command provided")
+
         cmd_name = args.pop(0)
 
         # Parse the keyword arguments and their values from the args list

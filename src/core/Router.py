@@ -35,12 +35,13 @@ class Router:
         self.space_replacement = buffer.join(random.choice(string.punctuation) for _ in range(5)) + buffer
 
     def resolve(self, args: List[str]) -> Tuple[Controller, List[str]]:
-        """The command is resolved here."""
-        # Controller name is the first argument
-        controller_name: str = args.pop(0)
-
-        # Parse the rest of the arguments and extract the values
         try:
+            # Controller name is the first argument
+            if len(args) == 0:
+                raise Exception("No category provided")
+            controller_name: str = args.pop(0)
+
+            # Parse the rest of the arguments and extract the values
             (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
         except Exception as e:
             self.logger.error(e)

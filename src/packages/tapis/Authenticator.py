@@ -30,7 +30,7 @@ class Authenticator:
             # Add the credentials from the config file to
             # this Configuration object's credentials dict.
             self.logger.error("Tapis CLI not configured.")
-            self.logger.log("Run `tapis auth configure`\n")
+            self.logger.log("Run the following commands in order:\n`tapis cli configure`\n`tapis auth configure`")
             sys.exit(1)
 
         # Authenticate using the provided auth method. Raise exception

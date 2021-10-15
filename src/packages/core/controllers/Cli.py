@@ -5,12 +5,12 @@ from utils.ConfigManager import ConfigManager
 import conf.settings as settings
 
 
-class Setup(Controller):
+class Cli(Controller):
     def __init__(self):
         Controller.__init__(self)
         self.conf = ConfigManager()
 
-    def init(self):
+    def configure(self):
         # If the configs.ini specified in the settings does not exist,
         # create it.
         if not os.path.isfile(settings.CONFIG_FILE):

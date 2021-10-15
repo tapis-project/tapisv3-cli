@@ -5,7 +5,6 @@ from utils.ConfigManager import ConfigManager
 from utils.Prompt import prompt
 import conf.settings as settings
 from packages.tapis.settings import ENVS
-from packages.core.controllers.Setup import Setup
 
 
 class Auth(Controller):
@@ -21,10 +20,10 @@ class Auth(Controller):
         provide the credentials for the defined authentication method.
         """
         # If the configs.ini specified in the settings does not exist,
-        # call the init method on the setup controller.
+        # create it.
         if not os.path.isfile(settings.CONFIG_FILE):
-            setup_controller = Setup()
-            setup_controller.init()
+            self.logger.log(f"Creating config file '{settings.CONFIG_FILE}'\n")
+            self.conf.create_config_file()
 
         # Create the credentials section if it doesn't exsit. (It's possible 
         # that the credentials section has been erased even though

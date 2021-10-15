@@ -1,16 +1,15 @@
 import re
-from typing import Union
 
 from tapipy.tapis import Tapis
 
-from configs import settings
+from conf import settings
 from core.Controller import Controller
-from core.Authenticator import Authenticator as Auth
+from packages.tapis.Authenticator import Authenticator as Auth
 
 
 class TapisController(Controller):
-    """A TAPIS-specific Controller."""
-    client: Union[Tapis, None] = None
+    """Base Tapis Controller."""
+    client: type[Tapis]
 
     def __init__(self):
         Controller.__init__(self)

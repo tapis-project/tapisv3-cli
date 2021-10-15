@@ -1,6 +1,4 @@
-import random
-import re
-import string
+import random, re, string, sys
 
 from importlib.util import find_spec
 from importlib import import_module
@@ -8,7 +6,9 @@ from typing import List, Tuple, Dict
 
 from core.Controller import Controller
 from core.TapipyController import TapipyController
+from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
+from conf.settings import DEFAULT_PACKAGE
 
 
 class Router:
@@ -18,6 +18,7 @@ class Router:
     """
     command_index: int
     logger: type[Logger]
+    conf: ConfigManager
     tag_value_pattern: str
     kw_arg_tag_pattern: str
     cmd_option_pattern: str
@@ -26,6 +27,7 @@ class Router:
     def __init__(self):
         self.command_index = 0
         self.logger = Logger()
+        self.conf = ConfigManager()
         self.tag_value_pattern = r"([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)"
         self.kw_arg_tag_pattern = r"[-]{2}([\w]{1}[\w]*)"
         self.cmd_option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
@@ -33,18 +35,61 @@ class Router:
         self.space_replacement = buffer.join(random.choice(string.punctuation) for _ in range(5)) + buffer
 
     def resolve(self, args: List[str]) -> Tuple[Controller, List[str]]:
-        """The command is resolved here."""
-        # Controller name
-        controller_name: str = args.pop(0)
+        try:
+            # Controller name is the first argument
+            if len(args) == 0:
+                raise Exception("No category provided")
+            controller_name: str = args.pop(0)
 
-        # Parse the arguments and extract the values
-        (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
+            # Parse the rest of the arguments and extract the values
+            (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
+        except Exception as e:
+            self.logger.error(e)
+            sys.exit()
 
-        # The first step of command resolution is to check if a
-        # user-defined controller exists by the name provided in args.
-        if find_spec(f"controllers.{controller_name.capitalize()}") is not None:
-            # Import the controller
-            module = import_module( f"controllers.{controller_name.capitalize()}", "./" )
+        # Fetch the default package from the configs
+        package = DEFAULT_PACKAGE
+        if (
+            self.conf.has_key("current", "package")
+            and bool(self.conf.get("current", "package"))
+        ):
+            package = self.conf.get("current", "package")
+
+        ################### STEPS TO CONTROLLER RESOLUTION ####################
+        """
+        - Check the 'core' package for a controller with a method 
+        that corresponds to the provded args. Dispatch if found.
+
+        - If a core controller is not found, check the 'current' 
+        package(found in the configs) for a controller with a method 
+        that corresponds to the provided args
+        
+        - If a current package controller or method is not found, dispatch 
+        the current OpenApiController (TapipyController)
+        """
+        #######################################################################
+        core_controller_ns = "packages.core.controllers"
+        if find_spec(f"{core_controller_ns}.{controller_name.capitalize()}") is not None:
+            module = import_module(f"{core_controller_ns}.{controller_name.capitalize()}", "./" )
+            controller_class: type[Controller] = getattr(module, f"{controller_name.capitalize()}")
+
+            if hasattr(controller_class, cmd_name):
+                # The controller class has a method by the command name.
+                # Instantiate the controller class
+                controller = controller_class()
+
+                # Set the options and command
+                controller.set_command(cmd_name)
+                controller.set_cmd_options(cmd_options)
+                controller.set_kw_args(kw_args)
+
+                # Return the controller with command and options set.
+                return (controller, args)
+
+        package_controller_ns = f"packages.{package}.controllers"
+        if find_spec(f"{package_controller_ns}.{controller_name.capitalize()}") is not None:
+            # Import the current package controller
+            module = import_module(f"packages.{package}.controllers.{controller_name.capitalize()}", "./" )
             controller_class: type[Controller] = getattr(module, f"{controller_name.capitalize()}")
 
             if not hasattr(controller_class, cmd_name):
@@ -110,7 +155,8 @@ class Router:
         escaped_args = self.escape_args(args)
 
         # Regex pattern for keyword args and their values
-        pattern = re.compile(rf"(?<=[\s]){self.kw_arg_tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*", re.MULTILINE | re.UNICODE)
+        regex = rf"(?<=[\s]){self.kw_arg_tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*"
+        pattern = re.compile(regex, re.MULTILINE | re.UNICODE)
         escaped_matches = dict(pattern.findall(" " + self.args_to_str(escaped_args)))
         unescaped_matches = self.unescape_matches(escaped_matches)
 
@@ -144,6 +190,9 @@ class Router:
         (cmd_options, args) = self.parse_cmd_options(args)
 
         # Get the command for the controller from the modified args list.
+        if len(args) < 1:
+            raise Exception("No command provided")
+
         cmd_name = args.pop(0)
 
         # Parse the keyword arguments and their values from the args list

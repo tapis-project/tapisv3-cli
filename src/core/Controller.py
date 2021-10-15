@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 
 from core.AbstractView import AbstractView
 from core.OptionSet import OptionSet
-from options.options_sets import option_registrar
+from shared.options.options_sets import option_registrar
 from utils.Logger import Logger
 from utils.module_loader import class_loader as load
 
@@ -87,6 +87,8 @@ class Controller:
 
     def invoke(self, args: List[str]) -> None:
         """Passes input args to the command."""
+        # TODO Check that self.command is a method
+        # TODO Prevent users from calling parent class methods
         if self.override_exec:
             return
 
@@ -177,7 +179,7 @@ class Controller:
 
     def set_view(self, name: str, data: Any) -> None:
         """Loads a view if it exists"""
-        view_class = load(f"views.{name}", name)
+        view_class = load(f"shared.views.{name}", name)
         if view_class is None:
             raise Exception("View '{name}' does not exist")
 

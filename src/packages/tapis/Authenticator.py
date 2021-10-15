@@ -3,8 +3,9 @@ from typing import Union
 
 from tapipy.tapis import Tapis
 
-from configs import settings
-from core.ConfigManager import ConfigManager
+from conf import settings
+from packages.tapis.settings import BASE_URL
+from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
 
 
@@ -13,11 +14,11 @@ class Authenticator:
     base_url: str
     auth_methods: str
 
-    def __init__(self, base_url=settings.BASE_URL):
+    def __init__(self, base_url=BASE_URL):
         self.base_url = base_url
         self.auth_methods = settings.AUTH_METHODS
         self.logger = Logger()
-        self.config = ConfigManager()
+        self.conf = ConfigManager()
 
     def authenticate(self, auth_method: str = settings.DEFAULT_AUTH_METHOD) -> Union[Tapis, None]:
         """
@@ -25,22 +26,22 @@ class Authenticator:
         Only password authentication is implemented for now.
         """
         # If there are no credentials in the credentials dict, throw error
-        if not bool(self.config.credentials):
+        if not bool(self.conf.credentials):
             # Add the credentials from the config file to
             # this Configuration object's credentials dict.
-            self.logger.error("Tapis CLI not configured. Run the following command to add your credentials:")
-            self.logger.log("`tapis auth configure`\n")
+            self.logger.error("Tapis CLI not configured.")
+            self.logger.log("Run the following commands in order:\n`tapis cli configure`\n`tapis auth configure`")
             sys.exit(1)
 
         # Authenticate using the provided auth method. Raise exception
         # if provided credentials do not meet requirements.
         if auth_method == settings.PASSWORD:
-            self.validate_credentials(auth_method, self.config.credentials)
+            self.validate_credentials(auth_method, self.conf.credentials)
             try:
                 client = Tapis(
                     base_url=self.base_url,
-                    username=self.config.credentials["username"],
-                    password=self.config.credentials["password"]
+                    username=self.conf.credentials["username"],
+                    password=self.conf.credentials["password"]
                 )
                 client.get_tokens()
                 return client

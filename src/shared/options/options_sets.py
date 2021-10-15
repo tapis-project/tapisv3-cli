@@ -17,12 +17,12 @@ from core.OptionRegistrar import OptionRegistrar
 option_registrar = OptionRegistrar()
 
 option_registrar.register("core", [
-    Option("-a",
+    Option("-v",
         aliases=["-verbose"],
         usage="show additional information for a command invocation",
         context="generic"
     ),
-    Option("-b",
+    Option("-h",
         aliases=["-help"],
         usage="display help information for a command",
         context="generic",

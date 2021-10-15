@@ -9,7 +9,7 @@ from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
 
 
-class Authenticator:
+class TapisAuthenticator:
     """Authorization credentials are parsed here."""
     base_url: str
     auth_methods: str

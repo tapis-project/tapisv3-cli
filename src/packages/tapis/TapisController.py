@@ -4,7 +4,7 @@ from tapipy.tapis import Tapis
 
 from conf import settings
 from core.Controller import Controller
-from core.Authenticator import Authenticator as Auth
+from packages.tapis.TapisAuthenticator import TapisAuthenticator as Auth
 
 
 class TapisController(Controller):

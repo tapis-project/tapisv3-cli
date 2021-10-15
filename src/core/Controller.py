@@ -87,6 +87,8 @@ class Controller:
 
     def invoke(self, args: List[str]) -> None:
         """Passes input args to the command."""
+        # TODO Check that self.command is a method
+        # TODO Prevent users from calling parent class methods
         if self.override_exec:
             return
 

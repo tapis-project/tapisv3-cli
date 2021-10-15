@@ -9,7 +9,7 @@ from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
 
 
-class TapisAuthenticator:
+class Authenticator:
     """Authorization credentials are parsed here."""
     base_url: str
     auth_methods: str
@@ -18,7 +18,7 @@ class TapisAuthenticator:
         self.base_url = base_url
         self.auth_methods = settings.AUTH_METHODS
         self.logger = Logger()
-        self.config = ConfigManager()
+        self.conf = ConfigManager()
 
     def authenticate(self, auth_method: str = settings.DEFAULT_AUTH_METHOD) -> Union[Tapis, None]:
         """
@@ -29,8 +29,8 @@ class TapisAuthenticator:
         if not bool(self.config.credentials):
             # Add the credentials from the config file to
             # this Configuration object's credentials dict.
-            self.logger.error("Tapis CLI not configured. Run the following command to add your credentials:")
-            self.logger.log("`tapis auth configure`\n")
+            self.logger.error("Tapis CLI not configured.")
+            self.logger.log("Run `tapis auth configure`\n")
             sys.exit(1)
 
         # Authenticate using the provided auth method. Raise exception

@@ -2,7 +2,7 @@ import shared.options.handlers
 
 from conf import settings
 from core.Controller import Controller
-from packages.tapis.TapisAuthenticator import TapisAuthenticator as Auth
+from packages.tapis.Authenticator import Authenticator as Auth
 
 
 class TapipyController(Controller):

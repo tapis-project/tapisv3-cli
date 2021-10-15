@@ -1,7 +1,7 @@
 template = {
     "credentials": {},
     "current": {
-        "package": "core",
+        "package": "tapis",
         "user": "",
         "auth_method": "PASSWORD"
     },

@@ -26,7 +26,7 @@ class Authenticator:
         Only password authentication is implemented for now.
         """
         # If there are no credentials in the credentials dict, throw error
-        if not bool(self.config.credentials):
+        if not bool(self.conf.credentials):
             # Add the credentials from the config file to
             # this Configuration object's credentials dict.
             self.logger.error("Tapis CLI not configured.")
@@ -36,12 +36,12 @@ class Authenticator:
         # Authenticate using the provided auth method. Raise exception
         # if provided credentials do not meet requirements.
         if auth_method == settings.PASSWORD:
-            self.validate_credentials(auth_method, self.config.credentials)
+            self.validate_credentials(auth_method, self.conf.credentials)
             try:
                 client = Tapis(
                     base_url=self.base_url,
-                    username=self.config.credentials["username"],
-                    password=self.config.credentials["password"]
+                    username=self.conf.credentials["username"],
+                    password=self.conf.credentials["password"]
                 )
                 client.get_tokens()
                 return client

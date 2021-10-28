@@ -87,18 +87,16 @@ class Router:
             module = import_module(f"{core_controller_ns}.{cmd_to_class(controller_name)}", "./" )
             controller_class: type[BaseController] = getattr(module, f"{cmd_to_class(controller_name)}")
 
-            if hasattr(controller_class, cmd_name):
-                # The controller class has a method by the command name.
-                # Instantiate the controller class
-                controller = controller_class()
+            # Instantiate the controller class
+            controller = controller_class()
 
-                # Set the options and command
-                controller.set_command(cmd_name)
-                controller.set_cmd_options(cmd_options)
-                controller.set_kw_args(kw_args)
+            # Set the options and command
+            controller.set_command(cmd_name)
+            controller.set_cmd_options(cmd_options)
+            controller.set_kw_args(kw_args)
 
-                # Return the controller with command and options set.
-                return (controller, args)
+            # Return the controller with command and options set.
+            return (controller, args)
 
         # If tapipy is the current package, invoke the operation on the resource
         if package == "tapipy":
@@ -130,6 +128,11 @@ class Router:
 
             # Return the controller with command and options set.
             return (controller, args)
+
+        # No controller was found in the current package by the name provided
+        # in the args. Log the error and exit.
+        self.logger.error(f"Command '{controller_name}' not found")
+        sys.exit()
 
     def parse_cmd_options(self, args: List[str]) -> Tuple[List[str], List[str]]:
         """Parse the options that precede the command"""

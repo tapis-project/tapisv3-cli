@@ -10,7 +10,7 @@ from utils.Logger import Logger
 from utils.module_loader import class_loader as load
 
 
-class Controller:
+class BaseController:
     """
     Handles the command setting, command execution, and command help
     functionality for the TAPIS CLI (adaptable to use non-TAPIS commands

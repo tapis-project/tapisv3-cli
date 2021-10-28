@@ -4,7 +4,7 @@ from importlib.util import find_spec
 from importlib import import_module
 from typing import List, Tuple, Dict
 
-from core.Controller import Controller
+from core.BaseController import BaseController
 from core.TapipyController import TapipyController
 from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
@@ -34,7 +34,7 @@ class Router:
         buffer = "[*]"
         self.space_replacement = buffer.join(random.choice(string.punctuation) for _ in range(5)) + buffer
 
-    def resolve(self, args: List[str]) -> Tuple[Controller, List[str]]:
+    def resolve(self, args: List[str]) -> Tuple[BaseController, List[str]]:
         try:
             # Controller name is the first argument
             if len(args) == 0:
@@ -71,7 +71,7 @@ class Router:
         core_controller_ns = "packages.core.controllers"
         if find_spec(f"{core_controller_ns}.{controller_name.capitalize()}") is not None:
             module = import_module(f"{core_controller_ns}.{controller_name.capitalize()}", "./" )
-            controller_class: type[Controller] = getattr(module, f"{controller_name.capitalize()}")
+            controller_class: type[BaseController] = getattr(module, f"{controller_name.capitalize()}")
 
             if hasattr(controller_class, cmd_name):
                 # The controller class has a method by the command name.
@@ -90,7 +90,7 @@ class Router:
         if find_spec(f"{package_controller_ns}.{controller_name.capitalize()}") is not None:
             # Import the current package controller
             module = import_module(f"packages.{package}.controllers.{controller_name.capitalize()}", "./" )
-            controller_class: type[Controller] = getattr(module, f"{controller_name.capitalize()}")
+            controller_class: type[BaseController] = getattr(module, f"{controller_name.capitalize()}")
 
             if not hasattr(controller_class, cmd_name):
                 # If the command being invoked doesn't exist on the controller,

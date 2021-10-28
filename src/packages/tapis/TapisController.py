@@ -3,16 +3,16 @@ import re
 from tapipy.tapis import Tapis
 
 from conf import settings
-from core.Controller import Controller
+from core.BaseController import BaseController
 from packages.tapis.Authenticator import Authenticator as Auth
 
 
-class TapisController(Controller):
+class TapisController(BaseController):
     """Base Tapis Controller."""
     client: type[Tapis]
 
     def __init__(self):
-        Controller.__init__(self)
+        BaseController.__init__(self)
         try:
             self.client = Auth().authenticate()
             if self.client is None:

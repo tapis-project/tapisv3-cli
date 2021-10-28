@@ -1,14 +1,14 @@
 import os, shutil
 
-from core.Controller import Controller
+from core.BaseController import BaseController
 from utils.ConfigManager import ConfigManager
 from utils.Prompt import prompt
 from conf.settings import PACKAGES, PACKAGES_DIR
 
 
-class Packages(Controller):
+class Packages(BaseController):
     def __init__(self):
-        Controller.__init__(self)
+        BaseController.__init__(self)
         self.conf = ConfigManager()
 
     def create(self, package_name):

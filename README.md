@@ -7,7 +7,7 @@ tapis-cli can be set up and run in 2 ways; Locally, and in a Docker container.
 
 ### Local setup
 **Clone the repo**\
-`git clone https://github.com/nathandf/tapis-cli.git`
+`https://github.com/tapis-project/tapisv3-cli.git`
 
 **Navigate to the 'src' directory of the project where tapis.sh is found**\
 `cd ./tapis-cli/src`

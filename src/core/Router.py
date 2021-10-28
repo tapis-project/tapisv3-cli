@@ -33,6 +33,7 @@ class Router:
         self.cmd_option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
         buffer = "[*]"
         self.space_replacement = buffer.join(random.choice(string.punctuation) for _ in range(5)) + buffer
+        self.action_filter_suffix = "_Action"
 
     def resolve(self, args: List[str]) -> Tuple[BaseController, List[str]]:
         try:
@@ -43,6 +44,12 @@ class Router:
 
             # Parse the rest of the arguments and extract the values
             (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
+
+            # Prevent users from bypassing the action filters by disallowing
+            # the action_filter_prefix from the cmd_name
+            if self.action_filter_suffix in cmd_name:
+                raise Exception(f"{controller_name} has no command {cmd_name}")
+
         except Exception as e:
             self.logger.error(e)
             sys.exit()

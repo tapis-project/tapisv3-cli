@@ -8,6 +8,7 @@ from core.BaseController import BaseController
 from core.TapipyController import TapipyController
 from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
+from utils.cmd_to_class import cmd_to_class
 from conf.settings import DEFAULT_PACKAGE
 
 
@@ -48,7 +49,7 @@ class Router:
             # Prevent users from bypassing the action filters by disallowing
             # the action_filter_prefix from the cmd_name
             if self.action_filter_suffix in cmd_name:
-                raise Exception(f"{controller_name} has no command {cmd_name}")
+                raise Exception(f"Command {controller_name} has no command {cmd_name}")
 
         except Exception as e:
             self.logger.error(e)
@@ -76,9 +77,9 @@ class Router:
         """
         #######################################################################
         core_controller_ns = "packages.core.controllers"
-        if find_spec(f"{core_controller_ns}.{controller_name.capitalize()}") is not None:
-            module = import_module(f"{core_controller_ns}.{controller_name.capitalize()}", "./" )
-            controller_class: type[BaseController] = getattr(module, f"{controller_name.capitalize()}")
+        if find_spec(f"{core_controller_ns}.{cmd_to_class(controller_name)}") is not None:
+            module = import_module(f"{core_controller_ns}.{cmd_to_class(controller_name)}", "./" )
+            controller_class: type[BaseController] = getattr(module, f"{cmd_to_class(controller_name)}")
 
             if hasattr(controller_class, cmd_name):
                 # The controller class has a method by the command name.
@@ -94,10 +95,10 @@ class Router:
                 return (controller, args)
 
         package_controller_ns = f"packages.{package}.controllers"
-        if find_spec(f"{package_controller_ns}.{controller_name.capitalize()}") is not None:
+        if find_spec(f"{package_controller_ns}.{cmd_to_class(controller_name)}") is not None:
             # Import the current package controller
-            module = import_module(f"packages.{package}.controllers.{controller_name.capitalize()}", "./" )
-            controller_class: type[BaseController] = getattr(module, f"{controller_name.capitalize()}")
+            module = import_module(f"packages.{package}.controllers.{cmd_to_class(controller_name)}", "./" )
+            controller_class: type[BaseController] = getattr(module, f"{cmd_to_class(controller_name)}")
 
             if not hasattr(controller_class, cmd_name):
                 # If the command being invoked doesn't exist on the controller,

@@ -46,9 +46,13 @@ class Router:
             # Parse the rest of the arguments and extract the values
             (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
 
-            # Prevent users from bypassing the action filters by disallowing
-            # the action_filter_prefix from the cmd_name
-            if self.action_filter_suffix in cmd_name:
+            # Prevent users from bypassing the action filters and protected
+            # methods by disallowing the cmd_name to contain the action filter
+            # prefix or start with '_'
+            if (
+                self.action_filter_suffix in cmd_name
+                or cmd_name[0] == "_"
+            ):
                 raise Exception(f"Command {controller_name} has no command {cmd_name}")
 
         except Exception as e:

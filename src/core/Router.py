@@ -44,7 +44,7 @@ class Router:
             controller_name: str = args.pop(0)
 
             # Parse the rest of the arguments and extract the values
-            (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
+            (cmd_name, cmd_options, kw_args, args) = self._resolve_args(args)
 
             # Prevent users from bypassing the action filters and protected
             # methods by disallowing the cmd_name to contain the action filter
@@ -53,7 +53,7 @@ class Router:
                 self.action_filter_suffix in cmd_name
                 or cmd_name[0] == "_"
             ):
-                raise Exception(f"Command {controller_name} has no command {cmd_name}")
+                raise Exception(f"Category {controller_name} has no command {cmd_name}")
 
         except Exception as e:
             self.logger.error(e)
@@ -131,10 +131,10 @@ class Router:
 
         # No controller was found in the current package by the name provided
         # in the args. Log the error and exit.
-        self.logger.error(f"Command '{controller_name}' not found")
+        self.logger.error(f"Category '{controller_name}' not found")
         sys.exit()
 
-    def parse_cmd_options(self, args: List[str]) -> Tuple[List[str], List[str]]:
+    def _parse_cmd_options(self, args: List[str]) -> Tuple[List[str], List[str]]:
         """Parse the options that precede the command"""
         # Regex pattern for options.
         pattern = re.compile(rf"{self.cmd_option_pattern}")
@@ -155,15 +155,15 @@ class Router:
 
         return (cmd_options, args)
 
-    def parse_kw_args(self, args: List[str]) -> Tuple[Dict[str, str], List[str]]:
+    def _parse_kw_args(self, args: List[str]) -> Tuple[Dict[str, str], List[str]]:
         """Keyword arguments are parsed specifically."""
         # Escape spaces in args
-        escaped_args = self.escape_args(args)
+        escaped_args = self._escape_args(args)
 
         # Regex pattern for keyword args and their values
         regex = rf"(?<=[\s]){self.kw_arg_tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*"
         pattern = re.compile(regex, re.MULTILINE | re.UNICODE)
-        escaped_matches = dict(pattern.findall(" " + self.args_to_str(escaped_args)))
+        escaped_matches = dict(pattern.findall(" " + self._args_to_str(escaped_args)))
         unescaped_matches = self.unescape_matches(escaped_matches)
 
         # Convert the dictionary of escaped matches into a list
@@ -184,7 +184,7 @@ class Router:
 
         return (unescaped_matches, modified_args)
 
-    def resolve_args(self, args: List[str]) -> Tuple[
+    def _resolve_args(self, args: List[str]) -> Tuple[
             str,
             str,
             Dict[str, str],
@@ -193,7 +193,7 @@ class Router:
         """Options are parsed form the args to resolve the args."""
         # Parse the options from the args. This also determines the
         # index of the command name via self.command_index
-        (cmd_options, args) = self.parse_cmd_options(args)
+        (cmd_options, args) = self._parse_cmd_options(args)
 
         # Get the command for the controller from the modified args list.
         if len(args) < 1:
@@ -202,7 +202,7 @@ class Router:
         cmd_name = args.pop(0)
 
         # Parse the keyword arguments and their values from the args list
-        (kw_args, args) = self.parse_kw_args(args)
+        (kw_args, args) = self._parse_kw_args(args)
 
         return (
             cmd_name,
@@ -211,7 +211,7 @@ class Router:
             args
         )
 
-    def args_to_str(self, args) -> string:
+    def _args_to_str(self, args) -> string:
         """Converts arguments to 'string' type for easier parsing."""
         arg_str = ""
         for arg in args:
@@ -219,7 +219,7 @@ class Router:
 
         return arg_str.lstrip(" ")
 
-    def escape_args(self, args: List[str]) -> list:
+    def _escape_args(self, args: List[str]) -> list:
         """
         A list of args is taken and all spaces are replaced with the
         space replacement defined in the class initialization.

@@ -5,6 +5,4 @@ def cmd_to_class(cmd: str) -> str:
     for part in parts:
         class_name += "".join(part.capitalize())
 
-    print("Class Name:", class_name)
-
     return class_name

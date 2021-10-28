@@ -1,6 +1,7 @@
 PACKAGES = [
     "core",
-    "tapis"
+    "tapis",
+    "tapipy"
 ]
 
 DEFAULT_PACKAGE = "core"

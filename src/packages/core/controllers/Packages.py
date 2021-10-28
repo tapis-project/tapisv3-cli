@@ -31,7 +31,7 @@ class Packages(BaseController):
         self.logger.log(f"Packages:{nl}- {join_str.join(PACKAGES)}")
 
     def delete(self, package_name):
-        protected_packages = ["core", "tapis"]
+        protected_packages = ["core", "tapis", "tapipy"]
         if package_name in protected_packages:
             raise Exception(f"Error: Cannot delete the following packages: {protected_packages}")
 

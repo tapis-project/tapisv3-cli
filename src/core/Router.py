@@ -5,7 +5,7 @@ from importlib import import_module
 from typing import List, Tuple, Dict
 
 from core.BaseController import BaseController
-from core.TapipyController import TapipyController
+from packages.tapipy.TapipyController import TapipyController
 from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
 from utils.cmd_to_class import cmd_to_class
@@ -72,14 +72,16 @@ class Router:
         - Check the 'core' package for a controller with a method 
         that corresponds to the provded args. Dispatch if found.
 
-        - If a core controller is not found, check the 'current' 
-        package(found in the configs) for a controller with a method 
-        that corresponds to the provided args
+        - If a core controller is not found, check the 'tapipy' 
+        package for a resource with an operation that corresponds to 
+        the provided args
         
-        - If a current package controller or method is not found, dispatch 
-        the current OpenApiController (TapipyController)
+        - If 'tapipy' is not the current package, check the current package
+        (found in the configs) for a controller with method that corresponds
+        to the provided args
         """
         #######################################################################
+        # Check for a core controller that matches the args
         core_controller_ns = "packages.core.controllers"
         if find_spec(f"{core_controller_ns}.{cmd_to_class(controller_name)}") is not None:
             module = import_module(f"{core_controller_ns}.{cmd_to_class(controller_name)}", "./" )
@@ -98,24 +100,25 @@ class Router:
                 # Return the controller with command and options set.
                 return (controller, args)
 
+        # If tapipy is the current package, invoke the operation on the resource
+        if package == "tapipy":
+            controller = TapipyController()
+            # Set the resource, operation, and options
+            controller.set_resource(controller_name)
+            controller.set_operation(cmd_name)
+            controller.set_cmd_options(cmd_options)
+            controller.set_kw_args(kw_args)
+
+            return (controller, args)
+
+        # No core controller is found, nor is tapipy the current package.
+        # Find a controller in the current package.
         package_controller_ns = f"packages.{package}.controllers"
         if find_spec(f"{package_controller_ns}.{cmd_to_class(controller_name)}") is not None:
             # Import the current package controller
             module = import_module(f"packages.{package}.controllers.{cmd_to_class(controller_name)}", "./" )
             controller_class: type[BaseController] = getattr(module, f"{cmd_to_class(controller_name)}")
-
-            if not hasattr(controller_class, cmd_name):
-                # If the command being invoked doesn't exist on the controller,
-                # instantiate an TapipyController
-                controller = TapipyController()
-                # Set the resource, operation, and options
-                controller.set_resource(controller_name)
-                controller.set_operation(cmd_name)
-                controller.set_cmd_options(cmd_options)
-                controller.set_kw_args(kw_args)
-
-                return (controller, args)
-
+                
             # The controller class has a method by the command name.
             # Instantiate the controller class
             controller = controller_class()
@@ -127,18 +130,6 @@ class Router:
 
             # Return the controller with command and options set.
             return (controller, args)
-
-        # If a user-defined controller doesn't exist, return an instance
-        # of core.TapipyController
-        controller = TapipyController()
-
-        # Set the resource, operation, and options
-        controller.set_resource(controller_name)
-        controller.set_operation(cmd_name)
-        controller.set_cmd_options(cmd_options)
-        controller.set_kw_args(kw_args)
-
-        return (controller, args)
 
     def parse_cmd_options(self, args: List[str]) -> Tuple[List[str], List[str]]:
         """Parse the options that precede the command"""

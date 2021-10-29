@@ -44,6 +44,7 @@ class BaseController:
         self.view = None
 
     def index(self):
+        self.logger.log(f"\n{self.__doc__}")
         self.help()
 
     def help(self):
@@ -59,10 +60,10 @@ class BaseController:
         - tapis jobs submit [appName] [appVersion]
         \nCommands:"""
 
-        print(self.help.__doc__)
+        self.logger.log(self.help.__doc__)
         methods = self.get_methods(self)
         for method in methods:
-            print(f"\t- {method}")
+            self.logger.log(f"\t- {method}")
 
     def set_command(self, command: str) -> None:
         """

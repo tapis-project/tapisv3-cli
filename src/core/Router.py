@@ -41,18 +41,18 @@ class Router:
             controller_name: str = args.pop(0)
 
             # Parse the rest of the arguments and extract the values
-            (cmd_name, cmd_options, kw_args, args) = self._resolve_args(args)
+            (cmd, cmd_options, kw_args, args) = self._resolve_args(args)
 
             # Prevent users from bypassing the action filters and protected
-            # methods by disallowing the cmd_name to contain the action filter
+            # methods by disallowing the cmd to contain the action filter
             # prefix, start with '_', or is one of the following:
             # [ "before", "after", "index" ]
             if (
-                ACTION_FILTER_SUFFIX in cmd_name
-                or cmd_name[0] == "_"
-                or cmd_name in [ "before", "after", "index" ]
+                ACTION_FILTER_SUFFIX in cmd
+                or cmd[0] == "_"
+                or cmd in [ "before", "after" ]
             ):
-                raise Exception(f"Category {controller_name} has no command {cmd_name}")
+                raise Exception(f"Category {controller_name} has no command {cmd}")
 
         except Exception as e:
             self.logger.error(e)
@@ -90,7 +90,7 @@ class Router:
             controller = controller_class()
 
             # Set the options and command
-            controller.set_cmd(cmd_name)
+            controller.set_cmd(cmd)
             controller.set_cmd_options(cmd_options)
             controller.set_kw_args(kw_args)
 
@@ -102,7 +102,7 @@ class Router:
             controller = TapipyController()
             # Set the resource, operation, and options
             controller.set_resource(controller_name)
-            controller.set_operation(cmd_name)
+            controller.set_operation(cmd)
             controller.set_cmd_options(cmd_options)
             controller.set_kw_args(kw_args)
 
@@ -121,7 +121,7 @@ class Router:
             controller = controller_class()
 
             # Set the options and command
-            controller.set_cmd(cmd_name)
+            controller.set_cmd(cmd)
             controller.set_cmd_options(cmd_options)
             controller.set_kw_args(kw_args)
 
@@ -196,13 +196,13 @@ class Router:
         if len(args) < 1:
             args.append("index")
 
-        cmd_name = args.pop(0)
+        cmd = args.pop(0)
 
         # Parse the keyword arguments and their values from the args list
         (kw_args, args) = self._parse_kw_args(args)
 
         return (
-            cmd_name,
+            cmd,
             cmd_options,
             kw_args,
             args

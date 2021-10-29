@@ -25,29 +25,31 @@ class BaseController:
     cmd_options: list
     kw_args: Dict[str, str]
     arg_options: Dict[str, Dict[str, str]]
-    command: str
+    cmd: str
     override_exec: bool
     logger: type[Logger]
     exit: callable
     arg_option_tag_pattern: str
     view: type[AbstractView]
+    is_action: bool
 
     def __init__(self):
         self.option_set = option_registrar.get_option_set(type(self).__name__)
         self.cmd_options = []
         self.kw_args = {}
         self.arg_options = {}
-        self.command = "help"
+        self.cmd = "help"
         self.override_exec = False
         self.logger = Logger()
         self.exit = sys.exit
         self.arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
         self.view = None
+        self.is_action = False
 
-    def before():
+    def before(self):
         pass
 
-    def after():
+    def after(self):
         pass
 
     def index(self):
@@ -72,15 +74,19 @@ class BaseController:
         for method in methods:
             self.logger.log(f"\t- {method}")
 
-    def set_cmd(self, command: str) -> None:
+    def set_cmd(self, cmd: str) -> None:
         """
         Sets the command to be executed in a specific category.
         EX: apps = category, list = command
         """
-        if command not in dir(self):
-            self.logger.error(f"Category {type(self).__name__} has no command '{command}'\n")
-            self.exit(1)
-        self.command = command
+        cmd_action = cmd + ACTION_FILTER_SUFFIX
+        if cmd not in dir(self):
+            if cmd_action not in dir(self):
+                self.logger.error(f"Category {type(self).__name__} has no command '{cmd}'\n")
+                self.exit(1)
+            self.is_action = True
+
+        self.cmd = cmd_action if self.is_action else cmd
 
         return
 
@@ -98,13 +104,21 @@ class BaseController:
 
     def invoke(self, args: List[str]) -> None:
         """Passes input args to the command."""
-        # TODO Check that self.command is a method
+        # TODO Check that self.cmd is a method
         # TODO Prevent users from calling parent class methods
         if self.override_exec:
             return
 
-        method = getattr(self, self.command)
+        # Run the 'before' action filter
+        if self.is_action:
+            self.before()
+
+        method = getattr(self, self.cmd)
         method(*args)
+
+        # Run the 'after' action filter
+        if self.is_action:
+            self.after()
 
         return
 
@@ -149,7 +163,7 @@ class BaseController:
 
             # Validate user provided options against the category's option set
             if arg not in option_names:
-                raise Exception(f"{arg} is not a valid option for command {self.command}")
+                raise Exception(f"{arg} is not a valid option for command {self.cmd}")
 
             # Gets the option by name from the OptionSet
             option = self.option_set.get_by_name(arg)

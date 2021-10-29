@@ -5,7 +5,7 @@ from importlib import import_module
 from typing import List, Tuple, Dict
 
 from core.BaseController import BaseController
-from packages.tapipy.TapipyController import TapipyController
+from packages.tapipy.controllers.TapipyController import TapipyController
 from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
 from utils.cmd_to_class import cmd_to_class

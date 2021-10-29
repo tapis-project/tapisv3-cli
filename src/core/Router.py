@@ -90,7 +90,7 @@ class Router:
             controller = controller_class()
 
             # Set the options and command
-            controller.set_command(cmd_name)
+            controller.set_cmd(cmd_name)
             controller.set_cmd_options(cmd_options)
             controller.set_kw_args(kw_args)
 
@@ -121,7 +121,7 @@ class Router:
             controller = controller_class()
 
             # Set the options and command
-            controller.set_command(cmd_name)
+            controller.set_cmd(cmd_name)
             controller.set_cmd_options(cmd_options)
             controller.set_kw_args(kw_args)
 

@@ -72,7 +72,7 @@ class BaseController:
         for method in methods:
             self.logger.log(f"\t- {method}")
 
-    def set_command(self, command: str) -> None:
+    def set_cmd(self, command: str) -> None:
         """
         Sets the command to be executed in a specific category.
         EX: apps = category, list = command

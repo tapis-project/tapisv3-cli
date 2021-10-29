@@ -12,7 +12,7 @@ class Jobs(TapisController):
     def __init__(self):
         TapisController.__init__(self)
 
-    def cancel(self, uuid) -> None:
+    def cancel_Action(self, uuid) -> None:
         """Cancel a job that has been submitted."""
         try:
             self.client.jobs.cancelJob(jobUuid=uuid)
@@ -23,7 +23,7 @@ class Jobs(TapisController):
             self.logger.error(f"{e.message}\n")
             return
 
-    def download(self, uuid, output_path) -> None:
+    def download_Action(self, uuid, output_path) -> None:
         """Downloads the output of a completed job."""
         try:
             self.client.jobs.getJobOutputDownload(jobUuid=uuid, outputPath=output_path)
@@ -33,7 +33,7 @@ class Jobs(TapisController):
             self.logger.error(f"{e.message}\n")
             return
 
-    def get(self, uuid) -> None:
+    def get_Action(self, uuid) -> None:
         """Retrieve the details of a specified job."""
         try:
             job = self.client.jobs.getJob(jobUuid=uuid)
@@ -44,7 +44,7 @@ class Jobs(TapisController):
             self.logger.error(f"Job not found with UUID '{uuid}'\n")
             return
 
-    def history(self, uuid) -> None:
+    def history_Action(self, uuid) -> None:
         """Retrieve the computation history of a specified job."""
         try:
             status = self.client.jobs.getJobHistory(jobUuid=uuid)
@@ -55,14 +55,14 @@ class Jobs(TapisController):
             self.logger.error(f"Job not found with UUID '{uuid}'\n")
             self.exit(1)
 
-    def list(self) -> None:
+    def list_Action(self) -> None:
         """Retrieve the current list of submitted jobs."""
         jobs = self.client.jobs.getJobList()
         self.logger.log(jobs)
 
         return
 
-    def output(self, uuid, output_path) -> None:
+    def output_Action(self, uuid, output_path) -> None:
         """Displays the output files produced from a completed job."""
         try:
             self.client.jobs.getJobOutputList(jobUuid=uuid, outputPath=output_path)
@@ -73,7 +73,7 @@ class Jobs(TapisController):
             self.logger.error(f"{e.message}\n")
             return
 
-    def status(self, uuid) -> None:
+    def status_Action(self, uuid) -> None:
         """Retrieve the current operational status of a specified job."""
         try:
             status = self.client.jobs.getJobStatus(jobUuid=uuid)
@@ -84,7 +84,7 @@ class Jobs(TapisController):
             self.logger.error(f"Job not found with UUID '{uuid}'\n")
             self.exit(1)
 
-    def submit(self, app_id, app_version, *args) -> None:
+    def submit_Action(self, app_id, app_version, *args) -> None:
         """Submit a job to be run using a specified application and its version."""
         # Set the name and description to datetime-appid-username
         name = f"{datetime.now()}-{app_id}-{self.client.username}"
@@ -102,7 +102,7 @@ class Jobs(TapisController):
             self.logger.error(f"{e.message}\n")
             self.exit(1)
 
-    def submit_def(self, job_definition_file, *args) -> None:
+    def submit_def_Action(self, job_definition_file, *args) -> None:
         """ 
         Submit a job using a custom job JSON definition file. 
         The job request body can contain more file inputs than are specified
@@ -119,7 +119,7 @@ class Jobs(TapisController):
             self.logger.error(f"{e.message}\n")
             self.exit(1)
 
-    def resubmit(self, uuid) -> None:
+    def resubmit_Action(self, uuid) -> None:
         """Re-submit a job using a specified job UUID."""
         # TODO Some error -> With the tables on the Java side?
         try:

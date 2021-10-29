@@ -11,7 +11,7 @@ class Files(TapisController):
     def __init__(self):
         TapisController.__init__(self)
 
-    def delete(self, system_id, path) -> None:
+    def delete_Action(self, system_id, path) -> None:
         """Deletes the specified file from the target system."""
         try:
             self.client.files.delete(systemId=system_id, path=path)
@@ -21,7 +21,7 @@ class Files(TapisController):
             self.logger.error(f"File '{path}' not found in system '{system_id}'\n")
             return
 
-    def get_contents(self, system_id, path) -> None:
+    def get_contents_Action(self, system_id, path) -> None:
         """Retrieves the contents of the specified file in the target system."""
         try:
             contents = self.client.files.getContents(systemId=system_id, path=path)
@@ -33,7 +33,7 @@ class Files(TapisController):
             self.logger.error(f"File '{path}' not found in system '{system_id}'\n")
             return
         
-    def list(self, system_id, path) -> None:
+    def list_Action(self, system_id, path) -> None:
         """List every file on the target system."""
         files = self.client.files.listFiles(systemId=system_id, path=path)
         for file in files:
@@ -41,7 +41,7 @@ class Files(TapisController):
 
         return
 
-    def upload(self, system_id, path_to_file, destination_folder) -> None:
+    def upload_Action(self, system_id, path_to_file, destination_folder) -> None:
         """
         Uploads the specified file to the provided file path on the target system.
         The destination must inlcude all sub directories and a filename.
@@ -64,7 +64,7 @@ class Files(TapisController):
             self.logger.error(f"{e.message}\n")
             self.exit(1)
 
-    def upload_folder(self, system_id, path_to_folder, destination_folder) -> None:
+    def upload_folder_Action(self, system_id, path_to_folder, destination_folder) -> None:
         """ 
         Uploads the every file in the specified folder file the provided destination
         folder file path on the target system. Unlike upload(), this will automatically

@@ -13,6 +13,8 @@ class TapisController(BaseController):
 
     def __init__(self):
         BaseController.__init__(self)
+
+    def before(self):
         try:
             self.client = Auth().authenticate()
             if self.client is None:

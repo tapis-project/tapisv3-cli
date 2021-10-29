@@ -43,6 +43,9 @@ class BaseController:
         self.arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
         self.view = None
 
+    def index(self):
+        self.help()
+
     def help(self):
         """
         \nGeneral usage:

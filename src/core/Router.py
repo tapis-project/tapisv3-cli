@@ -188,13 +188,12 @@ class Router:
             List[str]
         ]:
         """Options are parsed form the args to resolve the args."""
-        # Parse the options from the args. This also determines the
-        # index of the command name via self.command_index
+        # Parse the options from the args.
         (cmd_options, args) = self._parse_cmd_options(args)
 
         # Get the command for the controller from the modified args list.
         if len(args) < 1:
-            raise Exception("No command provided")
+            args.append("index")
 
         cmd_name = args.pop(0)
 

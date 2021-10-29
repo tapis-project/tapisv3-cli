@@ -17,7 +17,6 @@ class Router:
     Commands and their options are passed into the router.
     The options are parsed and then the command is resolved.
     """
-    command_index: int
     logger: type[Logger]
     conf: ConfigManager
     tag_value_pattern: str
@@ -26,7 +25,6 @@ class Router:
     space_replacement: str
 
     def __init__(self):
-        self.command_index = 0
         self.logger = Logger()
         self.conf = ConfigManager()
         self.tag_value_pattern = r"([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)"
@@ -145,7 +143,6 @@ class Router:
             if pattern.match(option):
                 cmd_options.append(option)
                 option_indices.append(index)
-                self.command_index += 1
                 continue
             break
 

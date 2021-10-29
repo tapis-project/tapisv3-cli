@@ -1,3 +1,5 @@
+ACTION_FILTER_SUFFIX = "_Action"
+
 PACKAGES = [
     "core",
     "tapis",

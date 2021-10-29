@@ -9,7 +9,7 @@ from packages.tapipy.controllers.TapipyController import TapipyController
 from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
 from utils.cmd_to_class import cmd_to_class
-from conf.settings import DEFAULT_PACKAGE
+from conf.settings import DEFAULT_PACKAGE, ACTION_FILTER_SUFFIX
 
 
 class Router:
@@ -32,7 +32,6 @@ class Router:
         self.cmd_option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
         buffer = "[*]"
         self.space_replacement = buffer.join(random.choice(string.punctuation) for _ in range(5)) + buffer
-        self.action_filter_suffix = "_Action"
 
     def resolve(self, args: List[str]) -> Tuple[BaseController, List[str]]:
         try:
@@ -46,10 +45,12 @@ class Router:
 
             # Prevent users from bypassing the action filters and protected
             # methods by disallowing the cmd_name to contain the action filter
-            # prefix or start with '_'
+            # prefix, start with '_', or is one of the following:
+            # [ "before", "after", "index" ]
             if (
-                self.action_filter_suffix in cmd_name
+                ACTION_FILTER_SUFFIX in cmd_name
                 or cmd_name[0] == "_"
+                or cmd_name in [ "before", "after", "index" ]
             ):
                 raise Exception(f"Category {controller_name} has no command {cmd_name}")
 

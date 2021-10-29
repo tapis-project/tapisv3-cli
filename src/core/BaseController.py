@@ -8,6 +8,7 @@ from core.OptionSet import OptionSet
 from shared.options.options_sets import option_registrar
 from utils.Logger import Logger
 from utils.module_loader import class_loader as load
+from conf.settings import ACTION_FILTER_SUFFIX
 
 
 class BaseController:
@@ -42,6 +43,12 @@ class BaseController:
         self.exit = sys.exit
         self.arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
         self.view = None
+
+    def before():
+        pass
+
+    def after():
+        pass
 
     def index(self):
         self.logger.log(f"\n{self.__doc__}")

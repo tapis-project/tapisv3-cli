@@ -1,6 +1,9 @@
+ACTION_FILTER_SUFFIX = "_Action"
+
 PACKAGES = [
     "core",
-    "tapis"
+    "tapis",
+    "tapipy"
 ]
 
 DEFAULT_PACKAGE = "core"

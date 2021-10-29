@@ -1,16 +1,16 @@
 import os
 
-from core.Controller import Controller
+from core.BaseController import BaseController
 from utils.ConfigManager import ConfigManager
 from utils.Prompt import prompt
 import conf.settings as settings
 from packages.tapis.settings import ENVS
 
 
-class Auth(Controller):
+class Auth(BaseController):
     """Configurations are parsed here."""
     def __init__(self):
-        Controller.__init__(self)
+        BaseController.__init__(self)
         self.conf = ConfigManager()
 
     def configure(self):

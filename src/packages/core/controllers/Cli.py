@@ -1,13 +1,13 @@
 import os
 
-from core.Controller import Controller
+from core.BaseController import BaseController
 from utils.ConfigManager import ConfigManager
 import conf.settings as settings
 
 
-class Cli(Controller):
+class Cli(BaseController):
     def __init__(self):
-        Controller.__init__(self)
+        BaseController.__init__(self)
         self.conf = ConfigManager()
 
     def configure(self):

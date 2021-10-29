@@ -1,14 +1,14 @@
 import os, shutil
 
-from core.Controller import Controller
+from core.BaseController import BaseController
 from utils.ConfigManager import ConfigManager
 from utils.Prompt import prompt
 from conf.settings import PACKAGES, PACKAGES_DIR
 
 
-class Packages(Controller):
+class Packages(BaseController):
     def __init__(self):
-        Controller.__init__(self)
+        BaseController.__init__(self)
         self.conf = ConfigManager()
 
     def create(self, package_name):
@@ -31,7 +31,7 @@ class Packages(Controller):
         self.logger.log(f"Packages:{nl}- {join_str.join(PACKAGES)}")
 
     def delete(self, package_name):
-        protected_packages = [ "core", "tapis"]
+        protected_packages = ["core", "tapis", "tapipy"]
         if package_name in protected_packages:
             raise Exception(f"Error: Cannot delete the following packages: {protected_packages}")
 

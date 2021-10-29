@@ -1,11 +1,11 @@
 import shared.options.handlers
 
 from conf import settings
-from core.Controller import Controller
+from core.BaseController import BaseController
 from packages.tapis.Authenticator import Authenticator as Auth
 
 
-class TapipyController(Controller):
+class TapipyController(BaseController):
     """
     Handles the parsing and execution of commands specified in the OpenAPI specs.
 
@@ -16,7 +16,7 @@ class TapipyController(Controller):
     resource = None
 
     def __init__(self):
-        Controller.__init__(self)
+        BaseController.__init__(self)
         self.command = None
         try:
             self.client = Auth().authenticate()

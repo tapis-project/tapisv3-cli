@@ -8,7 +8,7 @@ class Tenants(TapisController):
     def __init__(self):
         TapisController.__init__(self)
 
-    def get(self, tenant_id) -> None:
+    def get_Action(self, tenant_id) -> None:
         """Retrieve the details of a specified tenant."""
         try:
             tenant = self.client.tenants.get_tenant(tenantId=tenant_id)
@@ -19,7 +19,7 @@ class Tenants(TapisController):
             self.logger.error(f"Tenant not found with id '{tenant_id}'\n")
             return
 
-    def list(self) -> None:
+    def list_Action(self) -> None:
         """List every tenant on the site."""
         tenants = self.client.tenants.list_tenants()
         if len(tenants) > 0:

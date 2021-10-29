@@ -12,7 +12,7 @@ class Apps(TapisController):
     def __init__(self):
         TapisController.__init__(self)
 
-    def available(self, app_id) -> None:
+    def available_Action(self, app_id) -> None:
         """ Check if an application is currently enabled. """
         try:
             app = self.client.apps.isEnabled(appId=app_id)
@@ -23,7 +23,7 @@ class Apps(TapisController):
             self.logger.error(f"App not found with id '{app_id}'\n")
             return
 
-    def change_owner(self, app_id, username) -> None:
+    def change_owner_Action(self, app_id, username) -> None:
         """
         Change the owner of an application (you may lose access to an app
         if you change the owner to another user and they don't grant you
@@ -34,7 +34,7 @@ class Apps(TapisController):
 
         return
 
-    def create(self, app_definition_file) -> None:
+    def create_Action(self, app_definition_file) -> None:
         """Create a new application from an app definition JSON file."""
         try:
             definition = json.loads(open(app_definition_file, "r").read())
@@ -46,7 +46,7 @@ class Apps(TapisController):
             self.logger.newline(1)
             return
 
-    def delete(self, app_id) -> None:
+    def delete_Action(self, app_id) -> None:
         """
         "Soft" delete an application; it will not appear in queries.
         Apps are still present in the environment and may be undeleted.
@@ -59,7 +59,7 @@ class Apps(TapisController):
             self.logger.error(f"App not found with id '{app_id}'\n")
             return
 
-    def disable(self, app_id) -> None:
+    def disable_Action(self, app_id) -> None:
         """Mark (all versions of) an application as unavailable for use."""
         try:
             self.client.apps.disableApp(appId=app_id)
@@ -69,7 +69,7 @@ class Apps(TapisController):
             self.logger.error(f"App not found with id '{app_id}'\n")
             return
 
-    def enable(self, app_id) -> None:
+    def enable_Action(self, app_id) -> None:
         """Mark (all versions of) an application as available for use."""
         try:
             self.client.apps.enableApp(appId=app_id)
@@ -79,7 +79,7 @@ class Apps(TapisController):
             self.logger.error(f"App not found with id '{app_id}'\n")
             return
 
-    def get(self, app_id) -> None:
+    def get_Action(self, app_id) -> None:
         """Retrieve the details of an application's latest version."""
         try:
             app = self.client.apps.getAppLatestVersion(appId=app_id)
@@ -94,7 +94,7 @@ class Apps(TapisController):
             self.logger.error(f"{e.message}\n")
             self.exit(1)
 
-    def getversion(self, app_id, version) -> None:
+    def getversion_Action(self, app_id, version) -> None:
         """Retrieve the details of the specified version of an application."""
         try:
             app = self.client.apps.getApp(appId=app_id, appVersion=version)
@@ -109,7 +109,7 @@ class Apps(TapisController):
             self.logger.error(f"{e.message}\n")
             self.exit(1)
 
-    def getperms(self, app_id, username) -> None:
+    def getperms_Action(self, app_id, username) -> None:
         """Get the permissions that a specified user has on a target application."""
         creds = self.client.apps.getUserPerms(appId=app_id, userName=username)
         self.logger.log(creds)
@@ -117,7 +117,7 @@ class Apps(TapisController):
 
         return
 
-    def grantperms(self, app_id, username, *args) -> None:
+    def grantperms_Action(self, app_id, username, *args) -> None:
         """Give permissions to a specified user on a target application."""
         perms = [arg.upper() for arg in args]
 
@@ -127,7 +127,7 @@ class Apps(TapisController):
 
         return
 
-    def list(self) -> None:
+    def list_Action(self) -> None:
         """List every application on the systems in this tenant and environment."""
         apps = self.client.apps.getApps()
         if len(apps) > 0:
@@ -140,7 +140,7 @@ class Apps(TapisController):
         self.logger.log(f"No apps found for user '{self.client.username}'\n")
         return
 
-    def patch(self, app_definition_file) -> None:
+    def patch_Action(self, app_definition_file) -> None:
         """
         Update selected attributes of an application using an app definition
         JSON file containing only the required and specified attributes.
@@ -165,7 +165,7 @@ class Apps(TapisController):
             self.logger.error( f"{e}\n" )
             self.exit(1)
 
-    def put(self, app_definition_file) -> None:
+    def put_Action(self, app_definition_file) -> None:
         """
         Update ALL attributes of an application using an app definition JSON
         file that contains all the same attributes used to create the app.
@@ -190,7 +190,7 @@ class Apps(TapisController):
             self.logger.error( f"{e}\n" )
             self.exit(1)
 
-    def revokeperms(self, app_id, username, *args) -> None:
+    def revokeperms_Action(self, app_id, username, *args) -> None:
         """Revoke permissions from a specified user on a target application."""
         perms = [arg.upper() for arg in args]
 
@@ -200,7 +200,7 @@ class Apps(TapisController):
 
         return
 
-    def search(self, *args) -> None:
+    def search_Action(self, *args) -> None:
         """
         Retrieve details for applications using attributes as search parameters.
         Multiple SQL-like queries can be done in the same set of string.
@@ -213,7 +213,7 @@ class Apps(TapisController):
 
         return
 
-    def undelete(self, app_id) -> None:
+    def undelete_Action(self, app_id) -> None:
         """Undelete an applications that has been "soft" deleted."""
         try:
             self.client.apps.undeleteApp(appId=app_id)

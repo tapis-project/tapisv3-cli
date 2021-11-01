@@ -1,4 +1,4 @@
-import shared.options.handlers
+import packages.shared.options.handlers
 
 from conf import settings
 from core.BaseController import BaseController
@@ -42,11 +42,11 @@ class TapipyController(BaseController):
 
                 # If the current option from the option set HAS been provided but there is
                 # no handler specified, ignore it
-                if option.handler == None or not hasattr(shared.options.handlers, option.handler):
+                if option.handler == None or not hasattr(packages.shared.options.handlers, option.handler):
                     continue
 
                 # Register the handler
-                handlers[option.context].append(getattr(shared.options.handlers, option.handler))
+                handlers[option.context].append(getattr(packages.shared.options.handlers, option.handler))
             
             for handler in handlers["generic"]:
                 handler(self)

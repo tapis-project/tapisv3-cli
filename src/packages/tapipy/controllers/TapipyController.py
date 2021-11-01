@@ -56,7 +56,7 @@ class TapipyController(BaseController):
 
             # Check that all keyword args for a given operation are
             # present.
-            self.validate_kw_args()
+            self._validate_kw_args()
 
             result = self.operation(*args, **self.kw_args)
 
@@ -92,7 +92,7 @@ class TapipyController(BaseController):
             self.logger.error(f"{type(self).__name__} has no resource '{resource_name}'\n")
             self.exit(1)
 
-    def validate_kw_args(self):
+    def _validate_kw_args(self):
         """Validates the keyword arguments required by an OpenAPI operation."""
         required_params = []
         for param in self.operation.path_parameters:

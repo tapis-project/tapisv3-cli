@@ -18,7 +18,7 @@ class TapisResultTableView(AbstractView):
             for _, item in enumerate(self.data):
                 print(tabulate(vars(item).items(), tablefmt="fancy_grid"))
             return
-
+            
         print(tabulate(vars(self.data).items(), ["Key", "Value"], tablefmt="fancy_grid"))
 
         return

@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 
 from core.AbstractView import AbstractView
 from core.OptionSet import OptionSet
-from shared.options.options_sets import option_registrar
+from packages.shared.options.options_sets import option_registrar
 from utils.Logger import Logger
 from utils.module_loader import class_loader as load
 from conf.settings import ACTION_FILTER_SUFFIX

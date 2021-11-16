@@ -9,6 +9,7 @@ from packages.tapipy.controllers.TapipyController import TapipyController
 from utils.ConfigManager import ConfigManager
 from utils.Logger import Logger
 from utils.cmd_to_class import cmd_to_class
+from utils.str_to_cmd import str_to_cmd
 from conf.settings import DEFAULT_PACKAGE, ACTION_FILTER_SUFFIX
 
 
@@ -90,7 +91,7 @@ class Router:
             controller = controller_class()
 
             # Set the options and command
-            controller.set_cmd(cmd)
+            controller.set_cmd(str_to_cmd(cmd))
             controller.set_cmd_options(cmd_options)
             controller.set_kw_args(kw_args)
 
@@ -121,7 +122,7 @@ class Router:
             controller = controller_class()
 
             # Set the options and command
-            controller.set_cmd(cmd)
+            controller.set_cmd(str_to_cmd(cmd))
             controller.set_cmd_options(cmd_options)
             controller.set_kw_args(kw_args)
 

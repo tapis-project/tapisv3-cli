@@ -1,4 +1,4 @@
-import shared.options.handlers
+import packages.shared.options.handlers
 
 from conf import settings
 from core.BaseController import BaseController
@@ -42,11 +42,11 @@ class TapipyController(BaseController):
 
                 # If the current option from the option set HAS been provided but there is
                 # no handler specified, ignore it
-                if option.handler == None or not hasattr(shared.options.handlers, option.handler):
+                if option.handler == None or not hasattr(packages.shared.options.handlers, option.handler):
                     continue
 
                 # Register the handler
-                handlers[option.context].append(getattr(shared.options.handlers, option.handler))
+                handlers[option.context].append(getattr(packages.shared.options.handlers, option.handler))
             
             for handler in handlers["generic"]:
                 handler(self)
@@ -56,7 +56,7 @@ class TapipyController(BaseController):
 
             # Check that all keyword args for a given operation are
             # present.
-            self.validate_kw_args()
+            self._validate_kw_args()
 
             result = self.operation(*args, **self.kw_args)
 
@@ -92,7 +92,7 @@ class TapipyController(BaseController):
             self.logger.error(f"{type(self).__name__} has no resource '{resource_name}'\n")
             self.exit(1)
 
-    def validate_kw_args(self):
+    def _validate_kw_args(self):
         """Validates the keyword arguments required by an OpenAPI operation."""
         required_params = []
         for param in self.operation.path_parameters:

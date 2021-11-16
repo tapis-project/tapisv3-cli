@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 
 from core.AbstractView import AbstractView
 from core.OptionSet import OptionSet
-from shared.options.options_sets import option_registrar
+from packages.shared.options.options_sets import option_registrar
 from utils.Logger import Logger
 from utils.module_loader import class_loader as load
 from conf.settings import ACTION_FILTER_SUFFIX
@@ -204,7 +204,7 @@ class BaseController:
 
     def set_view(self, name: str, data: Any) -> None:
         """Loads a view if it exists"""
-        view_class = load(f"shared.views.{name}", name)
+        view_class = load(f"packages.shared.views.{name}", name)
         if view_class is None:
             raise Exception("View '{name}' does not exist")
 

@@ -16,9 +16,16 @@ class TapisResultTableView(AbstractView):
         """The data is prettified and displayed neatly in tables on the command line."""
         if type(self.data) == list:
             for _, item in enumerate(self.data):
-                print(tabulate(vars(item).items(), tablefmt="fancy_grid"))
+                if hasattr(item, "__dict__"):
+                    print(tabulate(vars(item).items(), tablefmt="fancy_grid"))
+                    continue
+                print(item)
             return
-
-        print(tabulate(vars(self.data).items(), ["Key", "Value"], tablefmt="fancy_grid"))
+        
+        if hasattr(self.data, "__dict__"):
+            print(tabulate(vars(self.data).items(), ["Key", "Value"], tablefmt="fancy_grid"))
+            return
+        
+        print(self.data)
 
         return

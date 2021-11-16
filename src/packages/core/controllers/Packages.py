@@ -16,15 +16,6 @@ class Packages(BaseController):
         os.mkdir(package_dir)
         os.mkdir(package_dir + "controllers/")
 
-    def use(self):
-        package = prompt.validate_choices(
-            f"Choose a package: [{'|'.join(PACKAGES)}] ",
-            PACKAGES,
-            prompt.not_none
-        )
-
-        self.conf.add("current", "package", package)
-
     def list(self):
         nl = "\n"
         join_str = f"{nl}- "

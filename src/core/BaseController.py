@@ -204,7 +204,7 @@ class BaseController:
 
     def set_view(self, name: str, data: Any) -> None:
         """Loads a view if it exists"""
-        view_class = load(f"shared.views.{name}", name)
+        view_class = load(f"packages.shared.views.{name}", name)
         if view_class is None:
             raise Exception("View '{name}' does not exist")
 

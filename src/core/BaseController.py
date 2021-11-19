@@ -206,7 +206,7 @@ class BaseController:
         """Loads a view if it exists"""
         view_class = load(f"packages.shared.views.{name}", name)
         if view_class is None:
-            raise Exception("View '{name}' does not exist")
+            raise Exception(f"View '{name}' does not exist")
 
         self.view = view_class(data)
         return

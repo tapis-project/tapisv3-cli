@@ -12,12 +12,12 @@ class TapipyController(BaseController):
     Different tools, such as Tapipy, may inherit from this to specify their own
     specific categories and commands.
     """
-    operation = None
-    resource = None
-
     def __init__(self):
         BaseController.__init__(self)
-        self.command = None
+        self.cmd = None
+        self.operation = None
+        self.resource = None
+        self.operations = []
         try:
             self.client = Auth().authenticate()
             if self.client is None:
@@ -31,6 +31,11 @@ class TapipyController(BaseController):
         """Overwrites the execute method to invoke Tapipy Operations directly."""
         args = self.parse_args(args)
         result = None
+
+        if self.cmd == "help":
+            self.set_view("TapisResultRawView", self.operation())
+            self.view.render()
+            return
 
         try:
             handlers = { "generic": [], "args": [], "result": [] }
@@ -73,31 +78,53 @@ class TapipyController(BaseController):
         except Exception as e:
             self.logger.error(e)
 
+    def _help(self):
+        help_msg = (
+            "\nUsage:\n"
+            f"$tapis {self.resource.resource_name} [options] [command] [args/keyword args]\n"
+            "\nCommands:\n"
+        )
+
+        for operation in self.operations:
+            help_msg = help_msg + f"- {operation}\n"
+        
+        return help_msg
+
+    def set_resource(self, resource_name: str) -> None:
+        """Gets the resource for the OpenAPI command."""
+        try:
+            self.resource = getattr(self.client, resource_name)
+        except:
+            self.logger.error(f"{type(self).__name__} has no resource '{resource_name}'\n")
+            self.exit(1)
+
+        for _, path_desc in self.resource.resource_spec.items():
+            for _, op_desc in path_desc.operations.items():
+                self.operations.append(op_desc.operation_id)
+
     def set_operation(self, operation_name: str) -> None:
         """Sets the operation to be performed upon execution."""
-        self.command = operation_name
+        self.cmd = operation_name
+        
+        if operation_name == "help":
+            self.operation = self._help
+            return
+
         try:
             self.operation = getattr(self.resource, operation_name)
             return
         except:
-            self.logger.error(f"{type(self.resource).__name__} has no operation '{operation_name}'\n")
-            self.exit(1)
-
-    def set_resource(self, resource_name: str) -> None:
-        """Gets the resource name for the OpenAPI command."""
-        try:
-            self.resource = getattr(self.client, resource_name)
-            return
-        except:
-            self.logger.error(f"{type(self).__name__} has no resource '{resource_name}'\n")
+            self.logger.error(f"{self.resource.resource_name} has no operation '{operation_name}'\n")
+            self.logger.log(self._help())
             self.exit(1)
 
     def _validate_kw_args(self):
         """Validates the keyword arguments required by an OpenAPI operation."""
         required_params = []
-        for param in self.operation.path_parameters:
-            if param.required:
-                required_params.append(param.name)
+        if hasattr(self.operation, "path_parameters"):
+            for param in self.operation.path_parameters:
+                if param.required:
+                    required_params.append(param.name)
 
         kw_arg_keys = self.kw_args.keys()
         for param in required_params:

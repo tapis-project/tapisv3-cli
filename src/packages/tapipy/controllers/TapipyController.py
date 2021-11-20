@@ -3,6 +3,7 @@ import packages.shared.options.handlers
 from conf import settings
 from core.BaseController import BaseController
 from packages.tapis.Authenticator import Authenticator as Auth
+from helpers.help_formatter import help_formatter as formatter
 
 
 class TapipyController(BaseController):
@@ -17,7 +18,7 @@ class TapipyController(BaseController):
         self.cmd = None
         self.operation = None
         self.resource = None
-        self.operations = []
+        self.operation_ids = []
         try:
             self.client = Auth().authenticate()
             if self.client is None:
@@ -79,28 +80,30 @@ class TapipyController(BaseController):
             self.logger.error(e)
 
     def _help(self):
-        help_msg = (
-            "\nUsage:\n"
-            f"$tapis {self.resource.resource_name} [options] [command] [args/keyword args]\n"
-            "\nCommands:\n"
-        )
+        formatter.add_usage(f"$tapis {self.resource.resource_name} [options] [command] [args/keyword args]")
 
-        for operation in self.operations:
-            help_msg = help_msg + f"- {operation}\n"
+        for operation_id in self.operation_ids:
+            op = getattr(self.resource, operation_id)
+            formatter.add_command(
+                operation_id,
+                keyword_args=[param.name for param in op.path_parameters]
+            )
+
+        formatter.add_options(self.option_set.options)
         
-        return help_msg
+        return formatter.build()
 
     def set_resource(self, resource_name: str) -> None:
         """Gets the resource for the OpenAPI command."""
         try:
             self.resource = getattr(self.client, resource_name)
         except:
-            self.logger.error(f"{type(self).__name__} has no resource '{resource_name}'\n")
+            self.logger.error(f"{type(self).__name__} has no category '{resource_name}'\n")
             self.exit(1)
 
         for _, path_desc in self.resource.resource_spec.items():
             for _, op_desc in path_desc.operations.items():
-                self.operations.append(op_desc.operation_id)
+                self.operation_ids.append(op_desc.operation_id)
 
     def set_operation(self, operation_name: str) -> None:
         """Sets the operation to be performed upon execution."""
@@ -114,7 +117,7 @@ class TapipyController(BaseController):
             self.operation = getattr(self.resource, operation_name)
             return
         except:
-            self.logger.error(f"{self.resource.resource_name} has no operation '{operation_name}'\n")
+            self.logger.error(f"Category '{self.resource.resource_name}' has no command '{operation_name}'\n")
             self.logger.log(self._help())
             self.exit(1)
 

@@ -1,4 +1,5 @@
 import sys
+import inquirer
 from getpass import getpass
 
 class Prompt:
@@ -55,5 +56,16 @@ class Prompt:
             return callback(message)
 
         return value
+
+    def select(self, question, choices, carousel=True):
+        questions = [
+            inquirer.List('choice',
+                message=question,
+                choices=choices,
+                carousel=carousel
+            ),
+        ]
+
+        return inquirer.prompt(questions)["choice"]
 
 prompt = Prompt()

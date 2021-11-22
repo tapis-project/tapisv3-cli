@@ -10,12 +10,11 @@ class Use(BaseController):
         self.conf = ConfigManager()
 
     def index(self):
-        package = prompt.validate_choices(
-            f"Choose a package: [{'|'.join(PACKAGES)}] ",
-            PACKAGES,
-            prompt.not_none
+        answer = prompt.select(
+            f"Choose a package:",
+            PACKAGES
         )
-
-        self.conf.add("current", "package", package)
+        self.conf.add("current", "package", answer)
+        self.logger.complete(f"Using package '{answer}'")
 
     

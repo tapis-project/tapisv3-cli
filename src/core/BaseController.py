@@ -1,6 +1,7 @@
 import re
 import sys
 import types
+import inspect
 from typing import List, Dict, Any
 
 from core.AbstractView import AbstractView
@@ -9,6 +10,7 @@ from packages.shared.options.options_sets import option_registrar
 from utils.Logger import Logger
 from utils.module_loader import class_loader as load
 from conf.settings import ACTION_FILTER_SUFFIX
+from helpers.help_formatter import help_formatter as formatter
 
 
 class BaseController:
@@ -41,7 +43,6 @@ class BaseController:
         self.cmd = "help"
         self.override_exec = False
         self.logger = Logger()
-        self.exit = sys.exit
         self.arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
         self.view = None
         self.is_action = False
@@ -57,22 +58,25 @@ class BaseController:
         self.help()
 
     def help(self):
-        """
-        \nGeneral usage:
-        $tapis [category] [options] [command] [args/keyword args]
-        \nExamples:
-        - tapis systems get [systemId]
-        - tapis systems getSystem --systemId [systemId]
-        - tapis files upload [systems] [path/to/local/file] [destination/folder]
-        - tapis systems update [path/to/definition/file]
-        - tapis apps create [path/to/definition/file]
-        - tapis jobs submit [appName] [appVersion]
-        \nCommands:"""
-
-        self.logger.log(self.help.__doc__)
-        methods = self.get_methods(self)
+        formatter.add_usage(f"$tapis [category] [options] [command] [args/keyword args]")
+        methods = [ method for method in dir(self) if (
+            (not method.startswith(("_", "__")))
+            and callable(getattr(self, method))
+            and method not in dir(BaseController)
+        )]
+        
         for method in methods:
-            self.logger.log(f"\t- {method}")
+            pos_args = inspect.getfullargspec(getattr(self, method)).args
+            if "self" in pos_args:
+                pos_args.remove("self")
+            formatter.add_command(
+                method.replace("_Action", ""), 
+                positional_args=pos_args
+            )
+            
+        formatter.add_options(self.option_set.options)
+
+        self.logger.log(formatter.build())
 
     def set_cmd(self, cmd: str) -> None:
         """
@@ -210,3 +214,6 @@ class BaseController:
 
         self.view = view_class(data)
         return
+
+    def exit():
+        sys.exit()

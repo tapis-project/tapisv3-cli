@@ -24,7 +24,6 @@ class BaseController:
     cmd: str
     override_exec: bool
     logger: type[Logger]
-    exit: callable
     arg_option_tag_pattern: str
     view: type[AbstractView]
     is_action: bool
@@ -209,5 +208,5 @@ class BaseController:
         self.view = view_class(data)
         return
 
-    def exit():
+    def exit(self):
         sys.exit()

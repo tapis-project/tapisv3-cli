@@ -22,11 +22,16 @@ tapis-cli can be set up and run in 2 ways; Locally, and in a Docker container.
 `alias tapis="<path/to/tapis_cli_project>/src/tapis.sh"`
 
 ### Container setup
+NOTE: You must have docker installed locally for this to work
+`cd` into the root directory of the project
+
+## Build the image
+`docker build -f docker/Dockerfile -t tapisv3-cli:latest .`
+
+## Run the container interactively
+docker run -it tapisv3-cli:latest bash
 
 ## Configuring Tapis CLI
 Tapis CLI must first be configured. Run the following command and add your credentials\
-$`tapis auth configure`
-
-### General Usage
-$`tapis [category] [command] [args]`
+$`tapis configure`
 

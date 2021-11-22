@@ -1,3 +1,5 @@
+import os
+
 from configparser import ConfigParser
 
 from conf import settings
@@ -31,6 +33,9 @@ class ConfigManager:
                 self.credentials[key] = self.parser["credentials"][key]
 
     def create_config_file(self):
+        head, _ = os.path.split(settings.CONFIG_FILE)
+        print(head)
+        os.makedirs(head)
         for key, val in template.items():
             self.parser[key] = val
             with open(settings.CONFIG_FILE, "w") as file:

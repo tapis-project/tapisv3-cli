@@ -26,7 +26,7 @@ NOTE: You must have docker installed locally for this to work
 `cd` into the root directory of the project
 
 ## Build the image
-`docker build -f docker/Dockerfile -t tapisv3-cli:latest .`
+`docker build -f .docker/Dockerfile -t tapisv3-cli:latest .`
 
 ## Run the container interactively
 docker run -it tapisv3-cli:latest bash

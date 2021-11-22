@@ -50,8 +50,8 @@ option_registrar.register("TapipyController", [
         handler="jsonFileToKeywordArgs"
     ),
     Option("-r",
-        aliases=["-tapis-raw"],
-        description="",
+        aliases=["-raw"],
+        description="prints a string representation of the result object",
         context="result",
         handler="tapisResultRawView"
     ),
@@ -63,8 +63,8 @@ option_registrar.register("TapipyController", [
         handler="resultToFile"
     ),
     Option("-t",
-        aliases=["-tapis-table"],
-        description="",
+        aliases=["-table"],
+        description="displays a table representation of the result if possible",
         context="result",
         handler="tapisResultTableView"
     ),

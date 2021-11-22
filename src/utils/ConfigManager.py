@@ -55,3 +55,5 @@ class ConfigManager:
                 
     def get(self, section, key):
         return self.parser[section][key]
+
+configManager = ConfigManager()

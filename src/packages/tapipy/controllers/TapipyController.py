@@ -84,9 +84,17 @@ class TapipyController(BaseController):
 
         for operation_id in self.operation_ids:
             op = getattr(self.resource, operation_id)
+            keyword_args = [param.name for param in op.path_parameters]
+            self.logger.debug(dir(op))
+            if hasattr(op.request_body, "required"):
+                keyword_args.append("request_body")
+
+            if hasattr(op.query_parameters, "query_parameters"):
+                keyword_args.append("query_parameters")
+
             formatter.add_command(
                 operation_id,
-                keyword_args=[param.name for param in op.path_parameters]
+                keyword_args=keyword_args
             )
 
         formatter.add_options(self.option_set.options)

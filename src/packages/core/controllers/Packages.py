@@ -1,7 +1,6 @@
 import os, shutil
 
 from core.BaseController import BaseController
-from utils.ConfigManager import ConfigManager
 from utils.Prompt import prompt
 from conf.settings import PACKAGES, PACKAGES_DIR
 
@@ -9,7 +8,6 @@ from conf.settings import PACKAGES, PACKAGES_DIR
 class Packages(BaseController):
     def __init__(self):
         BaseController.__init__(self)
-        self.conf = ConfigManager()
 
     def create(self, package_name):
         package_dir = PACKAGES_DIR + package_name + "/"

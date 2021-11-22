@@ -1,5 +1,3 @@
-import re
-
 from tapipy.tapis import Tapis
 
 from conf import settings

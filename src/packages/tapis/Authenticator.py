@@ -5,7 +5,7 @@ from tapipy.tapis import Tapis
 
 from conf import settings
 from packages.tapis.settings import BASE_URL
-from utils.ConfigManager import ConfigManager
+from utils.ConfigManager import configManager as config
 from utils.Logger import Logger
 
 
@@ -18,7 +18,6 @@ class Authenticator:
         self.base_url = base_url
         self.auth_methods = settings.AUTH_METHODS
         self.logger = Logger()
-        self.conf = ConfigManager()
 
     def authenticate(self, auth_method: str = settings.DEFAULT_AUTH_METHOD) -> Union[Tapis, None]:
         """
@@ -26,7 +25,7 @@ class Authenticator:
         Only password authentication is implemented for now.
         """
         # If there are no credentials in the credentials dict, throw error
-        if not bool(self.conf.credentials):
+        if not bool(config.credentials):
             # Add the credentials from the config file to
             # this Configuration object's credentials dict.
             self.logger.error("Tapis CLI not configured.")
@@ -36,12 +35,12 @@ class Authenticator:
         # Authenticate using the provided auth method. Raise exception
         # if provided credentials do not meet requirements.
         if auth_method == settings.PASSWORD:
-            self.validate_credentials(auth_method, self.conf.credentials)
+            self.validate_credentials(auth_method, config.credentials)
             try:
                 client = Tapis(
                     base_url=self.base_url,
-                    username=self.conf.credentials["username"],
-                    password=self.conf.credentials["password"]
+                    username=config.credentials["username"],
+                    password=config.credentials["password"]
                 )
                 client.get_tokens()
                 return client

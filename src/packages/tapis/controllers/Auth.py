@@ -1,7 +1,7 @@
 import os
 
 from core.BaseController import BaseController
-from utils.ConfigManager import ConfigManager
+from utils.ConfigManager import configManager as config
 from utils.Prompt import prompt
 import conf.settings as settings
 from packages.tapis.settings import ENVS
@@ -11,7 +11,6 @@ class Auth(BaseController):
     """Configurations are parsed here."""
     def __init__(self):
         BaseController.__init__(self)
-        self.conf = ConfigManager()
 
     def configure(self):
         """
@@ -23,18 +22,18 @@ class Auth(BaseController):
         # create it.
         if not os.path.isfile(settings.CONFIG_FILE):
             self.logger.log(f"Creating config file '{settings.CONFIG_FILE}'\n")
-            self.conf.create_config_file()
+            config.create_config_file()
 
         # Create the credentials section if it doesn't exsit. (It's possible 
         # that the credentials section has been erased even though
         # the file exists)
-        if not self.conf.has_section("credentials"):
-            self.conf.add_section("credentials")
+        if not config.has_section("credentials"):
+            config.add_section("credentials")
         
 
         # Add the credentials from the config 
         # file to this Configuration object's credentials dict
-        for key in self.conf.credentials:
+        for key in config.credentials:
             self.credentials[key] = self.parser["credentials"][key]
 
         # If the AUTH_METHOD doesn't have one of the values in AUTH_METHODS,
@@ -48,8 +47,8 @@ class Auth(BaseController):
 
             # Fetch the username and password from the configs.ini if
             # they exist.
-            username = None if not hasattr(self.conf.credentials, "username") else self.conf.credentials["username"]
-            password = None if not hasattr(self.conf.credentials, "password") else self.conf.credentials["password"]
+            username = None if not hasattr(config.credentials, "username") else config.credentials["username"]
+            password = None if not hasattr(config.credentials, "password") else config.credentials["password"]
 
             # If username and password exist, return nothing.
             if bool(username) and bool(password):
@@ -64,11 +63,11 @@ class Auth(BaseController):
             password = prompt.not_none("Password 🔒: ", secret=True)
 
             # Save the credentials
-            self.conf.add("credentials", "username", username)
-            self.conf.add("credentials", "password", password)
+            config.add("credentials", "username", username)
+            config.add("credentials", "password", password)
 
             # Set the username and password in the Configuration's credientials dict
-            self.conf.credentials = {"username": username, "password": password}
+            config.credentials = {"username": username, "password": password}
 
             # Set env and tenant
             env = prompt.validate_choices("Tapis Env: ", ENVS, prompt.not_none)
@@ -78,7 +77,7 @@ class Auth(BaseController):
             self.tenant(tenant)
 
             # Set the current package to tapis
-            self.conf.add("current", "package", "tapis")
+            config.add("current", "package", "tapis")
 
             return
 
@@ -91,14 +90,14 @@ class Auth(BaseController):
             self.logger.error(f"Configuration Error: '{env}' is not a valid ENV. Valid Envs: {ENVS}")
         
         # Create a section for tapis based configs if it doesn't exist
-        if not self.conf.has_section("tapis"):
-            self.conf.add_section("tapis")
+        if not config.has_section("tapis"):
+            config.add_section("tapis")
         
-        self.conf.add("tapis", "env", env)
+        config.add("tapis", "env", env)
 
     def tenant(self, tenant):
         # Create a section for tapis based configs if it doesn't exist
-        if not self.conf.has_section("tapis"):
-            self.conf.add_section("tapis")
+        if not config.has_section("tapis"):
+            config.add_section("tapis")
         
-        self.conf.add("tapis", "tenant", tenant)
+        config.add("tapis", "tenant", tenant)

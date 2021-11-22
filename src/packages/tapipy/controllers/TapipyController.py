@@ -22,9 +22,9 @@ class TapipyController(BaseController):
         try:
             self.client = Auth().authenticate()
             if self.client is None:
-                self.exit()
+                self.exit(1)
         except SystemExit:
-            self.exit()
+            self.exit(1)
         except:
             raise ValueError(f"Unable to authenticate user using AUTH_METHOD {settings.AUTH_METHOD}\n")
 
@@ -85,7 +85,7 @@ class TapipyController(BaseController):
         for operation_id in self.operation_ids:
             op = getattr(self.resource, operation_id)
             keyword_args = [param.name for param in op.path_parameters]
-            self.logger.debug(dir(op))
+            
             if hasattr(op.request_body, "required"):
                 keyword_args.append("request_body")
 

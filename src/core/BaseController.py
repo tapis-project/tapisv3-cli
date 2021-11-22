@@ -208,5 +208,5 @@ class BaseController:
         self.view = view_class(data)
         return
 
-    def exit(self):
-        sys.exit()
+    def exit(self, code):
+        sys.exit(code)

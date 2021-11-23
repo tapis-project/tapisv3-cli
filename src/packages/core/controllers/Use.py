@@ -1,8 +1,6 @@
 from core.BaseController import BaseController
-from utils.ConfigManager import configManager as config
-from utils.Prompt import prompt
-from conf.settings import PACKAGES
 from packages.core.controllers.Profiles import Profiles
+from packages.core.controllers.Packages import Packages
 
 
 class Use(BaseController):
@@ -10,15 +8,11 @@ class Use(BaseController):
         BaseController.__init__(self)
 
     def index(self):
-        answer = prompt.select(
-            f"Choose a package",
-            PACKAGES
-        )
-        config.add("current", "package", answer)
-        self.logger.complete(f"Using package '{answer}'")
+        self.package()
 
     def package(self):
-        self.index()
+        packages_controller = Packages()
+        packages_controller.use()
 
     def profile(self):
         profile_controller = Profiles()

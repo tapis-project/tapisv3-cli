@@ -34,7 +34,6 @@ class ConfigManager:
 
     def create_config_file(self):
         head, _ = os.path.split(settings.CONFIG_FILE)
-        print(head)
         os.makedirs(head)
         for key, val in template.items():
             self.parser[key] = val
@@ -51,6 +50,17 @@ class ConfigManager:
             self.parser[section] = {}
             with open(settings.CONFIG_FILE, "w") as file:
                 self.parser.write(file)
+
+    def get_section(self, section):
+        return self.parser.items(section)
+
+    def get_section_keys(self, section):
+        items = self.get_section(section)
+        return [item[0] for item in items]
+
+    def get_section_values(self, section):
+        items = self.get_section(section)
+        return [item[1] for item in items]
 
     def has_section(self, section):
         return section in self.parser.sections()

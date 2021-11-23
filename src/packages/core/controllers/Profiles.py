@@ -5,9 +5,12 @@ from conf.settings import AUTH_METHODS, PASSWORD
 from core.AuthCredential import AuthCredential
 
 
-class Profile(BaseController):
+class Profiles(BaseController):
     def __init__(self):
         BaseController.__init__(self)
+
+    def index(self):
+        self.list()
 
     def use(self):
         profiles = config.get_section_keys("profiles")
@@ -42,6 +45,8 @@ class Profile(BaseController):
                 config.add(f"profile.{username}", item, value)
 
     def list(self):
-        pass
+        profiles = config.get_section_keys("profiles")
+        self.set_view("ListItems", profiles)
+        self.view.render()
 
     

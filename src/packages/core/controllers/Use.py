@@ -2,7 +2,7 @@ from core.BaseController import BaseController
 from utils.ConfigManager import configManager as config
 from utils.Prompt import prompt
 from conf.settings import PACKAGES
-from packages.core.controllers.Profile import Profile
+from packages.core.controllers.Profiles import Profiles
 
 
 class Use(BaseController):
@@ -21,7 +21,7 @@ class Use(BaseController):
         self.index()
 
     def profile(self):
-        profile_controller = Profile()
+        profile_controller = Profiles()
         profile_controller.use()
 
     

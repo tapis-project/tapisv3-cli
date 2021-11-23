@@ -5,7 +5,7 @@ template = {
         "auth_method": "PASSWORD"
     },
     "profiles": {},
-    "tapis": {
+    "package.tapis": {
         "tenant": "tacc",
         "env": "prod"
     }

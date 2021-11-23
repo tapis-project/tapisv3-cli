@@ -10,7 +10,7 @@ if ENV not in ENVS:
     raise Exception(f"Configuration Error: '{ENV}' is not a valid ENV. Valid Envs: {ENVS}")
 
 # Default to tacc tenant
-TENANT = conf.get("tapis", "tenant") if conf.has_key("tapis", "env") else "tacc"
+TENANT = conf.get("package.tapis", "tenant") if conf.has_key("package.tapis", "env") else "tacc"
 
 # Build the base url for tapis queries
 _env_str = ENV + "." if (ENV != "prod") else ""

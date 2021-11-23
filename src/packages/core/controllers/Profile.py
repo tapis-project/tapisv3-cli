@@ -34,6 +34,7 @@ class Profile(BaseController):
             password = prompt.not_none("Password 🔒:", secret=True)
             credential = AuthCredential(password=password)
 
+        config.add(f"current", "profile", username)
         config.add(f"profile.{username}", "auth_method", auth_method)
         
         for item, value in credential.__dict__.items():

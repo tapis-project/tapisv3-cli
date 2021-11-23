@@ -1,6 +1,5 @@
 from tapipy.tapis import Tapis
 
-from conf import settings
 from core.BaseController import BaseController
 from packages.tapis.Authenticator import Authenticator as Auth
 
@@ -16,8 +15,8 @@ class TapisController(BaseController):
         try:
             self.client = Auth().authenticate()
             if self.client is None:
-                self.exit()
+                self.exit(1)
         except SystemExit:
-            self.exit()
+            self.exit(1)
         except:
-            raise ValueError(f"Unable to authenticate user using AUTH_METHOD {settings.AUTH_METHOD}\n")
+            raise ValueError(f"Unable to authenticate user")

@@ -22,7 +22,7 @@ class Prompt:
         value = prompt(message)
 
         if value == None:
-            print("You cannot provide and empty value.\n")
+            print("You cannot provide and empty value.")
             return self.not_none(message, secret)
 
         return value
@@ -44,7 +44,7 @@ class Prompt:
         elif yn in self.yes_vals:
             return True
         else:
-            print("Invalid option required. Must type 'y' for yes or 'n' for no.\n")
+            print("Invalid option required. Must type 'y' for yes or 'n' for no.")
             sys.exit(1)
 
     # Recursively calls a callback until the value provided by a user matches

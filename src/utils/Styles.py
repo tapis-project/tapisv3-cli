@@ -9,12 +9,24 @@ class Styles:
     RESET = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    MUTED = '\033[90m'
 
 class Styler:
+    def apply(self, style, string):
+        return style + string + Styles.RESET
+
     def underline(self, string):
-        return Styles.UNDERLINE + string + Styles.RESET
+        return self.apply(Styles.UNDERLINE, string)
 
     def bold(self, string):
-        return Styles.BOLD + string + Styles.RESET
+        return self.apply(Styles.BOLD, string)
+
+    def muted(self, string):
+        return self.apply(Styles.MUTED, string)
+
+    def danger(self, string):
+        return self.apply(Styles.ERROR, string)
+
+    
 
 styler = Styler()

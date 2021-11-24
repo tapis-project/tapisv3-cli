@@ -3,7 +3,7 @@ from utils.ConfigManager import configManager as config
 from utils.Prompt import prompt
 from conf.settings import AUTH_METHODS, PASSWORD
 from core.AuthCredential import AuthCredential
-
+from utils.Styles import styler as s
 
 class Profiles(BaseController):
     def __init__(self):
@@ -13,8 +13,10 @@ class Profiles(BaseController):
         self.list()
 
     def use(self):
+        current_profile = config.get("current", "profile")
+        string = s.muted(f"[{current_profile}]")
         profiles = config.get_section_keys("profiles")
-        profile = prompt.select("Choose a profile", profiles)
+        profile = prompt.select_cancel(f"Choose a profile {string}", profiles)
         config.add("current", "profile", profile)
 
         self.logger.complete(f"Using profile '{profile}'")

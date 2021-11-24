@@ -1,6 +1,7 @@
 import sys
 import inquirer
 from getpass import getpass
+from utils.Styles import styler as s
 
 class Prompt:
     def __init__(self):
@@ -67,5 +68,18 @@ class Prompt:
         ]
 
         return inquirer.prompt(questions)["choice"]
+
+    def select_cancel(self, question, choices, carousel=True):
+        # Non-printable character used to prevent users from providing a choice
+        # that would cancel
+        np = "\t"
+        cancel_string = s.danger(f"[x] cancel{np}")
+        choices.append(cancel_string)
+        answer = self.select(question, choices, carousel)
+
+        if answer == cancel_string:
+            sys.exit(1)
+        
+        return answer
 
 prompt = Prompt()

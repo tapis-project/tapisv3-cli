@@ -4,6 +4,7 @@ from core.BaseController import BaseController
 from conf.settings import PACKAGES, PACKAGES_DIR
 from utils.Prompt import prompt
 from utils.ConfigManager import configManager as config
+from utils.Styles import styler as s 
 
 
 class Packages(BaseController):
@@ -24,8 +25,10 @@ class Packages(BaseController):
         self.logger.log(f"Packages:{nl}- {join_str.join(PACKAGES)}")
 
     def use(self):
-        answer = prompt.select(
-            f"Choose a package",
+        current_package = config.get("current", "package")
+        string = f"[{current_package}]"
+        answer = prompt.select_cancel(
+            f"Choose a package {s.muted(string)}",
             PACKAGES
         )
         config.add("current", "package", answer)

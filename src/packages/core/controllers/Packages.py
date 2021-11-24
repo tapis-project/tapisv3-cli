@@ -27,7 +27,7 @@ class Packages(BaseController):
     def use(self):
         current_package = config.get("current", "package")
         string = f"[{current_package}]"
-        answer = prompt.select_cancel(
+        answer = prompt.select(
             f"Choose a package {s.muted(string)}",
             PACKAGES
         )

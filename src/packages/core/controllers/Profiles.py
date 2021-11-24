@@ -16,7 +16,7 @@ class Profiles(BaseController):
         current_profile = config.get("current", "profile")
         string = s.muted(f"[{current_profile}]")
         profiles = config.get_section_keys("profiles")
-        profile = prompt.select_cancel(f"Choose a profile {string}", profiles)
+        profile = prompt.select(f"Choose a profile {string}", profiles)
         config.add("current", "profile", profile)
 
         self.logger.complete(f"Using profile '{profile}'")

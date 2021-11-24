@@ -24,7 +24,7 @@ class Profiles(BaseController):
     def add(self):
         self.logger.log("Create a new profile")
         # Prompt the username to create a username and password
-        username = prompt.not_none("Username: ")
+        username = prompt.not_none("Username")
         if config.has_key(f"profiles", username):
             self.logger.error(f"'{username}' is already a configured profile")
             self.exit(1)
@@ -36,7 +36,7 @@ class Profiles(BaseController):
 
         credential = None
         if auth_method == PASSWORD:
-            password = prompt.not_none("Password 🔒:", secret=True)
+            password = prompt.not_none("Password 🔒", secret=True)
             credential = AuthCredential(password=password)
 
         config.add(f"current", "profile", username)

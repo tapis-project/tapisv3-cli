@@ -8,7 +8,11 @@ class Prompt:
         self.no_vals = ["N", "n", "no", "No", "NO"]
         self.yes_vals = ["Y", "y", "yes", "Yes", "YES"]
 
-    def not_none(self, message: str, secret: bool = False) -> str:
+    def not_none(self,
+        message: str,
+        secret: bool = False,
+        default: any = None # TODO limit types (no objects, dicts, arrays, etc)
+    ) -> str:
         """
         Prompts the user for input described in the message. If secret is set
         to true, user input is not shown. If the user doesn't put any input,
@@ -20,9 +24,14 @@ class Prompt:
         if secret:
             prompt = getpass
 
-        value = prompt(message)
+        if default is not None:
+            message = message + s.muted(f" [{default}]")
 
-        if value == None:
+        modified_message = message + ": "
+
+        value = prompt(modified_message)
+
+        if bool(value) == False:
             print("You cannot provide and empty value.")
             return self.not_none(message, secret)
 

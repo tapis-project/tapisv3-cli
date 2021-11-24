@@ -24,7 +24,8 @@ class HelpFormatter:
         pos_args_msg = ""
         if len(positional_args) > 0:
             pos_args_msg = " | args: "
-            pos_args_msg = pos_args_msg + ", ".join([arg for arg in positional_args])
+            
+            pos_args_msg = pos_args_msg + f"[{', '.join([arg for arg in positional_args])}]"
             
 
         kw_args_msg = ""

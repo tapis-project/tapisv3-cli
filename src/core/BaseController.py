@@ -47,18 +47,13 @@ class BaseController:
         pass
 
     def index(self):
-        self.logger.log(f"\n{self.__doc__}")
+        self.logger.log(f"{self.__doc__}")
         self.help()
 
     def help(self):
         formatter.add_usage(f"$tapis [category] [options] [command] [args/keyword args]")
-        methods = [ method for method in dir(self) if (
-            (not method.startswith(("_", "__")))
-            and callable(getattr(self, method))
-            and method not in dir(BaseController)
-        )]
         
-        for method in methods:
+        for method in self.get_methods():
             pos_args = inspect.getfullargspec(getattr(self, method)).args
             if "self" in pos_args:
                 pos_args.remove("self")
@@ -70,6 +65,13 @@ class BaseController:
         formatter.add_options(self.option_set.options)
 
         self.logger.log(formatter.build())
+
+    def get_methods(self):
+        return [ method for method in dir(self) if (
+            (not method.startswith(("_", "__")))
+            and callable(getattr(self, method))
+            and method not in dir(BaseController)
+        )]
 
     def set_cmd(self, cmd: str) -> None:
         """
@@ -118,27 +120,6 @@ class BaseController:
             self.after()
 
         return
-
-    def get_methods(self, instance: object) -> list:
-        """Returns all of the methods that are available for the specified category."""
-        # Get all props of of the instance.
-        class_props = dir(instance)
-
-        # Remove the dunders.
-        props = []
-        pattern = re.compile(r"^[_]{1:2}[\w]+")
-        for prop in class_props:
-            if not re.match(pattern, prop):
-                props.append(prop)
-
-        # Remove all class properties that are not functions.
-        methods = []
-        for prop_name in props:
-            prop = getattr(instance, prop_name)
-            if isinstance(prop, types.MethodType):
-                methods.append(prop_name)
-
-        return methods
 
     def parse_args(self, args: list[str]):
         """Parses the arguments found in the input CLI command."""

@@ -14,7 +14,7 @@ class Configure(BaseController):
         profile_controller.add()
 
         # Set env and tenant
-        env = prompt.select("Tapis Env: ", ENVS)
+        env = prompt.select("Tapis Env", ENVS)
         config.add("package.tapis", "env", env)
 
         tenant = prompt.select("Tapis Tenant", [ "tacc" ])

@@ -27,6 +27,7 @@ class TapisController(BaseController):
     def index(self):
         self.select_Action()
 
+    # TODO add tab autocomplete for files and dirs
     def select_Action(self) -> None:
         # Get the methods for this controller and remove the select_Action
         methods = self.get_methods()
@@ -41,6 +42,9 @@ class TapisController(BaseController):
         # Prompt the user to select an operation to perform over the system with
         # the selection system_id
         action = prompt.select("Perform action", [ op for op, _ in op_map.items() ])
+
+        # Set the cmd to be invoked by the controller
+        self.set_cmd(action)
 
         # Get the arg spec for the operation being performed and
         # remove "self" from the arguments
@@ -61,13 +65,17 @@ class TapisController(BaseController):
         else:
             pos_args = arg_spec.args
         
-        # Prompt the use to provide values for the positional and keyword arguments
+        # Prompt the user to provide values for the positional
         arg_vals = []
-        kwarg_vals = []
         for arg in pos_args:
             arg_vals.append(prompt.not_none(f"{arg}"))
 
+        # Prompt the user to provide values for the keyword arguments
         i = 0
+        kwarg_vals = {}
         for arg in k_args:
-            kwarg_vals.append(prompt.not_none(f"{arg}", default=arg_spec.defaults[i]))
+            kwarg_vals[arg] = prompt.not_none(f"{arg}", default=arg_spec.defaults[i])
             i = i + 1
+
+        self.invoke(arg_vals, kwargs=kwarg_vals)
+        

@@ -1,5 +1,3 @@
-import os
-
 from core.BaseController import BaseController
 from utils.ConfigManager import configManager as config
 from packages.tapis.settings import ENVS

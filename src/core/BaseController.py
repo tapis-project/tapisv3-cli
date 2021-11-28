@@ -101,7 +101,7 @@ class BaseController:
 
         return
 
-    def invoke(self, args: List[str]) -> None:
+    def invoke(self, args: List[str], kwargs: Dict[str, str] = {}) -> None:
         """Passes input args to the command."""
         # TODO Check that self.cmd is a method
         # TODO Prevent users from calling parent class methods
@@ -113,7 +113,7 @@ class BaseController:
             self.before()
 
         method = getattr(self, self.cmd)
-        method(*args)
+        method(*args, **kwargs)
 
         # Run the 'after' action filter
         if self.is_action:

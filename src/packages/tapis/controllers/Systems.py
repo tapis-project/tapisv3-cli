@@ -15,7 +15,7 @@ class Systems(TapisController):
         try:
             system = self.client.systems.isEnabled(systemId=system_id)
             status = "enabled" if system.aBool else "disabled"
-            self.logger.info(f"The system '{system_id}'' is {status}\n")
+            self.logger.info(f"The system '{system_id}' is {status}\n")
             return
         except InvalidInputError:
             self.logger.error(f"System not found with id '{system_id}'\n")
@@ -137,7 +137,11 @@ class Systems(TapisController):
         Update selected attributes of a system using a system definition
         JSON file containing only the required and specified attributes.
         """
-        system_definition = json.loads(open(system_definition_file, "r").read())
+        try:
+            system_definition = json.loads(open(system_definition_file, "r").read())
+        except FileNotFoundError as e:
+            self.logger.error(e)
+            self.exit(1)
 
         if 'systemId' not in system_definition.keys():
             system_definition['systemId'] = system_definition['id']
@@ -158,7 +162,11 @@ class Systems(TapisController):
         Update ALL attributes of a system using a system definition JSON
         file that contains all the same attributes used to create the system.
         """
-        system_definition = json.loads(open(system_definition_file, "r").read())
+        try:
+            system_definition = json.loads(open(system_definition_file, "r").read())
+        except FileNotFoundError as e:
+            self.logger.error(e)
+            self.exit(1)
 
         if 'systemId' not in system_definition.keys():
             system_definition['systemId'] = system_definition['id']

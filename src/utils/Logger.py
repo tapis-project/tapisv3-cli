@@ -38,3 +38,5 @@ class Logger:
     def debug(self, message=""):
         """Used to show the debug ouput. Not implemented as of yet."""
         print(f"{Styles.DEBUG}########## DEBUG ##########{Styles.RESET}\n{message}\n{Styles.DEBUG}######## END DEBUG ########{Styles.RESET}")
+
+logger = Logger()

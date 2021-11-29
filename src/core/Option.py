@@ -20,6 +20,7 @@ class Option:
         name: str,
         aliases: list = [],
         usage: str = None,
+        description: str = None,
         params: Dict[str, Dict[str, Any]] = {},
         handler: str = None,
         context: HandlerContext = "args",
@@ -31,6 +32,7 @@ class Option:
     ):
         self.name = name
         self.aliases = aliases
+        self.description = description
         self.usage = usage
         self.params = params
         self.handler = handler

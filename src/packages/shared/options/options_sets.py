@@ -1,6 +1,6 @@
 """
 Outlines the various option attributes. Each option has both a single-character flag,
-a verbose string (alias) flag, and a general description (usage), but there are also
+a verbose string (alias) flag, and a general description (description), but there are also
 other attributes as well. See /src/core/Option.py for all available attributes.
 
 Some examples of attributes and what they do are:
@@ -19,12 +19,12 @@ option_registrar = OptionRegistrar()
 option_registrar.register("core", [
     Option("-v",
         aliases=["-verbose"],
-        usage="show additional information for a command invocation",
+        description="show additional information for a command invocation",
         context="generic"
     ),
     Option("-h",
         aliases=["-help"],
-        usage="display help information for a command",
+        description="display help information for a command",
         context="generic",
         handler="help"
     )
@@ -33,44 +33,44 @@ option_registrar.register("core", [
 option_registrar.register("TapipyController", [
     Option("-f",
         aliases=["-file, -contents"],
-        usage="a filename",
+        description="converts the contents of a json file into position arguments",
         params={"filename": {type: str}},
         handler="fileContentsToPositionalArg"
     ),
     Option("-h",
         aliases=["-help"],
-        usage="display help information for a command",
+        description="displays help information for a command",
         context="generic",
         handler="help"
     ),
     Option("-j",
         aliases=["-json"],
-        usage="a json filename",
+        description="converts a json object from a file into keyword arguments",
         params={"filename": {type: str}},
         handler="jsonFileToKeywordArgs"
     ),
     Option("-r",
-        aliases=["-tapis-raw"],
-        usage="",
+        aliases=["-raw"],
+        description="prints a string representation of the result object",
         context="result",
         handler="tapisResultRawView"
     ),
     Option("-s",
         aliases=["-save"],
-        usage="save results of a controller invocation to a file",
+        description="saves results of a command invocation to a file",
         params={"filename": {type: str}},
         context="result",
         handler="resultToFile"
     ),
     Option("-t",
-        aliases=["-tapis-table"],
-        usage="",
+        aliases=["-table"],
+        description="displays a table representation of the result if possible",
         context="result",
         handler="tapisResultTableView"
     ),
     Option("-v",
         aliases=["-verbose"],
-        usage="show additional information for a command invocation",
+        description="shows additional information for a command invocation",
         context="generic"
     )
 ])

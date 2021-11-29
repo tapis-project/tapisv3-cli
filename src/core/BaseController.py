@@ -1,6 +1,7 @@
 import re
 import sys
 import types
+import inspect
 from typing import List, Dict, Any
 
 from core.AbstractView import AbstractView
@@ -9,17 +10,12 @@ from packages.shared.options.options_sets import option_registrar
 from utils.Logger import Logger
 from utils.module_loader import class_loader as load
 from conf.settings import ACTION_FILTER_SUFFIX
+from helpers.help_formatter import help_formatter as formatter
 
 
 class BaseController:
     """
-    Handles the command setting, command execution, and command help
-    functionality for the TAPIS CLI (adaptable to use non-TAPIS commands
-    if the user creates new ones and a parser for non-TAPIS categories).
-
-    Each category has the same methods available to get/set/execute.
-    If the user wants to add non-TAPIS categories and commands, the new parser
-    should inherit from this category. See 'TapipyCategory.py' for an example.
+    Base class for categories.
     """
     option_set: type[OptionSet]
     cmd_options: list
@@ -28,7 +24,6 @@ class BaseController:
     cmd: str
     override_exec: bool
     logger: type[Logger]
-    exit: callable
     arg_option_tag_pattern: str
     view: type[AbstractView]
     is_action: bool
@@ -41,7 +36,6 @@ class BaseController:
         self.cmd = "help"
         self.override_exec = False
         self.logger = Logger()
-        self.exit = sys.exit
         self.arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
         self.view = None
         self.is_action = False
@@ -53,26 +47,31 @@ class BaseController:
         pass
 
     def index(self):
-        self.logger.log(f"\n{self.__doc__}")
+        self.logger.log(f"{self.__doc__}")
         self.help()
 
     def help(self):
-        """
-        \nGeneral usage:
-        $tapis [category] [options] [command] [args/keyword args]
-        \nExamples:
-        - tapis systems get [systemId]
-        - tapis systems getSystem --systemId [systemId]
-        - tapis files upload [systems] [path/to/local/file] [destination/folder]
-        - tapis systems update [path/to/definition/file]
-        - tapis apps create [path/to/definition/file]
-        - tapis jobs submit [appName] [appVersion]
-        \nCommands:"""
+        formatter.add_usage(f"$tapis [category] [options] [command] [args/keyword args]")
+        
+        for method in self.get_methods():
+            pos_args = inspect.getfullargspec(getattr(self, method)).args
+            if "self" in pos_args:
+                pos_args.remove("self")
+            formatter.add_command(
+                method.replace("_Action", ""), 
+                positional_args=pos_args
+            )
+            
+        formatter.add_options(self.option_set.options)
 
-        self.logger.log(self.help.__doc__)
-        methods = self.get_methods(self)
-        for method in methods:
-            self.logger.log(f"\t- {method}")
+        self.logger.log(formatter.build())
+
+    def get_methods(self):
+        return [ method for method in dir(self) if (
+            (not method.startswith(("_", "__")))
+            and callable(getattr(self, method))
+            and method not in dir(BaseController)
+        )]
 
     def set_cmd(self, cmd: str) -> None:
         """
@@ -102,7 +101,7 @@ class BaseController:
 
         return
 
-    def invoke(self, args: List[str]) -> None:
+    def invoke(self, args: List[str], kwargs: Dict[str, str] = {}) -> None:
         """Passes input args to the command."""
         # TODO Check that self.cmd is a method
         # TODO Prevent users from calling parent class methods
@@ -114,34 +113,13 @@ class BaseController:
             self.before()
 
         method = getattr(self, self.cmd)
-        method(*args)
+        method(*args, **kwargs)
 
         # Run the 'after' action filter
         if self.is_action:
             self.after()
 
         return
-
-    def get_methods(self, instance: object) -> list:
-        """Returns all of the methods that are available for the specified category."""
-        # Get all props of of the instance.
-        class_props = dir(instance)
-
-        # Remove the dunders.
-        props = []
-        pattern = re.compile(r"^[_]{1:2}[\w]+")
-        for prop in class_props:
-            if not re.match(pattern, prop):
-                props.append(prop)
-
-        # Remove all class properties that are not functions.
-        methods = []
-        for prop_name in props:
-            prop = getattr(instance, prop_name)
-            if isinstance(prop, types.MethodType):
-                methods.append(prop_name)
-
-        return methods
 
     def parse_args(self, args: list[str]):
         """Parses the arguments found in the input CLI command."""
@@ -206,7 +184,10 @@ class BaseController:
         """Loads a view if it exists"""
         view_class = load(f"packages.shared.views.{name}", name)
         if view_class is None:
-            raise Exception("View '{name}' does not exist")
+            raise Exception(f"View '{name}' does not exist")
 
         self.view = view_class(data)
         return
+
+    def exit(self, code):
+        sys.exit(code)

@@ -1,4 +1,4 @@
-import random, re, string, sys
+import random, re, string, sys, os
 
 from importlib.util import find_spec
 from importlib import import_module
@@ -7,10 +7,11 @@ from typing import List, Tuple, Dict
 from core.BaseController import BaseController
 from packages.tapipy.controllers.TapipyController import TapipyController
 from utils.ConfigManager import ConfigManager
-from utils.Logger import Logger
+from utils.Logger import logger
 from utils.cmd_to_class import cmd_to_class
 from utils.str_to_cmd import str_to_cmd
-from conf.settings import DEFAULT_PACKAGE, ACTION_FILTER_SUFFIX
+from conf.settings import DEFAULT_PACKAGE, ACTION_FILTER_SUFFIX, PACKAGES_DIR
+from packages.core.aliases import aliases as core_aliases
 
 
 class Router:
@@ -18,7 +19,6 @@ class Router:
     Commands and their options are passed into the router.
     The options are parsed and then the command is resolved.
     """
-    logger: type[Logger]
     conf: ConfigManager
     tag_value_pattern: str
     kw_arg_tag_pattern: str
@@ -26,7 +26,6 @@ class Router:
     space_replacement: str
 
     def __init__(self):
-        self.logger = Logger()
         self.conf = ConfigManager()
         self.tag_value_pattern = r"([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)"
         self.kw_arg_tag_pattern = r"[-]{2}([\w]{1}[\w]*)"
@@ -34,12 +33,19 @@ class Router:
         buffer = "[*]"
         self.space_replacement = buffer.join(random.choice(string.punctuation) for _ in range(5)) + buffer
 
+    def _resolve_alias(self, name, aliases: Dict[str, List[str]]):
+        for category, aliases in aliases.items():
+            if name in aliases:
+                return category
+
+        return None
+
     def resolve(self, args: List[str]) -> Tuple[BaseController, List[str]]:
         try:
             # Controller name is the first argument
             if len(args) == 0:
                 raise Exception("No category provided")
-            controller_name: str = args.pop(0)
+            category: str = args.pop(0)
 
             # Parse the rest of the arguments and extract the values
             (cmd, cmd_options, kw_args, args) = self._resolve_args(args)
@@ -53,10 +59,10 @@ class Router:
                 or cmd[0] == "_"
                 or cmd in [ "before", "after" ]
             ):
-                raise Exception(f"Category {controller_name} has no command {cmd}")
+                raise Exception(f"Category {category} has no command {cmd}")
 
         except Exception as e:
-            self.logger.error(e)
+            logger.error(e)
             sys.exit()
 
         # Fetch the default package from the configs
@@ -82,10 +88,24 @@ class Router:
         """
         #######################################################################
         # Check for a core controller that matches the args
-        core_controller_ns = "packages.core.controllers"
-        if find_spec(f"{core_controller_ns}.{cmd_to_class(controller_name)}") is not None:
-            module = import_module(f"{core_controller_ns}.{cmd_to_class(controller_name)}", "./" )
-            controller_class: type[BaseController] = getattr(module, f"{cmd_to_class(controller_name)}")
+        core_ns = "packages.core.controllers"
+
+        # Check if the package has a controller by the provided name
+        has_category = bool(find_spec(f"{core_ns}.{cmd_to_class(category)}"))
+
+        # Check if an alias for a category is being used. Will return 'None'
+        # if no alias is found
+        aliased_category = self._resolve_alias(category, core_aliases)
+
+        # If the package does not have a controller by the name provided but
+        # does have an alias for that name, set that to the new category
+        if has_category == False and bool(aliased_category):
+            category = aliased_category
+
+        # Import the controller and set the method(cmd) to be invoked
+        if has_category or bool(aliased_category):
+            module = import_module(f"{core_ns}.{cmd_to_class(category)}", "./" )
+            controller_class = getattr(module, f"{cmd_to_class(category)}")
 
             # Instantiate the controller class
             controller = controller_class()
@@ -95,14 +115,19 @@ class Router:
             controller.set_cmd_options(cmd_options)
             controller.set_kw_args(kw_args)
 
-            # Return the controller with command and options set.
+            # Return the controller with command and options set
             return (controller, args)
 
-        # If tapipy is the current package, invoke the operation on the resource
+        # If tapipy is the current package, invoke the operation on the resource.
+        # NOTE Tapipy is a special package the breaks the pattern of other packages.
+        # As a consequence, the 'category' and 'cmd' do not correlate to a controller 
+        # and method respectively. The category is the 
+        # resource(for which an alias may exist) and the cmd is the operation
         if package == "tapipy":
             controller = TapipyController()
-            # Set the resource, operation, and options
-            controller.set_resource(controller_name)
+            # TODO resolve aliases for tapipy package resource. Should be done
+            # within the TapipyController itself
+            controller.set_resource(category)
             controller.set_operation(cmd)
             controller.set_cmd_options(cmd_options)
             controller.set_kw_args(kw_args)
@@ -111,11 +136,31 @@ class Router:
 
         # No core controller is found, nor is tapipy the current package.
         # Find a controller in the current package.
-        package_controller_ns = f"packages.{package}.controllers"
-        if find_spec(f"{package_controller_ns}.{cmd_to_class(controller_name)}") is not None:
+        package_ns = f"packages.{package}.controllers"
+
+        # Check if the package has a controller by the provided name
+        has_category = bool(find_spec(f"{package_ns}.{cmd_to_class(category)}"))
+
+        # Import the aliases for this package if an aliases.py file exists in the
+        # package
+        package_aliases = {}
+        if os.path.isfile(f"{PACKAGES_DIR}{package}/aliases.py"):
+            alias_module = import_module(f"packages.{package}.aliases", "./")
+            package_aliases = getattr(alias_module, "aliases")
+
+        # Check if an alias for a category is being used. Will return 'None'
+        # if no alias is found
+        aliased_category = self._resolve_alias(category, package_aliases)
+
+        # If the package does not have a controller by the name provided but
+        # does have an alias for that name, set that to the new category
+        if has_category == False and bool(aliased_category):
+            category = aliased_category
+
+        if has_category or bool(aliased_category):
             # Import the current package controller
-            module = import_module(f"packages.{package}.controllers.{cmd_to_class(controller_name)}", "./" )
-            controller_class: type[BaseController] = getattr(module, f"{cmd_to_class(controller_name)}")
+            module = import_module(f"packages.{package}.controllers.{cmd_to_class(category)}", "./" )
+            controller_class: type[BaseController] = getattr(module, f"{cmd_to_class(category)}")
                 
             # The controller class has a method by the command name.
             # Instantiate the controller class
@@ -131,7 +176,7 @@ class Router:
 
         # No controller was found in the current package by the name provided
         # in the args. Log the error and exit.
-        self.logger.error(f"Category '{controller_name}' not found")
+        logger.error(f"Category '{category}' not found")
         sys.exit()
 
     def _parse_cmd_options(self, args: List[str]) -> Tuple[List[str], List[str]]:

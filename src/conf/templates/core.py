@@ -1,11 +1,11 @@
 template = {
-    "credentials": {},
     "current": {
         "package": "tapis",
-        "user": "",
+        "profile": "",
         "auth_method": "PASSWORD"
     },
-    "tapis": {
+    "profiles": {},
+    "package.tapis": {
         "tenant": "tacc",
         "env": "prod"
     }

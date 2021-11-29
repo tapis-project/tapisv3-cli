@@ -1,12 +1,18 @@
 import sys
+import inquirer
 from getpass import getpass
+from utils.Styles import styler as s
 
 class Prompt:
     def __init__(self):
         self.no_vals = ["N", "n", "no", "No", "NO"]
         self.yes_vals = ["Y", "y", "yes", "Yes", "YES"]
 
-    def not_none(self, message: str, secret: bool = False) -> str:
+    def not_none(self,
+        message: str,
+        secret: bool = False,
+        default: any = None # TODO limit types (no objects, dicts, arrays, etc)
+    ) -> str:
         """
         Prompts the user for input described in the message. If secret is set
         to true, user input is not shown. If the user doesn't put any input,
@@ -18,10 +24,15 @@ class Prompt:
         if secret:
             prompt = getpass
 
-        value = prompt(message)
+        if default is not None:
+            message = message + s.muted(f" [{default}]")
 
-        if value == None:
-            print("You cannot provide and empty value.\n")
+        modified_message = message + ": "
+
+        value = prompt(modified_message)
+
+        if bool(value) == False:
+            print("You cannot provide and empty value.")
             return self.not_none(message, secret)
 
         return value
@@ -43,7 +54,7 @@ class Prompt:
         elif yn in self.yes_vals:
             return True
         else:
-            print("Invalid option required. Must type 'y' for yes or 'n' for no.\n")
+            print("Invalid option required. Must type 'y' for yes or 'n' for no.")
             sys.exit(1)
 
     # Recursively calls a callback until the value provided by a user matches
@@ -55,5 +66,29 @@ class Prompt:
             return callback(message)
 
         return value
+
+    def select(self, question, choices, carousel=True):
+        questions = [
+            inquirer.List('choice',
+                message=question,
+                choices=choices,
+                carousel=carousel
+            ),
+        ]
+
+        return inquirer.prompt(questions)["choice"]
+
+    def select_cancel(self, question, choices, carousel=True):
+        # Non-printable character used to prevent users from providing a choice
+        # that would cancel
+        np = "\t"
+        cancel_string = s.danger(f"[x] cancel{np}")
+        choices.append(cancel_string)
+        answer = self.select(question, choices, carousel)
+
+        if answer == cancel_string:
+            sys.exit(1)
+        
+        return answer
 
 prompt = Prompt()

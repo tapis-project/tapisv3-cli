@@ -1,3 +1,5 @@
+import os
+
 from configparser import ConfigParser
 
 from conf import settings
@@ -11,26 +13,23 @@ class ConfigManager:
     """
     auth_method: str
     config: ConfigParser
-    credentials: dict
     package: str
 
     def __init__(self):
-        # Intialize and set the configparser to the Configuration object and
-        # get the credentials from the config file.
-        self.auth_method = settings.AUTH_METHOD
         self.parser = ConfigParser()
         self.parser.read(settings.CONFIG_FILE)
         self.logger = Logger()
         self.package = None
-        self.credentials = {}
 
-        # Add the credentials from the config file to 
-        # this Configuration object's credentials dict.
-        if "credentials" in self.parser.sections():
-            for key in self.parser["credentials"]:
-                self.credentials[key] = self.parser["credentials"][key]
+         # If the configs.ini specified in the settings does not exist,
+        # create it.
+        if not os.path.isfile(settings.CONFIG_FILE):
+            self.logger.log(f"Creating config file '{settings.CONFIG_FILE}'\n")
+            self.create_config_file()
 
     def create_config_file(self):
+        head, _ = os.path.split(settings.CONFIG_FILE)
+        os.makedirs(head)
         for key, val in template.items():
             self.parser[key] = val
             with open(settings.CONFIG_FILE, "w") as file:
@@ -47,6 +46,17 @@ class ConfigManager:
             with open(settings.CONFIG_FILE, "w") as file:
                 self.parser.write(file)
 
+    def get_section(self, section):
+        return dict(self.parser.items(section))
+
+    def get_section_keys(self, section):
+        items = self.get_section(section).items()
+        return [key for key, _ in items]
+
+    def get_section_values(self, section):
+        items = self.get_section(section).items()
+        return [value for _, value in items]
+
     def has_section(self, section):
         return section in self.parser.sections()
     
@@ -55,3 +65,5 @@ class ConfigManager:
                 
     def get(self, section, key):
         return self.parser[section][key]
+
+configManager = ConfigManager()

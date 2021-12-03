@@ -6,12 +6,12 @@ from typing import List, Tuple, Dict
 
 from core.BaseController import BaseController
 from packages.tapipy.controllers.TapipyController import TapipyController
-from utils.ConfigManager import ConfigManager
 from utils.Logger import logger
 from utils.cmd_to_class import cmd_to_class
 from utils.str_to_cmd import str_to_cmd
 from conf.settings import DEFAULT_PACKAGE, ACTION_FILTER_SUFFIX, PACKAGES_DIR
 from packages.core.aliases import aliases as core_aliases
+from utils.ConfigManager import configManager as config
 
 
 class Router:
@@ -19,14 +19,12 @@ class Router:
     Commands and their options are passed into the router.
     The options are parsed and then the command is resolved.
     """
-    conf: ConfigManager
     tag_value_pattern: str
     kw_arg_tag_pattern: str
     cmd_option_pattern: str
     space_replacement: str
 
     def __init__(self):
-        self.conf = ConfigManager()
         self.tag_value_pattern = r"([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)"
         self.kw_arg_tag_pattern = r"[-]{2}([\w]{1}[\w]*)"
         self.cmd_option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
@@ -68,10 +66,10 @@ class Router:
         # Fetch the default package from the configs
         package = DEFAULT_PACKAGE
         if (
-            self.conf.has_key("current", "package")
-            and bool(self.conf.get("current", "package"))
+            config.has_key("current", "package")
+            and bool(config.get("current", "package"))
         ):
-            package = self.conf.get("current", "package")
+            package = config.get("current", "package")
 
         ################### STEPS TO CONTROLLER RESOLUTION ####################
         """
@@ -128,6 +126,13 @@ class Router:
             # TODO resolve aliases for tapipy package resource. Should be done
             # within the TapipyController itself
             controller.set_resource(category)
+            
+            # NOTE Some magic here.
+            # Calling the index method on the tapipy controller determines the operation,
+            # args, kwargs, and options itself
+            if cmd == "index":
+                (cmd, kw_args, args) = controller.index()
+
             controller.set_operation(cmd)
             controller.set_cmd_options(cmd_options)
             controller.set_kw_args(kw_args)

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 - Router calls index method on BaseController if no command is passed after the resource
+- Upgrade tapipy to version 1.0.3
 
 ### non-Breaking Changes
 - Added CHANGELOG.md

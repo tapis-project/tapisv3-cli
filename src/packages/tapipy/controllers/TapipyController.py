@@ -113,6 +113,10 @@ class TapipyController(BaseController):
     def set_resource(self, resource_name: str) -> None:
         """Gets the resource for the OpenAPI command."""
         try:
+            # TODO Remove once files resource fully implements insert operation
+            # Add convenience upload method to operation_ids for files
+            if resource_name == "upload":
+                raise Exception()
             self.resource = getattr(self.client, resource_name)
         except:
             self.logger.error(f"{type(self).__name__} has no category '{resource_name}'\n")
@@ -123,7 +127,7 @@ class TapipyController(BaseController):
                 self.operation_ids.append(op_desc.operation_id)
 
     def set_operation(self, operation_name: str) -> None:
-        """Sets the operation to be performed upon execution."""
+        """Sets the operation to be performed"""
         self.cmd = operation_name
         
         if operation_name == "index":
@@ -132,6 +136,12 @@ class TapipyController(BaseController):
 
         if operation_name == "help":
             self.operation = self._help
+            return
+
+        # TODO Remove once files resource fully implements insert operation
+        # Set the operation to the convenience function
+        if operation_name == "upload" and self.resource.resource_name == "files":
+            self.operation = self._upload
             return
 
         try:
@@ -154,6 +164,21 @@ class TapipyController(BaseController):
         for param in required_params:
             if param not in kw_arg_keys:
                 raise Exception(f"Missing required keyword arguments: {[f'--{param}' for param in required_params if param not in self.kw_args.keys()]}")
+
+    # TODO Remove once the insert operation on the files resource is fully supported
+    # by Tapipy
+    def _upload(self, system_id, path_to_file, destination_folder) -> None:
+        try:
+            self.client.upload(
+                system_id = system_id,
+                source_file_path = path_to_file,
+                dest_file_path = destination_folder
+            )
+            return f"Uploaded file '{path_to_file}' to {destination_folder}\n"
+            return
+        except Exception as e:
+            self.logger.error(f"{e.message}\n")
+            self.exit(1)
 
     # TODO add tab autocomplete for files and dirs
     # Prompts the user to select an operation id from a drop down, then
@@ -180,14 +205,14 @@ class TapipyController(BaseController):
         request_body = op_map[cmd].request_body
         method = None
         JSON_FILE = "provide a json file"
-        ENUMERATE_PROPS = "prompt for each property"
+        EACH = "prompt for each property"
         EDITOR = "build request body in an editor"
         if hasattr(request_body, "required"):
             self.logger.log("This operations requires a request body")
             method = prompt.select(f"Choose a method",
                 [
                     JSON_FILE,
-                    ENUMERATE_PROPS,
+                    EACH,
                     EDITOR,
                 ]
             )
@@ -198,7 +223,7 @@ class TapipyController(BaseController):
         elif method == EDITOR:
             obj = self._prompt_editor("Create a request body")
             kw_args = {**kw_args, **{ key:value for key, value in obj}}
-        elif method == ENUMERATE_PROPS:
+        elif method == EACH:
             self.logger.warn((
                 "You may be required to write raw json for properties with\n"
                 "types 'array' and 'object' and must additionally know the types\n" 

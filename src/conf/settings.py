@@ -8,7 +8,7 @@ PACKAGES = [
     "jupyterscinco"
 ]
 
-DEFAULT_PACKAGE = "core"
+DEFAULT_PACKAGE = "utils"
 
 PACKAGES_DIR = "packages/"
 

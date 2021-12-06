@@ -2,7 +2,7 @@ from core.BaseController import BaseController
 from utils.ConfigManager import configManager as config
 from packages.tapis.settings import ENVS
 from utils.Prompt import prompt
-from packages.core.controllers.Profiles import Profiles
+from packages.utils.controllers.Profiles import Profiles
 
 class Configure(BaseController):
     def __init__(self):

@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Open API Schema type transform util
 
 ### Fixed
-- 
+- Router: Check if aliases object exists in aliases module before getattr
 
 ### Removed
 - N/A

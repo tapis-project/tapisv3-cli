@@ -10,7 +10,7 @@ from utils.Logger import logger
 from utils.cmd_to_class import cmd_to_class
 from utils.str_to_cmd import str_to_cmd
 from conf.settings import DEFAULT_PACKAGE, ACTION_FILTER_SUFFIX, PACKAGES_DIR
-from packages.core.aliases import aliases as core_aliases
+from packages.utils.aliases import aliases as utils_aliases
 from utils.ConfigManager import configManager as config
 
 
@@ -73,10 +73,10 @@ class Router:
 
         ################### STEPS TO CONTROLLER RESOLUTION ####################
         """
-        - Check the 'core' package for a controller with a method 
+        - Check the 'utils' package for a controller with a method 
         that corresponds to the provded args. Dispatch if found.
 
-        - If a core controller is not found, check the 'tapipy' 
+        - If a utils controller is not found, check the 'tapipy' 
         package for a resource with an operation that corresponds to 
         the provided args
         
@@ -85,15 +85,15 @@ class Router:
         to the provided args
         """
         #######################################################################
-        # Check for a core controller that matches the args
-        core_ns = "packages.core.controllers"
+        # Check for a utils controller that matches the args
+        utils_ns = "packages.utils.controllers"
 
         # Check if the package has a controller by the provided name
-        has_category = bool(find_spec(f"{core_ns}.{cmd_to_class(category)}"))
+        has_category = bool(find_spec(f"{utils_ns}.{cmd_to_class(category)}"))
 
         # Check if an alias for a category is being used. Will return 'None'
         # if no alias is found
-        aliased_category = self._resolve_alias(category, core_aliases)
+        aliased_category = self._resolve_alias(category, utils_aliases)
 
         # If the package does not have a controller by the name provided but
         # does have an alias for that name, set that to the new category
@@ -102,7 +102,7 @@ class Router:
 
         # Import the controller and set the method(cmd) to be invoked
         if has_category or bool(aliased_category):
-            module = import_module(f"{core_ns}.{cmd_to_class(category)}", "./" )
+            module = import_module(f"{utils_ns}.{cmd_to_class(category)}", "./" )
             controller_class = getattr(module, f"{cmd_to_class(category)}")
 
             # Instantiate the controller class
@@ -139,7 +139,7 @@ class Router:
 
             return (controller, args)
 
-        # No core controller is found, nor is tapipy the current package.
+        # No utils controller is found, nor is tapipy the current package.
         # Find a controller in the current package.
         package_ns = f"packages.{package}.controllers"
 
@@ -151,7 +151,9 @@ class Router:
         package_aliases = {}
         if os.path.isfile(f"{PACKAGES_DIR}{package}/aliases.py"):
             alias_module = import_module(f"packages.{package}.aliases", "./")
-            package_aliases = getattr(alias_module, "aliases")
+            package_aliases = {}
+            if hasattr(alias_module, "aliases"):
+                package_aliases = getattr(alias_module, "aliases")
 
         # Check if an alias for a category is being used. Will return 'None'
         # if no alias is found

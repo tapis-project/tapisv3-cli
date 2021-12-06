@@ -1,6 +1,6 @@
 from core.BaseController import BaseController
-from packages.core.controllers.Profiles import Profiles
-from packages.core.controllers.Packages import Packages
+from packages.utils.controllers.Profiles import Profiles
+from packages.utils.controllers.Packages import Packages
 from utils.ConfigManager import configManager as config
 from utils.Prompt import prompt
 from packages.tapis.settings import ENVS

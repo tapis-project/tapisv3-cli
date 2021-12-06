@@ -1,0 +1,5 @@
+DATABASE = "jupyterhub_v3_metadata"
+TENANT = ""
+INSTANCE = ""
+COLLECTION = "jupyterhub_dev"
+CONFIG = f"config.{TENANT}.{INSTANCE}.jhub"

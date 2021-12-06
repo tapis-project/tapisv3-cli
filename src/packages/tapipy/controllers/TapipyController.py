@@ -1,3 +1,7 @@
+import json
+
+from json.decoder import JSONDecodeError
+
 import packages.shared.options.handlers
 
 from conf import settings
@@ -174,28 +178,33 @@ class TapipyController(BaseController):
         # If the current operation requires a request body, prompt the user
         # to choose a method to satisfy that request body
         request_body = op_map[cmd].request_body
-        request_body_required = hasattr(request_body, "required")
         method = None
         JSON_FILE = "provide a json file"
         ENUMERATE_PROPS = "prompt for each property"
-        if request_body_required:
+        EDITOR = "build request body in an editor"
+        if hasattr(request_body, "required"):
             self.logger.log("This operations requires a request body")
             method = prompt.select(f"Choose a method",
                 [
                     JSON_FILE,
-                    ENUMERATE_PROPS
+                    ENUMERATE_PROPS,
+                    EDITOR,
                 ]
             )
 
         args = []
         if method == JSON_FILE:
             args = self._prompt_json_file()
+        elif method == EDITOR:
+            obj = self._prompt_editor("Create a request body")
+            kw_args = {**kw_args, **{ key:value for key, value in obj}}
         elif method == ENUMERATE_PROPS:
             self.logger.warn((
                 "You may be required to write raw json for properties with\n"
                 "types 'array' and 'object' and must additionally know the types\n" 
                 "and requirements of their deeply nested elements and properties."
             ))
+
             answer = prompt.select(
                 "Continue, provide a json file, or cancel",
                 ["continue", "json file"],
@@ -220,6 +229,17 @@ class TapipyController(BaseController):
         # Add a the "-j" cmd_option to the args along with its value
         return [ "-j", json_definition_file ]
 
+    def _prompt_editor(self, message):
+        try:
+            contents = prompt.editor(message)
+            return json.loads(contents).items()
+        except AttributeError:
+            self.logger.error("Request body must be a valid JSON object")
+            self._prompt_editor(message)
+        except JSONDecodeError:
+            self.logger.error("The request body contains invalid JSON")
+            self._prompt_editor(message)
+        
     # Iterates through the request body and prompts the user for a value
     # based on the type of value it expect. The prompt values are then transformed
     # from a string to their correct type and stored in kw_args
@@ -231,7 +251,7 @@ class TapipyController(BaseController):
                 kw_args[prop] = self._prompt_primitives(prop, desc)
                 continue
             
-            kw_args[prop] = self._prompt_non_primitives(prop, desc)
+            kw_args[prop] = self._prompt_editor(prop)
 
         return kw_args
 
@@ -263,12 +283,6 @@ class TapipyController(BaseController):
             # Transform the open api schema type into the correct
             # python type
             return transform(desc.type.value, value)
-
-    def _prompt_non_primitives(self, prop, desc):
-        return prompt.text(
-            prop,
-            description=f"type: {desc.type.value}"
-        )
 
 
 

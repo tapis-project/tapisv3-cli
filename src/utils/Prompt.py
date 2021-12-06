@@ -155,6 +155,18 @@ class Prompt:
         
         return inquirer.prompt(questions)["choice"]
 
+    def editor(self, message, description: str = None):
+        modified_message = message
+
+        # Add description to message
+        if description is not None:
+            modified_message = modified_message + s.muted(f" {description}")
+
+        questions = [
+            inquirer.Editor('text', message=modified_message)
+        ]
+        return inquirer.prompt(questions)["text"]
+
     def _validate_type(self, type_fn, value):
         try:
             type_fn(value)

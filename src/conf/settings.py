@@ -12,6 +12,8 @@ DEFAULT_PACKAGE = "tapipy"
 
 PACKAGES_DIR = "packages/"
 
+TEMPLATES_DIR = "conf/templates/"
+
 DEFAULT_AUTH_METHOD = "PASSWORD"
 
 AUTH_METHODS = [ "PASSWORD" ]

@@ -4,7 +4,7 @@ from configparser import ConfigParser
 
 from conf import settings
 from utils.Logger import Logger
-from conf.templates.core import template
+from conf.templates.base import template
 
 
 class ConfigManager:

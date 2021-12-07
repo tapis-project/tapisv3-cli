@@ -1,6 +1,6 @@
 template = {
     "current": {
-        "package": "tapis",
+        "package": "tapipy",
         "profile": "",
         "auth_method": "PASSWORD"
     },

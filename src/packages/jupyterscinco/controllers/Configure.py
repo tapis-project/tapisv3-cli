@@ -1,5 +1,4 @@
 from core.BaseController import BaseController
-from utils.ConfigManager import configManager as config
 from packages.jupyterscinco.controllers.Set import Set
 
 
@@ -15,8 +14,8 @@ class Configure(BaseController):
     # Use this method to set configs specific to your package using the ConfigManager
     # instance(config)
     def index(self):
-        if config.has_section(f"package.{self.get_package()}") == False:
-            config.add_section(f"package.{self.get_package()}")
+        if self.config.has_section(f"package.{self.get_package()}") == False:
+            self.config.add_section(f"package.{self.get_package()}")
 
         set_controller = Set()
         method_names = set_controller.get_methods()

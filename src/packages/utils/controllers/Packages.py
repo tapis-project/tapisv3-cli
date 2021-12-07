@@ -27,7 +27,7 @@ class Packages(BaseController):
         copyfile(f"{TEMPLATES_DIR}files/settings.py", package_dir + "settings.py")
         copyfile(f"{TEMPLATES_DIR}files/aliases.py", package_dir + "aliases.py")
         os.mkdir(package_dir + "controllers/")
-        copyfile(f"{TEMPLATES_DIR}controllers/Example.py", package_dir + "controllers/Example.py")
+        copyfile(f"{TEMPLATES_DIR}controllers/Systems.py", package_dir + "controllers/Systems.py")
 
         self.logger.complete(f"Package '{package_name}' created.")
         self.logger.info(f"Don't forget to add '{package_name}' to the PACKAGES array src/conf/settings.py")

@@ -6,7 +6,7 @@ from packages.tapis.TapisController import TapisController
 
 
 # This example controller queries and mutates the tapis Systems API
-class Example(TapisController):
+class Systems(TapisController):
     # Tapis controller abstracts away client initialization and authentication.
     # Make calls with the tapis client using self.client
     def __init__(self):

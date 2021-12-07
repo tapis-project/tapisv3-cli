@@ -100,7 +100,7 @@ class Router:
         if has_category or bool(aliased_category):
             module = import_module(f"{utils_ns}.{cmd_to_class(category)}", "./" )
             controller_class = getattr(module, f"{cmd_to_class(category)}")
-
+            
             # Instantiate the controller class
             controller = controller_class()
 

@@ -1,16 +1,21 @@
 import re
 import sys
+import os
 import inspect
 from typing import List, Dict, Any
 
 from core.AbstractView import AbstractView
 from core.OptionSet import OptionSet
+from core.SettingSet import SettingSet
 from packages.shared.options.options_sets import option_registrar
 from utils.Logger import Logger
 from utils.module_loader import class_loader as load
 from conf.settings import ACTION_FILTER_SUFFIX
 from helpers.help_formatter import help_formatter as formatter
 from utils.Prompt import prompt
+from utils.ConfigManager import configManager as config
+from conf.settings import PACKAGES_DIR
+from importlib import import_module
 
 
 class BaseController:
@@ -37,8 +42,11 @@ class BaseController:
         self.override_exec = False
         self.logger = Logger()
         self.arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
+        self.settings_pattern = r"([A-Z]+[A-Z_]*)"
         self.view = None
         self.is_action = False
+        self.config = config
+        self.settings = self.init_settings()
 
     def before(self):
         pass
@@ -206,9 +214,35 @@ class BaseController:
         # Set the cmd to be invoked by the controller
         self.set_cmd(action)
 
+        (arg_vals, kwarg_vals) = self._prompt_arg_kwarg_vals(op_map[action])
+
+        self.invoke(arg_vals, kwargs=kwarg_vals)
+
+    def exit(self, code):
+        sys.exit(code)
+
+    def init_settings(self):
+        # Check for settings.py for the current package
+        if os.path.isfile(f"{PACKAGES_DIR}{self.get_package()}/settings.py") == False:
+            # No settings file is found, return an empty SettingSet
+            return SettingSet({})
+
+        settings = {}
+        # Import the settings
+        module = import_module(f"packages.{self.get_package()}.settings", "./")
+        settings_attrs = dir(module)
+        for attr in settings_attrs:
+            # Settings must only contain uppercase letters and underscores
+            # and must start with an uppercase letter
+            if re.match(rf"{self.settings_pattern}", attr) is not None:
+                settings[attr] = getattr(module, attr)
+
+        return SettingSet(settings)
+
+    def _prompt_arg_kwarg_vals(self, method):
         # Get the arg spec for the operation being performed and
         # remove "self" from the arguments
-        arg_spec = inspect.getfullargspec(op_map[action])
+        arg_spec = inspect.getfullargspec(method)
         arg_spec.args.remove("self")
 
         # Determine the keyword arguments. In the inspect module, the keyword
@@ -237,7 +271,16 @@ class BaseController:
             kwarg_vals[arg] = prompt.text(f"{arg}", default=arg_spec.defaults[i])
             i = i + 1
 
-        self.invoke(arg_vals, kwargs=kwarg_vals)
+        return ( arg_vals, kwarg_vals )
 
-    def exit(self, code):
-        sys.exit(code)
+    def get_package(self):
+        return self.config.get("current", "package")
+    
+    def get_config(self, key):
+        return self.config.get(f"package.{self.get_package()}", key)
+
+    def set_config(self, key, value):
+        self.config.add(f"package.{self.get_package()}", key, value)
+
+
+

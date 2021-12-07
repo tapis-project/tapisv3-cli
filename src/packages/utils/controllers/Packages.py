@@ -46,7 +46,8 @@ class Packages(BaseController):
         string = f"[{current_package}]"
         answer = prompt.select(
             f"Choose a package {s.muted(string)}",
-            PACKAGES
+            PACKAGES,
+            sort=True
         )
         config.add("current", "package", answer)
         self.logger.complete(f"Using package '{answer}'")

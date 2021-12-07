@@ -1,5 +1,3 @@
-DATABASE = "jupyterhub_v3_metadata"
-TENANT = ""
-INSTANCE = ""
-COLLECTION = "jupyterhub_dev"
-CONFIG = f"config.{TENANT}.{INSTANCE}.jhub"
+from utils.ConfigManager import configManager as config
+
+CONFIG = f"config.{config.get('package.jupyterscinco', 'tenant')}.{config.get('package.jupyterscinco', 'instance')}.jhub"

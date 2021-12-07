@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added prompt util boolean select
 - Open API Schema type transform util
 - rename core package to utils
+- Pacakge create creates Example and Configure controllers
+- package settings available on package controllers on instantiation
+- Access to settings and config management on the base controller class
 
 ### Fixed
 - Router: Check if aliases object exists in aliases module before getattr

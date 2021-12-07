@@ -64,6 +64,8 @@ class ConfigManager:
         return (self.has_section(section) and key in self.parser[section])
                 
     def get(self, section, key):
-        return self.parser[section][key]
+        if self.has_key(section, key):
+            return self.parser[section][key]
+        return None
 
 configManager = ConfigManager()

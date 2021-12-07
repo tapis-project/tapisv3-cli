@@ -63,13 +63,9 @@ class Router:
             logger.error(e)
             sys.exit()
 
-        # Fetch the default package from the configs
-        package = DEFAULT_PACKAGE
-        if (
-            config.has_key("current", "package")
-            and bool(config.get("current", "package"))
-        ):
-            package = config.get("current", "package")
+        # Set the package
+        current = config.get("current", "package")
+        package = current if current is not None else DEFAULT_PACKAGE
 
         ################### STEPS TO CONTROLLER RESOLUTION ####################
         """
@@ -183,7 +179,7 @@ class Router:
 
         # No controller was found in the current package by the name provided
         # in the args. Log the error and exit.
-        logger.error(f"Category '{category}' not found")
+        logger.error(f"Category '{category}' not found in package '{package}'")
         sys.exit()
 
     def _parse_cmd_options(self, args: List[str]) -> Tuple[List[str], List[str]]:

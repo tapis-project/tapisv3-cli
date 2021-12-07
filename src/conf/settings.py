@@ -8,7 +8,7 @@ PACKAGES = [
     "jupyterscinco"
 ]
 
-DEFAULT_PACKAGE = "utils"
+DEFAULT_PACKAGE = "tapipy"
 
 PACKAGES_DIR = "packages/"
 

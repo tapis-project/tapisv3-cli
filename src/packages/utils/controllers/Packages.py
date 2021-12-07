@@ -1,5 +1,8 @@
 import os
+
 from shutil import copyfile
+from importlib.util import find_spec
+from importlib import import_module
 
 from core.BaseController import BaseController
 from conf.settings import PACKAGES, PACKAGES_DIR, TEMPLATES_DIR
@@ -28,6 +31,7 @@ class Packages(BaseController):
         copyfile(f"{TEMPLATES_DIR}files/aliases.py", package_dir + "aliases.py")
         os.mkdir(package_dir + "controllers/")
         copyfile(f"{TEMPLATES_DIR}controllers/Systems.py", package_dir + "controllers/Systems.py")
+        copyfile(f"{TEMPLATES_DIR}controllers/Configure.py", package_dir + "controllers/Configure.py")
 
         self.logger.complete(f"Package '{package_name}' created.")
         self.logger.info(f"Don't forget to add '{package_name}' to the PACKAGES array src/conf/settings.py")
@@ -46,3 +50,25 @@ class Packages(BaseController):
         )
         config.add("current", "package", answer)
         self.logger.complete(f"Using package '{answer}'")
+
+    def configure(self):
+        package = prompt.select("Choose a package to configure", PACKAGES, sort=True)
+        configure_ns = f"packages.{package}.controllers.Configure"
+        has_configure = bool(find_spec(configure_ns))
+        if has_configure == False:
+            self.logger.warn(f"Package '{package}' has no category 'Configure'")
+            return
+
+        module = import_module(configure_ns, "./" )
+        if hasattr(module, "Configure") == False:
+            self.logger.warn(f"Package '{package}' has no category 'Configure'")
+            return
+
+        configure_controller = getattr(module, "Configure")()
+        configure_controller.index()
+
+        self.logger.complete(f"Package '{package}' configured")
+
+        return
+
+

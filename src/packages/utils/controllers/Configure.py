@@ -21,7 +21,7 @@ class Configure(BaseController):
         config.add("package.tapis", "tenant", tenant)
 
         # Set the current package to tapis
-        config.add("current", "package", "tapis")
+        config.add("current", "package", "tapipy")
 
         return
     

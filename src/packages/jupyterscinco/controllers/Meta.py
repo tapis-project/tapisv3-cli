@@ -6,26 +6,31 @@ from packages.tapis.TapisController import TapisController
 class Meta(TapisController):
     def get_config_Action(self):
         filter_obj = {"name": settings.CONFIG}
-        metadata = self.client.meta.listDocuments(db=settings.DATABASE, collection=settings.COLLECTION, filter=json.dumps(filter_obj))
+        metadata = self.client.meta.listDocuments(
+            db=settings.DATABASE,
+            collection=settings.COLLECTION,
+            filter=json.dumps(filter_obj)
+        )
         self.logger.log(json.loads(metadata)[0])
 
     def list_group_Action(self):
         filter_obj = {'name':{'$regex':f".*group.{settings.CONFIG}"}}
-        metadata = self.client.meta.listDocuments(db=settings.DATABASE, collection=settings.COLLECTION, filter=json.dumps(filter_obj))
+        metadata = self.client.meta.listDocuments(
+            db=settings.DATABASE,
+            collection=settings.COLLECTION,
+            filter=json.dumps(filter_obj)
+        )
         return json.loads(metadata)
 
     def get_group_Action(self, group):
         filter_obj = {'name': f"{group}.group.{settings.CONFIG}"}
-        metadata = self.client.meta.listDocuments(db=settings.DATABASE, collection=settings.COLLECTION, filter=json.dumps(filter_obj))
+        metadata = self.client.meta.listDocuments(
+            db=settings.DATABASE,
+            collection=settings.COLLECTION,
+            filter=json.dumps(filter_obj)
+        )
         return json.loads(metadata)[0]
-
-    def modify_group_Action(self, group, value):
-        meta = self.get_tapis_group_config_metadata(group)
-        print("************** " * 30)
-        meta['value'] = value
-        print(meta)
-        self.client.meta.modifyDocument(db=settings.DATABASE, collection=settings.COLLECTION, request_body=meta, docId=meta['_id']['$oid'])
-
+    
     def create_group_Action(self, group):
         meta = {
             "name": f"{group}.group.{settings.CONFIG}",
@@ -40,21 +45,44 @@ class Meta(TapisController):
                 "name": f"{group}.group.{settings.CONFIG}"
             }
         }
-        self.client.meta.createDocument(db=settings.DATABASE, collection=settings.COLLECTION, basic='true', request_body=meta)
+        self.client.meta.createDocument(
+            db=settings.DATABASE,
+            collection=settings.COLLECTION,
+            basic='true',
+            request_body=meta
+        )
+    
+    def modify_group_Action(self, group, value):
+        meta = self.get_tapis_group_config_metadata(group)
+        meta["value"] = value
+        print(meta)
+        self.client.meta.modifyDocument(
+            db=settings.DATABASE,
+            collection=settings.COLLECTION,
+            request_body=meta,
+            docId=meta['_id']['$oid']
+        )
 
-    def rename_group_Action(self, original, group):
-        
-        meta = self.get_tapis_group_config_metadata(original)
-        #del meta['_id']['$oid']
-        new_meta_name = f"{group}.group.{settings.CONFIG}"
-        meta['name'] = new_meta_name
-        meta['value']['group_name'] = group
-        meta['value']['name'] = new_meta_name
-        self.client.meta.modifyDocument(db=settings.DATABASE, collection=settings.COLLECTION, request_body=meta, docId=meta['_id']['$oid'])
+    def rename_group_Action(self, group, new_group):
+        meta = self.get_tapis_group_config_metadata(group)
+        new_meta_name = f"{new_group}.group.{settings.CONFIG}"
+        meta["name"] = new_meta_name
+        meta["value"]["group_name"] = new_group
+        meta["value"]["name"] = new_meta_name
+        self.client.meta.modifyDocument(
+            db=settings.DATABASE,
+            collection=settings.COLLECTION,
+            request_body=meta,
+            docId=meta["_id"]["$oid"]
+        )
 
     def delete_group_Action(self, group):
         meta = self.get_tapis_group_config_metadata(group)
-        self.client.meta.deleteDocument(db=settings.DATABASE, collection=settings.COLLECTION, docId=meta['_id']['$oid'])
+        self.client.meta.deleteDocument(
+            db=settings.DATABASE,
+            collection=settings.COLLECTION,
+            docId=meta['_id']['$oid']
+        )
 
     # def get_admin_tenant_metadata():
     #     ag = Agave(api_server=settings.AGAVE_API, token=settings.AGAVE_SERVICE_TOKEN)

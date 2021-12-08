@@ -7,7 +7,6 @@ from importlib import import_module
 from core.BaseController import BaseController
 from conf.settings import PACKAGES, PACKAGES_DIR, TEMPLATES_DIR
 from utils.Prompt import prompt
-from utils.ConfigManager import configManager as config
 from utils.Styles import styler as s 
 from utils.Prompt import prompt
 

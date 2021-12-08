@@ -1,5 +1,6 @@
 import sys
 import inquirer
+from inquirer.themes import Default
 from getpass import getpass
 from utils.Styles import styler as s
 from typing import List
@@ -8,6 +9,7 @@ class Prompt:
     def __init__(self):
         self.no_vals = ["N", "n", "no", "No", "NO"]
         self.yes_vals = ["Y", "y", "yes", "Yes", "YES"]
+        self.theme = Default()
 
     # TODO provide tab functionality to tab through dirs on users machine
     def text(self,
@@ -135,7 +137,7 @@ class Prompt:
             ),
         ]
 
-        answer = inquirer.prompt(questions)["choice"]
+        answer = inquirer.prompt(questions, theme=self.theme)["choice"]
         if answer == cancel_string:
             sys.exit(1)
 
@@ -146,14 +148,25 @@ class Prompt:
             message = message + s.muted(f" {description}")
 
         questions = [
-            inquirer.List('choice',
+            inquirer.List("choice",
                 message=message,
                 choices=[True, False],
                 carousel=carousel
             ),
         ]
         
-        return inquirer.prompt(questions)["choice"]
+        return inquirer.prompt(questions, theme=self.theme)["choice"]
+
+    def checkbox(self, message, choices):
+        message = message + s.muted(" Space to select. Enter to confirm")
+        questions = [ 
+            inquirer.Checkbox("choice",
+                message=message,
+                choices=choices
+            ) 
+        ]
+
+        return inquirer.prompt(questions, theme=self.theme)["choice"]
 
     def editor(self, message, description: str = None):
         modified_message = message
@@ -165,7 +178,7 @@ class Prompt:
         questions = [
             inquirer.Editor('text', message=modified_message)
         ]
-        return inquirer.prompt(questions)["text"]
+        return inquirer.prompt(questions, theme=self.theme)["text"]
 
     def _validate_type(self, type_fn, value):
         try:

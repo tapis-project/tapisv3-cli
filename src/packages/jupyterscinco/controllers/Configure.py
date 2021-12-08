@@ -18,12 +18,7 @@ class Configure(BaseController):
             self.config.add_section(f"package.{self.get_package()}")
 
         set_controller = Set()
-        method_names = set_controller.get_methods()
-        
-        for method_name in method_names:
-            method = getattr(set_controller, method_name)
-            (arg_vals, kwarg_vals) = self._prompt_arg_kwarg_vals(method)
-            method(*arg_vals, **kwarg_vals)
+        set_controller.index()
 
         
 

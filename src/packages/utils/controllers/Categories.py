@@ -1,7 +1,6 @@
 import os
 
 from core.BaseController import BaseController
-from utils.ConfigManager import configManager as config
 from utils.Styles import styler as s
 from conf.settings import PACKAGES_DIR
 
@@ -25,7 +24,7 @@ class Categories(BaseController):
 
         self.logger.newline(1)
 
-        package = config.get("current", "package")
+        package = self.config.get("current", "package")
 
         if package == "tapipy":
             self.exit(0)

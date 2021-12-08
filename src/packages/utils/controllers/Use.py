@@ -1,7 +1,6 @@
 from core.BaseController import BaseController
 from packages.utils.controllers.Profiles import Profiles
 from packages.utils.controllers.Packages import Packages
-from utils.ConfigManager import configManager as config
 from utils.Prompt import prompt
 from packages.tapis.settings import ENVS
 
@@ -26,10 +25,10 @@ class Use(BaseController):
 
     def env(self):
         env = prompt.select("Tapis Env", ENVS)
-        config.add("package.tapis", "env", env)
+        self.config.add("package.tapis", "env", env)
 
     def tenant(self):
         tenant = prompt.select("Tapis Tenant", [ "tacc" ])
-        config.add("package.tapis", "tenant", tenant)
+        self.config.add("package.tapis", "tenant", tenant)
 
     

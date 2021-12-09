@@ -67,6 +67,15 @@ class Tenants(TapisController):
         self.set_view("JupSciMetaView", json.loads(metadata))
         self.view.render()
 
+    def list_all_Action(self):
+        metadata = self.client.meta.listDocuments(
+            db=self.get_config("database"),
+            collection=self.get_config("collection")
+        )
+        
+        self.set_view("JupSciMetaView", json.loads(metadata))
+        self.view.render()
+
     def put_Action(self, value):
         meta = self.get_Action()
         meta["value"] = value

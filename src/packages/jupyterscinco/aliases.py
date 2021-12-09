@@ -1,1 +1,4 @@
-aliases = {}
+aliases = {
+    "tenants": [ "tenant" ],
+    "groups": [ "group" ],
+}

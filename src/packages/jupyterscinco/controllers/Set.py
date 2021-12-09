@@ -1,5 +1,4 @@
 from core.BaseController import BaseController
-from utils.Prompt import prompt
 
 
 class Set(BaseController):

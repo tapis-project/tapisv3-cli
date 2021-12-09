@@ -1,5 +1,5 @@
 from core.BaseController import BaseController
-from utils.ConfigManager import configManager as config
+
 
 # NOTE This is a special controller. It cannot be accessed via the command line
 # except through `tapis package configure`. If you added your package to the
@@ -13,4 +13,5 @@ class Configure(BaseController):
     # Use this method to set configs specific to your package using the ConfigManager
     # instance(config)
     def index(self):
-        pass
+        if self.config.has_section(f"package.{self.get_package()}") == False:
+            self.config.add_section(f"package.{self.get_package()}")

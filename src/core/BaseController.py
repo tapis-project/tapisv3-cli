@@ -221,6 +221,7 @@ class BaseController:
     def exit(self, code):
         sys.exit(code)
 
+    # Gathers the settings for the current package
     def init_settings(self):
         # Check for settings.py for the current package
         if os.path.isfile(f"{PACKAGES_DIR}{self.get_package()}/settings.py") == False:
@@ -268,7 +269,14 @@ class BaseController:
         i = 0
         kwarg_vals = {}
         for arg in k_args:
-            kwarg_vals[arg] = prompt.text(f"{arg}", default=arg_spec.defaults[i])
+            kwarg_vals[arg] = prompt.text(
+                f"{arg}",
+                default=arg_spec.defaults[i],
+                # NOTE This may cause some problems somewhere
+                # We want to allow users to pass default kwarg values of None.
+                # If the default for a givin arg is None, allow nullable
+                nullable=(True if arg_spec.defaults[i] == None else False)
+            )
             i = i + 1
 
         return ( arg_vals, kwarg_vals )

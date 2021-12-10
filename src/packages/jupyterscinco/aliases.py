@@ -1,4 +1,5 @@
 aliases = {
-    "tenants": [ "tenant" ],
-    "groups": [ "group" ],
+    "configs": [ "config" ],
+    "volumes": [ "volume" ],
+    "images": [ "image" ],
 }

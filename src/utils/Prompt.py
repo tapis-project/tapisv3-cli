@@ -106,6 +106,22 @@ class Prompt:
 
         return value
 
+    def confirm(self, message):
+        questions = [
+            inquirer.List("choice",
+                message=message,
+                choices=["confirm", "cancel"]
+            ),
+        ]
+
+        answer = inquirer.prompt(questions, theme=self.theme)["choice"]
+
+        if answer == "confirm":
+            return True
+        
+        return False
+
+
     def select(self,
         message,
         choices: List[str],

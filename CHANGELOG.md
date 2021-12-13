@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 - GUI for tapipy package [@nathandf](https://github.com/nathandf)
+- JupyterSCINCO package
 
 ### Breaking Changes
 - Router calls index method on BaseController if no command is passed after the resource

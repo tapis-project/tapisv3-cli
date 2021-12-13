@@ -3,15 +3,15 @@ import json
 from tapipy.errors import NotAuthorizedError
 
 from packages.jupyterscinco.JupSciController import JupSciController
+from packages.jupyterscinco.utils.build_config import build_config
 from utils.Prompt import prompt
 
 
 class Configs(JupSciController):
     # Creates a config
     def create_Action(self, tenant, instance):
-        config = self._build_config(tenant, instance)
-        self.logger.debug(config)
-        return
+        config = build_config(tenant, instance, self.config_type, group=self.group)
+        
         meta = {
             "name": config,
             "value": {
@@ -40,7 +40,7 @@ class Configs(JupSciController):
     
     # Delete a config
     def delete_Action(self, tenant, instance):
-        config = self._build_config(tenant, instance)
+        config = build_config(tenant, instance, self.config_type, group=self.group)
         if prompt.confirm(f"Confirm deletion of config '{config}'"):
             meta = self._get(tenant, instance)
             self.client.meta.deleteDocument(
@@ -99,7 +99,7 @@ class Configs(JupSciController):
     # Convenience method to fetch a config from the database without rendering the result
     # to the shell
     def _get(self, tenant, instance):
-        filter_obj = {"name": self._build_config(tenant, instance)}
+        filter_obj = {"name": build_config(tenant, instance, self.config_type, group=self.group)}
         metadata = self.client.meta.listDocuments(
             db=self.get_config("database"),
             collection=self.get_config("collection"),

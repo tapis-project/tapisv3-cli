@@ -1,6 +1,7 @@
 import json
 
 from packages.jupyterscinco.JupSciController import JupSciController
+from packages.jupyterscinco.utils.build_config import build_config
 from utils.Prompt import prompt
 
 
@@ -54,7 +55,7 @@ class Volumes(JupSciController):
     # Convenience method to fetch a config from the database without rendering the result
     # to the shell
     def _get(self, tenant, instance):
-        filter_obj = {"name": self._build_config(tenant, instance)}
+        filter_obj = {"name": build_config(tenant, instance, self.config_type, group=self.group)}
         result = self.client.meta.listDocuments(
             db=self.get_config("database"),
             collection=self.get_config("collection"),

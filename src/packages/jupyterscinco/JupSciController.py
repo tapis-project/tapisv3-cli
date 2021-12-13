@@ -16,11 +16,5 @@ class JupSciController(TapisController):
 
         if self.config_type == "group":
             self.group = prompt.text("group")
-
-    def _build_config(self, tenant, instance):
-        config = f"config.{tenant}.{instance}.jhub"
-        if self.config_type == "group":
-            config = f"{self.group}.group." + config
-
-        return config
+        
 

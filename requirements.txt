@@ -26,7 +26,7 @@ requests==2.26.0
 six==1.16.0
 strict-rfc3339==0.7
 tabulate==0.8.9
-tapipy==1.0.1
+tapipy==1.0.3
 urllib3==1.26.6
 wcwidth==0.2.5
 yarg==0.1.9

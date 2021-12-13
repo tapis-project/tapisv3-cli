@@ -4,7 +4,7 @@ from configparser import ConfigParser
 
 from conf import settings
 from utils.Logger import Logger
-from conf.templates.core import template
+from conf.templates.base import template
 
 
 class ConfigManager:
@@ -64,6 +64,8 @@ class ConfigManager:
         return (self.has_section(section) and key in self.parser[section])
                 
     def get(self, section, key):
-        return self.parser[section][key]
+        if self.has_key(section, key):
+            return self.parser[section][key]
+        return None
 
 configManager = ConfigManager()

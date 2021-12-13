@@ -35,8 +35,11 @@ class Logger:
         """Displays the error message when an error is thrown."""
         print(f"\n{Styles.ERROR}Error:{Styles.RESET} {message}")
 
-    def debug(self, message=""):
-        """Used to show the debug ouput. Not implemented as of yet."""
-        print(f"{Styles.DEBUG}########## DEBUG ##########{Styles.RESET}\n{message}\n{Styles.DEBUG}######## END DEBUG ########{Styles.RESET}")
+    def debug(self, *args):
+        """Used to show the debug ouput."""
+        print(f"{Styles.DEBUG}########## DEBUG ##########{Styles.RESET}\n")
+        for arg in args:
+            print(arg)
+        print(f"{Styles.DEBUG}######## END DEBUG ########{Styles.RESET}")
 
 logger = Logger()

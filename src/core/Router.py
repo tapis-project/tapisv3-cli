@@ -6,12 +6,12 @@ from typing import List, Tuple, Dict
 
 from core.BaseController import BaseController
 from packages.tapipy.controllers.TapipyController import TapipyController
-from utils.ConfigManager import ConfigManager
 from utils.Logger import logger
 from utils.cmd_to_class import cmd_to_class
 from utils.str_to_cmd import str_to_cmd
 from conf.settings import DEFAULT_PACKAGE, ACTION_FILTER_SUFFIX, PACKAGES_DIR
-from packages.core.aliases import aliases as core_aliases
+from packages.utils.aliases import aliases as utils_aliases
+from utils.ConfigManager import configManager as config
 
 
 class Router:
@@ -19,14 +19,12 @@ class Router:
     Commands and their options are passed into the router.
     The options are parsed and then the command is resolved.
     """
-    conf: ConfigManager
     tag_value_pattern: str
     kw_arg_tag_pattern: str
     cmd_option_pattern: str
     space_replacement: str
 
     def __init__(self):
-        self.conf = ConfigManager()
         self.tag_value_pattern = r"([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)"
         self.kw_arg_tag_pattern = r"[-]{2}([\w]{1}[\w]*)"
         self.cmd_option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
@@ -65,20 +63,16 @@ class Router:
             logger.error(e)
             sys.exit()
 
-        # Fetch the default package from the configs
-        package = DEFAULT_PACKAGE
-        if (
-            self.conf.has_key("current", "package")
-            and bool(self.conf.get("current", "package"))
-        ):
-            package = self.conf.get("current", "package")
+        # Set the package
+        current = config.get("current", "package")
+        package = current if current is not None else DEFAULT_PACKAGE
 
         ################### STEPS TO CONTROLLER RESOLUTION ####################
         """
-        - Check the 'core' package for a controller with a method 
+        - Check the 'utils' package for a controller with a method 
         that corresponds to the provded args. Dispatch if found.
 
-        - If a core controller is not found, check the 'tapipy' 
+        - If a utils controller is not found, check the 'tapipy' 
         package for a resource with an operation that corresponds to 
         the provided args
         
@@ -87,15 +81,15 @@ class Router:
         to the provided args
         """
         #######################################################################
-        # Check for a core controller that matches the args
-        core_ns = "packages.core.controllers"
+        # Check for a utils controller that matches the args
+        utils_ns = "packages.utils.controllers"
 
         # Check if the package has a controller by the provided name
-        has_category = bool(find_spec(f"{core_ns}.{cmd_to_class(category)}"))
+        has_category = bool(find_spec(f"{utils_ns}.{cmd_to_class(category)}"))
 
         # Check if an alias for a category is being used. Will return 'None'
         # if no alias is found
-        aliased_category = self._resolve_alias(category, core_aliases)
+        aliased_category = self._resolve_alias(category, utils_aliases)
 
         # If the package does not have a controller by the name provided but
         # does have an alias for that name, set that to the new category
@@ -104,9 +98,9 @@ class Router:
 
         # Import the controller and set the method(cmd) to be invoked
         if has_category or bool(aliased_category):
-            module = import_module(f"{core_ns}.{cmd_to_class(category)}", "./" )
+            module = import_module(f"{utils_ns}.{cmd_to_class(category)}", "./" )
             controller_class = getattr(module, f"{cmd_to_class(category)}")
-
+            
             # Instantiate the controller class
             controller = controller_class()
 
@@ -128,13 +122,20 @@ class Router:
             # TODO resolve aliases for tapipy package resource. Should be done
             # within the TapipyController itself
             controller.set_resource(category)
+            
+            # NOTE Some magic here.
+            # Calling the index method on the tapipy controller determines the operation,
+            # args, kwargs, and options itself
+            if cmd == "index":
+                (cmd, kw_args, args) = controller.index()
+
             controller.set_operation(cmd)
             controller.set_cmd_options(cmd_options)
             controller.set_kw_args(kw_args)
 
             return (controller, args)
 
-        # No core controller is found, nor is tapipy the current package.
+        # No utils controller is found, nor is tapipy the current package.
         # Find a controller in the current package.
         package_ns = f"packages.{package}.controllers"
 
@@ -146,7 +147,9 @@ class Router:
         package_aliases = {}
         if os.path.isfile(f"{PACKAGES_DIR}{package}/aliases.py"):
             alias_module = import_module(f"packages.{package}.aliases", "./")
-            package_aliases = getattr(alias_module, "aliases")
+            package_aliases = {}
+            if hasattr(alias_module, "aliases"):
+                package_aliases = getattr(alias_module, "aliases")
 
         # Check if an alias for a category is being used. Will return 'None'
         # if no alias is found
@@ -176,7 +179,7 @@ class Router:
 
         # No controller was found in the current package by the name provided
         # in the args. Log the error and exit.
-        logger.error(f"Category '{category}' not found")
+        logger.error(f"Category '{category}' not found in package '{package}'")
         sys.exit()
 
     def _parse_cmd_options(self, args: List[str]) -> Tuple[List[str], List[str]]:

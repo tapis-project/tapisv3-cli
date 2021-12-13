@@ -5,14 +5,27 @@ from packages.jupyterscinco.utils.build_config import build_config
 from utils.Prompt import prompt
 
 
-class Volumes(JupSciController):
+class Mounts(JupSciController):
     def add_Action(self, tenant, instance):
         meta = self._get(tenant, instance)
 
-        display_name = prompt.text("displayName")
-        name = prompt.text("name")
+        mount_type = prompt.select("type", ["nfs"])
+        path = prompt.text("path", description="[required]")
+        mount_path = prompt.text("mountPath", description="[required]")
+        readonly = prompt.select_bool("readOnly")
+        server = prompt.text("server", nullable=True)
 
-        meta["value"]["images"].append({"displayName": display_name, "name": name})
+        mount = {
+            "type": mount_type, 
+            "path": path,
+            "mountPath": mount_path,
+            "readOnly": readonly,
+        }
+
+        if server is not None:
+            mount["server"] = server
+
+        meta["value"]["volume_mounts"].append(mount)
 
         self.client.meta.modifyDocument(
             db=self.get_config("database"),
@@ -26,22 +39,22 @@ class Volumes(JupSciController):
 
     def list_Action(self, tenant, instance):
         meta = self._get(tenant, instance)
-        images = meta["value"]["images"]
+        mounts = meta["value"]["volume_mounts"]
 
-        self.set_view("DictTable", images)
+        self.set_view("DictTable", mounts)
         self.view.render()
 
     def remove_Action(self, tenant, instance):
         meta = self._get(tenant, instance)
-        images = meta["value"]["images"]
+        mounts = meta["value"]["volume_mounts"]
 
-        removed_image_name = prompt.select(
-            "Choose an image to remove", 
-            [image["name"] for image in images])
+        removed_mount_path = prompt.select(
+            "Choose a mount to remove", 
+            [mount["mountPath"] for mount in mounts])
 
-        modified_images = [image for image in images if image["name"] != removed_image_name]
+        modified_mounts = [mount for mount in mounts if mount["mountPath"] != removed_mount_path]
 
-        meta["value"]["images"] = modified_images
+        meta["value"]["volume_mounts"] = modified_mounts
 
         self.client.meta.modifyDocument(
             db=self.get_config("database"),
@@ -50,7 +63,7 @@ class Volumes(JupSciController):
             docId=meta["_id"]["$oid"]
         )
 
-        self.logger.complete(f"Removed image '{removed_image_name}'")
+        self.logger.complete(f"Removed mount '{removed_mount_path}'")
 
     # Convenience method to fetch a config from the database without rendering the result
     # to the shell

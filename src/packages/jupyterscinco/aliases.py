@@ -1,5 +1,5 @@
 aliases = {
     "configs": [ "config" ],
-    "volumes": [ "volume" ],
+    "mounts": [ "mount", "volume", "volumes", "volume-mounts" ],
     "images": [ "image" ],
 }

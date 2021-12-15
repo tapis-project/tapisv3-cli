@@ -179,7 +179,6 @@ class TapipyController(BaseController):
                 dest_file_path = destination_folder
             )
             return f"Uploaded file '{path_to_file}' to {destination_folder}\n"
-            return
         except Exception as e:
             self.logger.error(f"{e.message}\n")
             self.exit(1)

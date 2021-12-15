@@ -98,12 +98,10 @@ class TapipyController(BaseController):
             if hasattr(op.request_body, "required"):
                 keyword_args.append("request_body")
 
-            # Only show if 1 or more query params required
-            if (
-                hasattr(op, "query_parameters")
-                and len([qp for qp in op.query_parameters if qp.required == True]) > 0
-            ):
-                keyword_args.append("query_parameters")
+            # List all query parameters as keyword arguments
+            if hasattr(op, "query_parameters"):
+                keyword_args = (keyword_args + 
+                    [qp.name for qp in op.query_parameters if qp.required == True])
 
             formatter.add_command(
                 operation_id,
@@ -159,8 +157,15 @@ class TapipyController(BaseController):
     def _validate_kw_args(self):
         """Validates the keyword arguments required by an OpenAPI operation."""
         required_params = []
+        # Path parameters
         if hasattr(self.operation, "path_parameters"):
             for param in self.operation.path_parameters:
+                if param.required:
+                    required_params.append(param.name)
+                    
+        # Query parameters
+        if hasattr(self.operation, "query_parameters"):
+            for param in self.operation.query_parameters:
                 if param.required:
                     required_params.append(param.name)
 

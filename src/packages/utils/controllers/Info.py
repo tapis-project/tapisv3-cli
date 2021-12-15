@@ -1,5 +1,4 @@
 from core.BaseController import BaseController
-from utils.ConfigManager import configManager as config
 
 
 class Info(BaseController):
@@ -8,8 +7,8 @@ class Info(BaseController):
 
     def index(self):
         self.set_view("DictTable", {
-            "Profile": config.get("current", "profile"),
-            "Package": config.get("current", "package"),
-            "Auth method": config.get("current", "auth_method")
+            "Profile": self.config.get("current", "profile"),
+            "Package": self.config.get("current", "package"),
+            "Auth method": self.config.get("current", "auth_method")
         })
         self.view.render()

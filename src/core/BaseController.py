@@ -1,16 +1,21 @@
 import re
 import sys
-import types
+import os
 import inspect
 from typing import List, Dict, Any
 
 from core.AbstractView import AbstractView
 from core.OptionSet import OptionSet
+from core.SettingSet import SettingSet
 from packages.shared.options.options_sets import option_registrar
 from utils.Logger import Logger
 from utils.module_loader import class_loader as load
 from conf.settings import ACTION_FILTER_SUFFIX
 from helpers.help_formatter import help_formatter as formatter
+from utils.Prompt import prompt
+from utils.ConfigManager import configManager as config
+from conf.settings import PACKAGES_DIR
+from importlib import import_module
 
 
 class BaseController:
@@ -37,8 +42,11 @@ class BaseController:
         self.override_exec = False
         self.logger = Logger()
         self.arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
+        self.settings_pattern = r"([A-Z]+[A-Z_]*)"
         self.view = None
         self.is_action = False
+        self.config = config
+        self.settings = self.init_settings()
 
     def before(self):
         pass
@@ -47,8 +55,7 @@ class BaseController:
         pass
 
     def index(self):
-        self.logger.log(f"{self.__doc__}")
-        self.help()
+        self._select_Action()
 
     def help(self):
         formatter.add_usage(f"$tapis [category] [options] [command] [args/keyword args]")
@@ -175,7 +182,7 @@ class BaseController:
             self.arg_options[arg] = {}
             for index, val in enumerate(arg_option_vals):
                 self.arg_options[arg][params[index]] = val
-
+                
             continue
 
         return pos_args
@@ -189,5 +196,99 @@ class BaseController:
         self.view = view_class(data)
         return
 
+    # TODO add tab autocomplete for files and dirs
+    def _select_Action(self) -> None:
+        # Get the methods for this controller and remove the select_Action
+        methods = self.get_methods()
+
+        # Generate a dictionary where the key is the name of the method
+        # without the suffix "_Action" and the value is the method attr itself
+        op_map = {}
+        for op_name in methods:
+            op_map[op_name.replace("_Action", "")] = getattr(self, op_name)
+
+        # Prompt the user to select an operation to perform over the system with
+        # the selection system_id
+        action = prompt.select("Perform action", [ op for op, _ in op_map.items() ])
+
+        # Set the cmd to be invoked by the controller
+        self.set_cmd(action)
+
+        (arg_vals, kwarg_vals) = self._prompt_arg_kwarg_vals(op_map[action])
+
+        self.invoke(arg_vals, kwargs=kwarg_vals)
+
     def exit(self, code):
         sys.exit(code)
+
+    # Gathers the settings for the current package
+    def init_settings(self):
+        # Check for settings.py for the current package
+        if os.path.isfile(f"{PACKAGES_DIR}{self.get_package()}/settings.py") == False:
+            # No settings file is found, return an empty SettingSet
+            return SettingSet({})
+
+        settings = {}
+        # Import the settings
+        module = import_module(f"packages.{self.get_package()}.settings", "./")
+        settings_attrs = dir(module)
+        for attr in settings_attrs:
+            # Settings must only contain uppercase letters and underscores
+            # and must start with an uppercase letter
+            if re.match(rf"{self.settings_pattern}", attr) is not None:
+                settings[attr] = getattr(module, attr)
+
+        return SettingSet(settings)
+
+    def _prompt_arg_kwarg_vals(self, method):
+        # Get the arg spec for the operation being performed and
+        # remove "self" from the arguments
+        arg_spec = inspect.getfullargspec(method)
+        arg_spec.args.remove("self")
+
+        # Determine the keyword arguments. In the inspect module, the keyword
+        # arguments are the last elements of the args list. If there are any,
+        # their values will be found in the "defaults" property.
+        k_args = []
+        if arg_spec.defaults is not None:
+            k_args = arg_spec.args[-(len(arg_spec.defaults)):]
+
+        # Determine the positional arguments based on the number of keyword arguments
+        pos_args = []
+        if len(k_args) > 0:
+            pos_args = arg_spec.args[0:-(len(k_args))]
+        else:
+            pos_args = arg_spec.args
+        
+        # Prompt the user to provide values for the positional
+        arg_vals = []
+        for arg in pos_args:
+            arg_vals.append(prompt.text(f"{arg}"))
+
+        # Prompt the user to provide values for the keyword arguments
+        i = 0
+        kwarg_vals = {}
+        for arg in k_args:
+            kwarg_vals[arg] = prompt.text(
+                f"{arg}",
+                default=arg_spec.defaults[i],
+                # NOTE This may cause some problems somewhere
+                # We want to allow users to pass default kwarg values of None.
+                # If the default for a givin arg is None, allow null
+                required=(False if arg_spec.defaults[i] == None else True)
+            )
+            i = i + 1
+
+        return ( arg_vals, kwarg_vals )
+
+    def get_package(self):
+        return self.config.get("current", "package")
+    
+    def get_config(self, key):
+        return self.config.get(f"package.{self.get_package()}", key)
+
+    def set_config(self, key, value):
+        self.config.add(f"package.{self.get_package()}", key, value)
+
+
+

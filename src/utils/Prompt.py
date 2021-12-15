@@ -1,17 +1,24 @@
 import sys
 import inquirer
+from inquirer.themes import Default
 from getpass import getpass
 from utils.Styles import styler as s
+from typing import List
 
 class Prompt:
     def __init__(self):
         self.no_vals = ["N", "n", "no", "No", "NO"]
         self.yes_vals = ["Y", "y", "yes", "Yes", "YES"]
+        self.theme = Default()
 
-    def not_none(self,
+    # TODO provide tab functionality to tab through dirs on users machine
+    def text(self,
         message: str,
         secret: bool = False,
-        default: any = None # TODO limit types (no objects, dicts, arrays, etc)
+        default: any = None, # TODO limit types (no objects, dicts, arrays, etc)
+        required: bool = True,
+        description: str = None,
+        value_type: callable = None
     ) -> str:
         """
         Prompts the user for input described in the message. If secret is set
@@ -24,16 +31,55 @@ class Prompt:
         if secret:
             prompt = getpass
 
+        modified_message = message
+
+        # Modify message with red astrisk if required
+        if required == True:
+            modified_message = s.danger("*") + modified_message
+
+        # Add description to message
+        if description is not None:
+            modified_message = modified_message + s.muted(f" {description}")
+
+        # Add default value to message
         if default is not None:
-            message = message + s.muted(f" [{default}]")
+            modified_message = modified_message + s.muted(f" [{default}]")
 
-        modified_message = message + ": "
+        modified_message = modified_message + ": "
 
-        value = prompt(modified_message)
+        # Prompt user for input
+        try:
+            value = prompt(modified_message)
+        except:
+            sys.exit(1)
 
-        if bool(value) == False:
-            print("You cannot provide and empty value.")
-            return self.not_none(message, secret)
+        # If no value is provided, set the value to the default value
+        if bool(value) == False and default is not None:
+            value = default
+
+        # Reprompt if required and user provides null value
+        if required and bool(value) == False:
+            print("Input required")
+            return self.text(
+                message,
+                secret=secret,
+                default=default,
+                required=required,
+                description=description,
+                value_type=value_type
+            )
+
+        # Reprompt user if they provide a value of the incorrect type
+        if value_type is not None and self._validate_type(value_type, value) == False:
+            print("Incorrect type provided")
+            return self.text(
+                message,
+                secret=secret,
+                default=default,
+                required=required,
+                description=description,
+                value_type=value_type
+            )
 
         return value
 
@@ -67,28 +113,124 @@ class Prompt:
 
         return value
 
-    def select(self, question, choices, carousel=True):
+    def confirm(self, message):
+        questions = [
+            inquirer.List("choice",
+                message=message,
+                choices=["confirm", "cancel"]
+            ),
+        ]
+
+        try:
+            answer = inquirer.prompt(questions, theme=self.theme)["choice"]
+        except:
+            
+            sys.exit(1)
+
+        if answer == "confirm":
+            return True
+        
+        return False
+
+
+    def select(self,
+        message,
+        choices: List[str],
+        description: str = None,
+        carousel=True,
+        cancel=False,
+        sort=False
+    ):
+        # Add cancel as an option if cancel == True
+        # Non-printable character used to prevent users from providing a choice
+        # that would cancel
+        np = "\t"
+        cancel_string = s.muted(f"[x] cancel{np}")
+        if cancel:
+            choices.append(cancel_string)
+        
+        if sort:
+            choices = sorted(choices)
+
+        # Add description to message
+        if description is not None:
+            message = message + s.muted(f" {description}")
+
         questions = [
             inquirer.List('choice',
-                message=question,
+                message=message,
                 choices=choices,
                 carousel=carousel
             ),
         ]
 
-        return inquirer.prompt(questions)["choice"]
-
-    def select_cancel(self, question, choices, carousel=True):
-        # Non-printable character used to prevent users from providing a choice
-        # that would cancel
-        np = "\t"
-        cancel_string = s.danger(f"[x] cancel{np}")
-        choices.append(cancel_string)
-        answer = self.select(question, choices, carousel)
-
-        if answer == cancel_string:
+        try:
+            answer = inquirer.prompt(questions, theme=self.theme)["choice"]
+        except:
             sys.exit(1)
         
+        if answer == cancel_string:
+            sys.exit(1)
+
         return answer
+
+    def select_bool(self, message, description=None, carousel=True):
+        if description is not None:
+            message = message + s.muted(f" {description}")
+
+        questions = [
+            inquirer.List("choice",
+                message=message,
+                choices=[True, False],
+                carousel=carousel
+            ),
+        ]
+        try:
+            value = inquirer.prompt(questions, theme=self.theme)["choice"]
+        except:
+            sys.exit(1)
+
+        return value
+
+    def checkbox(self, message, choices):
+        message = message + s.muted(" Space to select. Enter to confirm")
+        questions = [ 
+            inquirer.Checkbox("choice",
+                message=message,
+                choices=choices
+            ) 
+        ]
+
+        try:
+            value = inquirer.prompt(questions, theme=self.theme)["choice"]
+        except:
+            sys.exit(1)
+
+        return value
+
+    def editor(self, message, description: str = None):
+        modified_message = message
+
+        # Add description to message
+        if description is not None:
+            modified_message = modified_message + s.muted(f" {description}")
+
+        questions = [
+            inquirer.Editor('text', message=modified_message)
+        ]
+
+        try:
+            value = inquirer.prompt(questions, theme=self.theme)["text"]
+        except:
+            sys.exit(1)
+
+        return value
+
+    def _validate_type(self, type_fn, value):
+        try:
+            type_fn(value)
+            return True
+        except:
+            return False
 
 prompt = Prompt()

@@ -35,7 +35,8 @@ def jsonFileToKeywordArgs(controller, args):
 
     # Check that the extension of the file is '.json'
     if extension != ".json":
-        raise Exception(f"Using argument option '-j' requires a json file argument. Provided: '{extension}'")
+        file_error = "" if os.path.isfile(filename) else f"\nFile '{filename}' does not exist."
+        raise Exception(f"Using argument option '-j' requires a valid json file as an argument.{file_error}")
 
     # Convert the definition file into a json object
     obj = json.loads(open(filename, "r").read())

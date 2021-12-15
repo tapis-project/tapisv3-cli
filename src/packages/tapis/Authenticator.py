@@ -10,7 +10,6 @@ from utils.Logger import Logger
 
 
 class Authenticator:
-    """Authorization credentials are parsed here."""
     base_url: str
     auth_methods: str
 

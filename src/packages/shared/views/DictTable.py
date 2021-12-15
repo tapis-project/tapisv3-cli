@@ -14,5 +14,10 @@ class DictTable(AbstractView):
         self.data = data
 
     def render(self):
+        if type(self.data) == list:
+            for entry in self.data:
+                print(tabulate(entry.items(), tablefmt="fancy_grid"))
+            return
+
         print(tabulate(self.data.items(), tablefmt="fancy_grid"))
         return

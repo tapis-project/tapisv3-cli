@@ -274,8 +274,8 @@ class BaseController:
                 default=arg_spec.defaults[i],
                 # NOTE This may cause some problems somewhere
                 # We want to allow users to pass default kwarg values of None.
-                # If the default for a givin arg is None, allow nullable
-                nullable=(True if arg_spec.defaults[i] == None else False)
+                # If the default for a givin arg is None, allow null
+                required=(False if arg_spec.defaults[i] == None else True)
             )
             i = i + 1
 

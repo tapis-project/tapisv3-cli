@@ -98,8 +98,10 @@ class TapipyController(BaseController):
             if hasattr(op.request_body, "required"):
                 keyword_args.append("request_body")
 
-            if hasattr(op.query_parameters, "query_parameters"):
-                keyword_args.append("query_parameters")
+            # List all query parameters as keyword arguments
+            if hasattr(op, "query_parameters"):
+                keyword_args = (keyword_args + 
+                    [qp.name for qp in op.query_parameters if qp.required == True])
 
             formatter.add_command(
                 operation_id,
@@ -155,8 +157,15 @@ class TapipyController(BaseController):
     def _validate_kw_args(self):
         """Validates the keyword arguments required by an OpenAPI operation."""
         required_params = []
+        # Path parameters
         if hasattr(self.operation, "path_parameters"):
             for param in self.operation.path_parameters:
+                if param.required:
+                    required_params.append(param.name)
+
+        # Query parameters
+        if hasattr(self.operation, "query_parameters"):
+            for param in self.operation.query_parameters:
                 if param.required:
                     required_params.append(param.name)
 
@@ -175,7 +184,6 @@ class TapipyController(BaseController):
                 dest_file_path = destination_folder
             )
             return f"Uploaded file '{path_to_file}' to {destination_folder}\n"
-            return
         except Exception as e:
             self.logger.error(f"{e.message}\n")
             self.exit(1)
@@ -193,12 +201,19 @@ class TapipyController(BaseController):
         # Prompt the user to select a cmd(operation) to perform
         cmd = prompt.select("Perform action", [ op for op, _ in op_map.items() ], sort=True)
 
-        # Prompt use to provide values for the path parameters. The key and 
+        # Prompt user to provide values for the path parameters. The key and 
         # value of these will be used as keyword arguments
         kw_args = {}
-        params = [param.name for param in op_map[cmd].path_parameters]
+        params = [param for param in op_map[cmd].path_parameters]
+        len(params) > 0 and self.logger.log("Path parameters:")
         for param in params:
-            kw_args[param] = prompt.text(f"{param}")
+            kw_args[param.name] = prompt.text(f"{param.name}", required=param.required)
+
+        # Prompt user to provide values for the query parameters
+        qps = [ qp for qp in op_map[cmd].query_parameters ]
+        len(qps) > 0 and self.logger.log("Query parameters:")
+        for qp in qps:
+            kw_args[qp.name] = prompt.text(f"{qp.name}", required=qp.required)
 
         # If the current operation requires a request body, prompt the user
         # to choose a method to satisfy that request body
@@ -224,25 +239,10 @@ class TapipyController(BaseController):
             obj = self._prompt_editor("Create a request body")
             kw_args = {**kw_args, **{ key:value for key, value in obj}}
         elif method == EACH:
-            self.logger.warn((
-                "You may be required to write raw json for properties with\n"
-                "types 'array' and 'object' and must additionally know the types\n" 
-                "and requirements of their deeply nested elements and properties."
-            ))
-
-            answer = prompt.select(
-                "Continue, provide a json file, or cancel",
-                ["continue", "json file"],
-                cancel=True
-            )
-
-            if answer == "continue":
-                # Prompt the user for each individual property 
-                request_body_kw_args = self._request_body_prompt(
-                    request_body.content["application/json"].schema.properties)
-                kw_args = { **kw_args, **request_body_kw_args }
-            elif answer == "json file":
-                args = self._prompt_json_file()
+            # Prompt the user for each individual property 
+            request_body_kw_args = self._prompt_request_body(request_body)
+            kw_args = { **kw_args, **request_body_kw_args }
+           
 
         return (cmd, kw_args, args)
 
@@ -268,19 +268,23 @@ class TapipyController(BaseController):
     # Iterates through the request body and prompts the user for a value
     # based on the type of value it expect. The prompt values are then transformed
     # from a string to their correct type and stored in kw_args
-    def _request_body_prompt(self, properties):
+    def _prompt_request_body(self, request_body):
+        properties = request_body.content["application/json"].schema.properties
+        required_props = request_body.content["application/json"].schema.required
         kw_args = {}
+        self.logger.debug(properties.values)
         for prop, desc in properties.items():
             # Prompt for primitive types
             if desc.type.value in TRANSFORMS["primitives"]:
-                kw_args[prop] = self._prompt_primitives(prop, desc)
+                required = prop in required_props
+                kw_args[prop] = self._prompt_primitives(prop, desc, required=required)
                 continue
             
             kw_args[prop] = self._prompt_editor(prop)
 
         return kw_args
 
-    def _prompt_primitives(self, prop, desc):
+    def _prompt_primitives(self, prop, desc, required=False):
         # Handle booleans
         if desc.type.value == "boolean":
             # Returns boolean so no need to transform the type
@@ -302,6 +306,7 @@ class TapipyController(BaseController):
             value = prompt.text(
                 prop,
                 description=f"type: {desc.type.value}",
+                required=required,
                 value_type=TRANSFORMS["primitives"][desc.type.value]
             )
 

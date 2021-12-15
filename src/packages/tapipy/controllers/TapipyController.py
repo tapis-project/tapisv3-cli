@@ -162,7 +162,7 @@ class TapipyController(BaseController):
             for param in self.operation.path_parameters:
                 if param.required:
                     required_params.append(param.name)
-                    
+
         # Query parameters
         if hasattr(self.operation, "query_parameters"):
             for param in self.operation.query_parameters:
@@ -240,8 +240,7 @@ class TapipyController(BaseController):
             kw_args = {**kw_args, **{ key:value for key, value in obj}}
         elif method == EACH:
             # Prompt the user for each individual property 
-            request_body_kw_args = self._request_body_prompt(
-                request_body.content["application/json"].schema.properties)
+            request_body_kw_args = self._prompt_request_body(request_body)
             kw_args = { **kw_args, **request_body_kw_args }
            
 
@@ -269,19 +268,23 @@ class TapipyController(BaseController):
     # Iterates through the request body and prompts the user for a value
     # based on the type of value it expect. The prompt values are then transformed
     # from a string to their correct type and stored in kw_args
-    def _request_body_prompt(self, properties):
+    def _prompt_request_body(self, request_body):
+        properties = request_body.content["application/json"].schema.properties
+        required_props = request_body.content["application/json"].schema.required
         kw_args = {}
+        self.logger.debug(properties.values)
         for prop, desc in properties.items():
             # Prompt for primitive types
             if desc.type.value in TRANSFORMS["primitives"]:
-                kw_args[prop] = self._prompt_primitives(prop, desc)
+                required = prop in required_props
+                kw_args[prop] = self._prompt_primitives(prop, desc, required=required)
                 continue
             
             kw_args[prop] = self._prompt_editor(prop)
 
         return kw_args
 
-    def _prompt_primitives(self, prop, desc):
+    def _prompt_primitives(self, prop, desc, required=False):
         # Handle booleans
         if desc.type.value == "boolean":
             # Returns boolean so no need to transform the type
@@ -303,6 +306,7 @@ class TapipyController(BaseController):
             value = prompt.text(
                 prop,
                 description=f"type: {desc.type.value}",
+                required=required,
                 value_type=TRANSFORMS["primitives"][desc.type.value]
             )
 

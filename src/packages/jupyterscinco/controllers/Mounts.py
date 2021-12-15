@@ -13,7 +13,7 @@ class Mounts(JupSciController):
         path = prompt.text("path", description="[required]")
         mount_path = prompt.text("mountPath", description="[required]")
         readonly = prompt.select_bool("readOnly")
-        server = prompt.text("server", nullable=True)
+        server = prompt.text("server", required=False)
 
         mount = {
             "type": mount_type, 

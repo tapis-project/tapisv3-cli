@@ -98,7 +98,11 @@ class TapipyController(BaseController):
             if hasattr(op.request_body, "required"):
                 keyword_args.append("request_body")
 
-            if hasattr(op.query_parameters, "query_parameters"):
+            # Only show if 1 or more query params required
+            if (
+                hasattr(op, "query_parameters")
+                and len([qp for qp in op.query_parameters if qp.required == True]) > 0
+            ):
                 keyword_args.append("query_parameters")
 
             formatter.add_command(
@@ -193,12 +197,19 @@ class TapipyController(BaseController):
         # Prompt the user to select a cmd(operation) to perform
         cmd = prompt.select("Perform action", [ op for op, _ in op_map.items() ], sort=True)
 
-        # Prompt use to provide values for the path parameters. The key and 
+        # Prompt user to provide values for the path parameters. The key and 
         # value of these will be used as keyword arguments
         kw_args = {}
-        params = [param.name for param in op_map[cmd].path_parameters]
+        params = [param for param in op_map[cmd].path_parameters]
+        len(params) > 0 and self.logger.log("Path parameters:")
         for param in params:
-            kw_args[param] = prompt.text(f"{param}")
+            kw_args[param.name] = prompt.text(f"{param.name}", required=param.required)
+
+        # Prompt user to provide values for the query parameters
+        qps = [ qp for qp in op_map[cmd].query_parameters ]
+        len(qps) > 0 and self.logger.log("Query parameters:")
+        for qp in qps:
+            kw_args[qp.name] = prompt.text(f"{qp.name}", required=qp.required)
 
         # If the current operation requires a request body, prompt the user
         # to choose a method to satisfy that request body
@@ -224,25 +235,11 @@ class TapipyController(BaseController):
             obj = self._prompt_editor("Create a request body")
             kw_args = {**kw_args, **{ key:value for key, value in obj}}
         elif method == EACH:
-            self.logger.warn((
-                "You may be required to write raw json for properties with\n"
-                "types 'array' and 'object' and must additionally know the types\n" 
-                "and requirements of their deeply nested elements and properties."
-            ))
-
-            answer = prompt.select(
-                "Continue, provide a json file, or cancel",
-                ["continue", "json file"],
-                cancel=True
-            )
-
-            if answer == "continue":
-                # Prompt the user for each individual property 
-                request_body_kw_args = self._request_body_prompt(
-                    request_body.content["application/json"].schema.properties)
-                kw_args = { **kw_args, **request_body_kw_args }
-            elif answer == "json file":
-                args = self._prompt_json_file()
+            # Prompt the user for each individual property 
+            request_body_kw_args = self._request_body_prompt(
+                request_body.content["application/json"].schema.properties)
+            kw_args = { **kw_args, **request_body_kw_args }
+           
 
         return (cmd, kw_args, args)
 

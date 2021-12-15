@@ -16,7 +16,7 @@ class Prompt:
         message: str,
         secret: bool = False,
         default: any = None, # TODO limit types (no objects, dicts, arrays, etc)
-        nullable: bool = False,
+        required: bool = True,
         description: str = None,
         value_type: callable = None
     ) -> str:
@@ -33,6 +33,10 @@ class Prompt:
 
         modified_message = message
 
+        # Modify message with red astrisk if required
+        if required == True:
+            modified_message = s.danger("*") + modified_message
+
         # Add description to message
         if description is not None:
             modified_message = modified_message + s.muted(f" {description}")
@@ -44,20 +48,23 @@ class Prompt:
         modified_message = modified_message + ": "
 
         # Prompt user for input
-        value = prompt(modified_message)
+        try:
+            value = prompt(modified_message)
+        except:
+            sys.exit(1)
 
         # If no value is provided, set the value to the default value
         if bool(value) == False and default is not None:
             value = default
 
-        # Reprompt if not nullable and user provides null value
-        if nullable is False and bool(value) == False:
-            print("You must provide a value.")
+        # Reprompt if required and user provides null value
+        if required and bool(value) == False:
+            print("Input required")
             return self.text(
                 message,
                 secret=secret,
                 default=default,
-                nullable=nullable,
+                required=required,
                 description=description,
                 value_type=value_type
             )
@@ -69,7 +76,7 @@ class Prompt:
                 message,
                 secret=secret,
                 default=default,
-                nullable=nullable,
+                required=required,
                 description=description,
                 value_type=value_type
             )
@@ -114,7 +121,11 @@ class Prompt:
             ),
         ]
 
-        answer = inquirer.prompt(questions, theme=self.theme)["choice"]
+        try:
+            answer = inquirer.prompt(questions, theme=self.theme)["choice"]
+        except:
+            
+            sys.exit(1)
 
         if answer == "confirm":
             return True
@@ -153,7 +164,11 @@ class Prompt:
             ),
         ]
 
-        answer = inquirer.prompt(questions, theme=self.theme)["choice"]
+        try:
+            answer = inquirer.prompt(questions, theme=self.theme)["choice"]
+        except:
+            sys.exit(1)
+        
         if answer == cancel_string:
             sys.exit(1)
 
@@ -170,8 +185,12 @@ class Prompt:
                 carousel=carousel
             ),
         ]
-        
-        return inquirer.prompt(questions, theme=self.theme)["choice"]
+        try:
+            value = inquirer.prompt(questions, theme=self.theme)["choice"]
+        except:
+            sys.exit(1)
+
+        return value
 
     def checkbox(self, message, choices):
         message = message + s.muted(" Space to select. Enter to confirm")
@@ -182,7 +201,12 @@ class Prompt:
             ) 
         ]
 
-        return inquirer.prompt(questions, theme=self.theme)["choice"]
+        try:
+            value = inquirer.prompt(questions, theme=self.theme)["choice"]
+        except:
+            sys.exit(1)
+
+        return value
 
     def editor(self, message, description: str = None):
         modified_message = message
@@ -194,7 +218,13 @@ class Prompt:
         questions = [
             inquirer.Editor('text', message=modified_message)
         ]
-        return inquirer.prompt(questions, theme=self.theme)["text"]
+
+        try:
+            value = inquirer.prompt(questions, theme=self.theme)["text"]
+        except:
+            sys.exit(1)
+
+        return value
 
     def _validate_type(self, type_fn, value):
         try:

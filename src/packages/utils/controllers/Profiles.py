@@ -45,6 +45,19 @@ class Profiles(BaseController):
             if value is not None:
                 self.config.add(f"profile.{username}", item, value)
 
+    def remove(self):
+        profiles = self.config.get_section_keys("profiles")
+        profile = prompt.select(f"Choose profile to remove", profiles)
+        answer = prompt.confirm(f"Are you sure you want to delete {profile}?")
+        
+        if answer:
+            self.config.remove_entry("profiles", profile)
+            self.logger.log(f"Profile {profile} removed")
+            self.exit(1)
+
+        self.logger.log("Action cancelled. Profile not deleted")
+        self.exit(1)
+
     def list(self):
         profiles = self.config.get_section_keys("profiles")
         self.set_view("ListItems", profiles)

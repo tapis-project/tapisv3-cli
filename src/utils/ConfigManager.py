@@ -62,6 +62,16 @@ class ConfigManager:
     
     def has_key(self, section, key):
         return (self.has_section(section) and key in self.parser[section])
+
+    def remove_entry(self, section, key):
+        if self.has_key(section, key):
+            profiles = self.get_section(section)
+            del profiles[key]
+            self.parser.remove_section(section)
+            self.add_section(section)
+            for key, value in profiles.items():
+                self.add(section, key, value)
+            
                 
     def get(self, section, key):
         if self.has_key(section, key):

@@ -1,5 +1,4 @@
 import sys
-from typing import Union
 
 from tapipy.tapis import Tapis
 
@@ -39,9 +38,14 @@ class Authenticator:
                 )
                 client.get_tokens()
                 return client
-            except:
-                e = sys.exc_info()[0]
-                self.logger.error(e)
+            except Exception as e:
+                # TODO Make better
+                error = e
+                if hasattr(e, "message"):
+                    error = e.message
+                self.logger.error(error)
+                sys.exit(1)
+
         else:
             raise ValueError(f"Invalid auth_method: {profile.auth_method}. Valid auth_method: {settings.AUTH_METHODS}")
 

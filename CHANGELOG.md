@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Access to settings and config management on the base controller class
 
 ### Fixed
+- Hotfix: handle error properly for bad credentials in Authenticator
+- Hotfix: remove .DS_store and add to git ignore
 - Router: Check if aliases object exists in aliases module before getattr
 
 ### Removed

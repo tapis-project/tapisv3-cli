@@ -49,6 +49,12 @@ option_registrar.register("TapipyController", [
         params={"filename": {type: str}},
         handler="jsonFileToKeywordArgs"
     ),
+    Option("-q",
+        aliases=["-quiet"],
+        description="returns only an id if there is one",
+        context="result",
+        handler="quiet",
+    ),
     Option("-r",
         aliases=["-raw"],
         description="prints a string representation of the result object",

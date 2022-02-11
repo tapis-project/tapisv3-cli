@@ -45,6 +45,10 @@ def jsonFileToKeywordArgs(controller, args):
 
     return args
 
+def quiet(controller, result):
+    controller.set_view("QuietView", result)
+    return None
+
 
 def resultToFile(controller, result):
     """

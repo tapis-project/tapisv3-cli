@@ -1,5 +1,4 @@
-"""The front-controller the TAPIs command line tool."""
-
+"""The front-controller the TAPIS command line tool."""
 import sys
 
 from core.Router import Router
@@ -11,7 +10,7 @@ def main():
     (controller, args) = Router().resolve(sys.argv[1:])
     try:
         controller.invoke(args)
-    except TypeError as e:
+    except Exception as e:
         logger.error(e)
 
 

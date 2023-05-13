@@ -13,5 +13,5 @@ class Configure(BaseController):
     # Use this method to set configs specific to your package using the ConfigManager
     # instance(config)
     def index(self):
-        if self.config.has_section(f"package.{self.get_package()}") == False:
-            self.config.add_section(f"package.{self.get_package()}")
+        if self.config_manager.has_section(f"package.{self.get_package()}") == False:
+            self.config_manager.add_section(f"package.{self.get_package()}")

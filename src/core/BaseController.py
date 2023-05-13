@@ -1,7 +1,4 @@
-import re
-import sys
-import os
-import inspect
+import re, sys, os, inspect
 from typing import List, Dict, Any
 
 from core.AbstractView import AbstractView
@@ -13,7 +10,7 @@ from utils.module_loader import class_loader as load
 from conf.settings import ACTION_FILTER_SUFFIX
 from helpers.help_formatter import help_formatter as formatter
 from utils.Prompt import prompt
-from utils.ConfigManager import configManager as config
+from utils.ConfigManager import config_manager
 from conf.settings import PACKAGES_DIR
 from importlib import import_module
 
@@ -45,7 +42,7 @@ class BaseController:
         self.settings_pattern = r"([A-Z]+[A-Z_]*)"
         self.view = None
         self.is_action = False
-        self.config = config
+        self.config_manager = config_manager
         self.settings = self.init_settings()
 
     def before(self):
@@ -128,7 +125,7 @@ class BaseController:
 
         return
 
-    def parse_args(self, args: list[str]):
+    def parse_args(self, args: List[str]):
         """Parses the arguments found in the input CLI command."""
         pos_args = []
         arg_opt_indices = []
@@ -187,13 +184,13 @@ class BaseController:
 
         return pos_args
 
-    def set_view(self, name: str, data: Any) -> None:
+    def set_view(self, name: str, data: Any, *args, **kwargs) -> None:
         """Loads a view if it exists"""
         view_class = load(f"packages.shared.views.{name}", name)
         if view_class is None:
             raise Exception(f"View '{name}' does not exist")
 
-        self.view = view_class(data)
+        self.view = view_class(data, *args, **kwargs)
         return
 
     # TODO add tab autocomplete for files and dirs
@@ -282,13 +279,13 @@ class BaseController:
         return ( arg_vals, kwarg_vals )
 
     def get_package(self):
-        return self.config.get("current", "package")
+        return self.config_manager.get("current", "package")
     
     def get_config(self, key):
-        return self.config.get(f"package.{self.get_package()}", key)
+        return self.config_manager.get(f"package.{self.get_package()}", key)
 
     def set_config(self, key, value):
-        self.config.add(f"package.{self.get_package()}", key, value)
+        self.config_manager.add(f"package.{self.get_package()}", key, value)
 
 
 

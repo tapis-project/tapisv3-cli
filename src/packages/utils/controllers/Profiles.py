@@ -1,8 +1,7 @@
 from core.BaseController import BaseController
 from utils.Prompt import prompt
-from conf.settings import AUTH_METHODS, PASSWORD
-from core.AuthCredential import AuthCredential
 from utils.Styles import styler as s
+
 
 class Profiles(BaseController):
     def __init__(self):
@@ -12,55 +11,57 @@ class Profiles(BaseController):
         self.list()
 
     def use(self):
-        current_profile = self.config.get("current", "profile")
-        string = s.muted(f"[{current_profile}]")
-        profiles = self.config.get_section_keys("profiles")
-        profile = prompt.select(f"Choose a profile {string}", profiles)
-        self.config.add("current", "profile", profile)
-
-        self.logger.complete(f"Using profile '{profile}'")
-
-    def add(self):
-        self.logger.log("Create a new profile")
-        # Prompt the username to create a username and password
-        username = prompt.text("Username")
-        if self.config.has_key(f"profiles", username):
-            self.logger.error(f"'{username}' is already a configured profile")
-            self.exit(1)
-
-        self.config.add("profiles", username, "enabled")
-        self.config.add_section(f"profile.{username}")
-
-        auth_method = prompt.select("Choose an authentication method", AUTH_METHODS)
-
-        credential = None
-        if auth_method == PASSWORD:
-            password = prompt.text("Password 🔒", secret=True)
-            credential = AuthCredential(password=password)
-
-        self.config.add(f"current", "profile", username)
-        self.config.add(f"profile.{username}", "auth_method", auth_method)
+        current_user = self.config_manager.get_current_user()
+        profiles = self.config_manager.list_profiles()
+        if len(profiles) == 0:
+            self.logger.warn("No profiles to choose from. Run `tapis login` to create a profile")
+            return
         
-        for item, value in credential.__dict__.items():
-            if value is not None:
-                self.config.add(f"profile.{username}", item, value)
+        usernames = [profile["username"] for profile in profiles]
+
+        current_user_str = s.muted(f"[{current_user}]")
+        new_current_user = prompt.select(
+            f"Choose a profile: {current_user_str}",
+            [username for username in usernames]
+        )
+        
+        self.config_manager.set_current_user(new_current_user)
+
+        self.logger.complete(f"Using profile for user '{new_current_user}'")
 
     def remove(self):
-        profiles = self.config.get_section_keys("profiles")
-        profile = prompt.select(f"Choose profile to remove", profiles)
-        answer = prompt.confirm(f"Are you sure you want to delete {profile}?")
+        profiles = self.config_manager.list_profiles()
+        if len(profiles) == 0:
+            self.logger.log("No profiles to remove")
+            return
+
+        username = prompt.select(f"Choose profile to remove", [profile["username"] for profile in profiles])
+        confirmed = prompt.confirm(f"Are you sure you want to delete {username}?")
         
-        if answer:
-            self.config.remove_entry("profiles", profile)
-            self.logger.log(f"Profile {profile} removed")
+        if confirmed:
+            self.config_manager.delete_profile(username)
+            self.logger.log(f"Profile for {username} deleted")
             self.exit(1)
 
         self.logger.log("Action cancelled. Profile not deleted")
         self.exit(1)
 
     def list(self):
-        profiles = self.config.get_section_keys("profiles")
-        self.set_view("ListItems", profiles)
+        # Fetch the profiles from the config
+        profiles = self.config_manager.list_profiles()
+        if len(profiles) == 0:
+            self.logger.info("No profiles found")
+            return
+
+        self.set_view("DictTable", [
+                {
+                    **profile,
+                    "jwt": "..." + profile["jwt"][-16:]
+                } for profile in profiles
+            ],
+            headers={"username": "username", "base_url": "base_url", "jwt": "jwt"}
+        )
+
         self.view.render()
 
     

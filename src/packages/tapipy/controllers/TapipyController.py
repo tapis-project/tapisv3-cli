@@ -188,7 +188,6 @@ class TapipyController(BaseController):
             self.logger.error(f"{e.message}\n")
             self.exit(1)
 
-    # TODO add tab autocomplete for files and dirs
     # Prompts the user to select an operation id from a drop down, then
     # prompts them the input values for the required keyword arguments
     def _select_Action(self) -> None:
@@ -220,14 +219,14 @@ class TapipyController(BaseController):
         request_body = op_map[cmd].request_body
         method = None
         JSON_FILE = "provide a json file"
-        EACH = "prompt for each property"
+        # EACH = "prompt for each property"
         EDITOR = "build request body in an editor"
         if hasattr(request_body, "required"):
             self.logger.log("This operations requires a request body")
             method = prompt.select(f"Choose a method",
                 [
                     JSON_FILE,
-                    EACH,
+                    # EACH,
                     EDITOR,
                 ]
             )
@@ -238,10 +237,10 @@ class TapipyController(BaseController):
         elif method == EDITOR:
             obj = self._prompt_editor("Create a request body")
             kw_args = {**kw_args, **{ key:value for key, value in obj}}
-        elif method == EACH:
-            # Prompt the user for each individual property 
-            request_body_kw_args = self._prompt_request_body(request_body)
-            kw_args = { **kw_args, **request_body_kw_args }
+        # elif method == EACH:
+        #     # Prompt the user for each individual property 
+        #     request_body_kw_args = self._prompt_request_body(request_body)
+        #     kw_args = { **kw_args, **request_body_kw_args }
            
 
         return (cmd, kw_args, args)

@@ -11,7 +11,7 @@ from utils.cmd_to_class import cmd_to_class
 from utils.str_to_cmd import str_to_cmd
 from conf.settings import DEFAULT_PACKAGE, ACTION_FILTER_SUFFIX, PACKAGES_DIR
 from packages.utils.aliases import aliases as utils_aliases
-from utils.ConfigManager import configManager as config
+from utils.ConfigManager import config_manager
 
 
 class Router:
@@ -64,7 +64,7 @@ class Router:
             sys.exit()
 
         # Set the package
-        current = config.get("current", "package")
+        current = config_manager.get_current_package()
         package = current if current is not None else DEFAULT_PACKAGE
 
         ################### STEPS TO CONTROLLER RESOLUTION ####################

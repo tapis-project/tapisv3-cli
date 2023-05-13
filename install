@@ -1,0 +1,90 @@
+#!/bin/bash
+
+function oneline() {
+    echo -ne "\033[2K" ; printf "\r$1"
+}
+
+echo "Installing TapisV3 CLI"
+
+# Detect if patch install or full install
+installType="complete"
+if [ "$1" == "patch" ]; then
+    installType="patch"
+elif [ "$1" == "fullpatch" ]; then
+    installType="fullpatch"
+fi
+
+# Detect the OS
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     os=linux;;
+    Darwin*)    os=mac;;
+    *)          os=$unameOut
+esac
+oneline "Detected OS: $os"
+
+# Kill install if OS not linux or mac
+if [ $os != mac ] && [ $os != linux ]; then
+    oneline "Operating system not supported: '$os' - Cancelling installation"
+    exit 1
+fi
+
+# Set the rcfile based on OS
+rcfile="$HOME/.bashrc"
+if [ $os == mac ]; then
+    rcfile="$HOME/.zshrc"
+fi
+
+# Source code directory
+libDir='/usr/local/lib/tapis'
+# Configs directory
+configDir='/usr/local/etc/tapis'
+
+# Create directories that will house the source code and config files
+oneline "Creating directories:"
+directoriesToCreate=($libDir $configDir)
+for directory in "${directoriesToCreate[@]}"; do
+    oneline $directory
+    mkdir -p $directory
+done
+
+# Copy the source code from the current directory to the source code directory
+oneline "Copying source code to '$libDir'"
+projectDir="$(pwd)"
+rsync -a "${projectDir}/src" $libDir
+rsync -a "${projectDir}/requirements.txt" "${libDir}/src"
+
+# Create the config.json that will house the cli configurations
+oneline "Generating config in '$configDir'"
+if [ $installType == "complete" ]; then
+    touch "${configDir}/config.json"
+    rsync "${projectDir}/config.json" "${configDir}/config.json"
+fi
+
+tapisEntrypoint="${libDir}/src/tapis.sh"
+oneline "Making tapis.sh executable"
+chmod +x $tapisEntrypoint
+
+if [ $installType == "fullpatch" ] || [ $installType == "complete" ]; then
+    oneline "Creating virtual envrionment"
+    cd "${libDir}/src"
+    python3 -m venv env
+    source env/bin/activate
+
+    oneline "Install python dependencies in virtual env"
+    pip install -r requirements.txt
+    pip list
+    deactivate
+fi
+
+if [ $installType == "complete" ]; then
+    echo "Adding alias for 'tapis': $rcfile"
+    echo "alias tapis='${tapisEntrypoint}'" >> $rcfile
+fi
+
+echo ""
+echo "################## IMPORTANT #########################################"
+echo "To complete installation, source your rcfile by running the following:"
+echo "source $rcfile"
+echo "######################################################################"
+echo ""

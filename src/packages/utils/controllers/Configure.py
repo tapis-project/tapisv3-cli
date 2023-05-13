@@ -13,13 +13,13 @@ class Configure(BaseController):
 
         # Set env and tenant
         env = prompt.select("Tapis Env", ENVS)
-        self.config.add("package.tapis", "env", env)
+        self.config_manager.add("package.tapis", "env", env)
 
         tenant = prompt.select("Tapis Tenant", [ "tacc" ])
-        self.config.add("package.tapis", "tenant", tenant)
+        self.config_manager.add("package.tapis", "tenant", tenant)
 
         # Set the current package to tapis
-        self.config.add("current", "package", "tapipy")
+        self.config_manager.add("current", "package", "tapipy")
 
         return
     

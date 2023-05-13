@@ -12,8 +12,6 @@ class Use(BaseController):
     def index(self):
         self.profile()
         self.package()
-        self.tenant()
-        self.env()
 
     def package(self):
         packages_controller = Packages()
@@ -22,13 +20,5 @@ class Use(BaseController):
     def profile(self):
         profile_controller = Profiles()
         profile_controller.use()
-
-    def env(self):
-        env = prompt.select("Tapis Env", ENVS)
-        self.config.add("package.tapis", "env", env)
-
-    def tenant(self):
-        tenant = prompt.select("Tapis Tenant", [ "tacc" ])
-        self.config.add("package.tapis", "tenant", tenant)
 
     

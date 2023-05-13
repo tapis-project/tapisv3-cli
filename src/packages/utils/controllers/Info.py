@@ -6,9 +6,15 @@ class Info(BaseController):
         BaseController.__init__(self)
 
     def index(self):
-        self.set_view("DictTable", {
-            "Profile": self.config.get("current", "profile"),
-            "Package": self.config.get("current", "package"),
-            "Auth method": self.config.get("current", "auth_method")
-        })
+        current_user = self.config_manager.get_current_user()
+        current_package = self.config_manager.get_current_package()
+        profile = self.config_manager.get_profile(current_user)
+        self.set_view("DictTable", [{
+                "current_user": current_user,
+                "current_package": current_package,
+                "base_url": profile["base_url"],
+                "jwt": "..." + profile["jwt"][-16:]
+            }], 
+            headers={"current_user": "current_user", "current_package": "current_package", "base_url": "base_url", "jwt": "jwt"}
+        )
         self.view.render()

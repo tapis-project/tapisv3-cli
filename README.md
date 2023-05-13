@@ -2,30 +2,26 @@
 
 TapisV3 CLI is a command line interface tool written in python that wraps the tapipy library to enable user to make fast and efficient calls to tapisv3 APIs.
 
-## Installation
-tapis-cli can be set up and run in 2 ways; Locally, and in a Docker container.
-
-### Local setup
+### Local installation
 **Step 1: Clone the repo**
-`https://github.com/tapis-project/tapisv3-cli.git`
+`git clone https://github.com/tapis-project/tapisv3-cli.git`
 
 **Step 3: Run the install script located in the project root directory**
+`cd tapisv3-cli`
+
 `./install`
 
 **Step 4: Source your .bashrc/.zshrc**
 `source ~/.bashrc`
 
-### Container setup
-NOTE: You must have docker installed locally for this to work
-`cd` into the root directory of the project
+### Docker install
 
-## Build the image
-`docker build -f .docker/Dockerfile -t tapisv3-cli:latest .`
+**Step 1: Build the image**
+`docker pull tapis/tapisv3-cli:latest`
 
-## Run the container interactively
-docker run -it tapisv3-cli:latest bash
+**Step 2: Run the container interactively**
+`docker run -it tapis/tapisv3-cli:latest bash`
 
-## Configuring Tapis CLI
-Tapis CLI must first be configured. Run the following command and add your credentials\
-$`tapis configure`
+**Step 3: Login to Tapis**
+`tapis login`
 

@@ -10,6 +10,7 @@ TapisV3 CLI is a command line interface tool written in python that wraps the ta
 **Step 3: Run the install script located in the project root directory**
 
 `cd tapisv3-cli`
+
 `./install`
 
 **Step 4: Source your .bashrc/.zshrc**

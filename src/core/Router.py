@@ -39,11 +39,16 @@ class Router:
         return None
 
     def resolve(self, args: List[str]) -> Tuple[BaseController, List[str]]:
+        # get the current package
+        current_package = config_manager.get_current_package()
+        package = current_package if current_package is not None else DEFAULT_PACKAGE
+        
         try:
-            # Controller name is the first argument
-            if len(args) == 0:
-                raise Exception("No category provided")
-            category: str = args.pop(0)
+            # # Controller name is the first argument
+            # if len(args) == 0:
+            #     args = [package]
+
+            category: str = args.pop(0) if len(args) > 0 else "index"
 
             # Parse the rest of the arguments and extract the values
             (cmd, cmd_options, kw_args, args) = self._resolve_args(args)
@@ -62,10 +67,6 @@ class Router:
         except Exception as e:
             logger.error(e)
             sys.exit()
-
-        # Set the package
-        current = config_manager.get_current_package()
-        package = current if current is not None else DEFAULT_PACKAGE
 
         ################### STEPS TO CONTROLLER RESOLUTION ####################
         """
@@ -112,12 +113,13 @@ class Router:
             # Return the controller with command and options set
             return (controller, args)
 
-        # If tapipy is the current package, invoke the operation on the resource.
+        # If tapipy is the current package and category is not index, invoke the 
+        # operation on the resource.
         # NOTE Tapipy is a special package the breaks the pattern of other packages.
         # As a consequence, the 'category' and 'cmd' do not correlate to a controller 
         # and method respectively. The category is the 
         # resource(for which an alias may exist) and the cmd is the operation
-        if package == "tapipy":
+        if package == "tapipy" and category != "index":
             controller = TapipyController()
             # TODO resolve aliases for tapipy package resource. Should be done
             # within the TapipyController itself

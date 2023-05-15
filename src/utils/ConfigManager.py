@@ -125,10 +125,11 @@ class ConfigManager:
 
     def update_profile(self, username, base_url=None, jwt=None):
         profile = self.get_profile(username)
-        profile.update({
+        profile = {
+            **profile,
             "base_url": base_url if base_url != None else profile["base_url"],
             "jwt": jwt if jwt != None else profile["jwt"]
-        })
+        }
 
         # Get the config, insert the updated profile, and remove the old
         config = self.load()
@@ -137,7 +138,7 @@ class ConfigManager:
             if profile["username"] != username:
                 modified_profiles.append(profile)
 
-        self.write(config)
+        self.write({**config, "profiles": modified_profiles})
 
     def delete_profile(self, username):
         config = self.load()

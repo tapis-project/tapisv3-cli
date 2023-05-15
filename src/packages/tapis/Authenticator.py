@@ -14,9 +14,7 @@ class Authenticator:
 
     def authenticate(self):
         # TODO NOTE FIXME Import taking a long time. move to top when resolved
-        start_time = time.time()
         from tapipy.tapis import Tapis
-        print("TODO - Import taking", time.time() - start_time, "seconds")
         current_user = config_manager.get_current_user()
 
         if current_user == None:

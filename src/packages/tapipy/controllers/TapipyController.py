@@ -38,7 +38,6 @@ class TapipyController(BaseController):
         return self._select_Action()
 
     def invoke(self, args) -> None:
-        """Overwrites the execute method to invoke Tapipy Operations directly."""
         args = self.parse_args(args)
         result = None
 
@@ -116,9 +115,10 @@ class TapipyController(BaseController):
         """Gets the resource for the OpenAPI command."""
         try:
             # TODO Remove once files resource fully implements insert operation
-            # Add convenience upload method to operation_ids for files
+            # and removes the upload method
             if resource_name == "upload":
                 raise Exception()
+
             self.resource = getattr(self.client, resource_name)
         except:
             self.logger.error(f"{type(self).__name__} has no category '{resource_name}'\n")
@@ -138,12 +138,6 @@ class TapipyController(BaseController):
 
         if operation_name == "help":
             self.operation = self._help
-            return
-
-        # TODO Remove once files resource fully implements insert operation
-        # Set the operation to the convenience function
-        if operation_name == "upload" and self.resource.resource_name == "files":
-            self.operation = self._upload
             return
 
         try:
@@ -222,7 +216,7 @@ class TapipyController(BaseController):
         # EACH = "prompt for each property"
         EDITOR = "build request body in an editor"
         if hasattr(request_body, "required"):
-            self.logger.log("This operations requires a request body")
+            self.logger.log("This operation requires a request body")
             method = prompt.select(f"Choose a method",
                 [
                     JSON_FILE,

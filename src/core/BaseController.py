@@ -19,15 +19,15 @@ class BaseController:
     """
     Base class for categories.
     """
-    option_set: type[OptionSet]
+    option_set: OptionSet
     cmd_options: list
     kw_args: Dict[str, str]
     arg_options: Dict[str, Dict[str, str]]
     cmd: str
     override_exec: bool
-    logger: type[Logger]
+    logger: Logger
     arg_option_tag_pattern: str
-    view: type[AbstractView]
+    view: AbstractView
     is_action: bool
 
     def __init__(self):

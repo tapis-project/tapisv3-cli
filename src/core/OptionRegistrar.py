@@ -6,7 +6,7 @@ from core.OptionSet import OptionSet
 
 class OptionRegistrar:
     """The registrar allows users to reigster new options and view current ones."""
-    option_sets: Dict[str, type[OptionSet]] = {}
+    option_sets: Dict[str, OptionSet] = {}
     registered_names = []
     registered_aliases = []
 
@@ -15,7 +15,7 @@ class OptionRegistrar:
         self.registered_names = []
         self.registered_aliases = []
 
-    def register(self, controller: str, options: List[type[Option]]) -> None:
+    def register(self, controller: str, options: List[Option]) -> None:
         """Options can be registered with this method."""
         # Do not allow options to be registered for a single controller more than once
         if controller in self.option_sets.keys():
@@ -48,7 +48,7 @@ class OptionRegistrar:
 
         return
 
-    def get_option_set(self, controller) -> type[OptionSet]:
+    def get_option_set(self, controller) -> OptionSet:
         if controller in self.option_sets.keys():
             return self.option_sets[controller]
 

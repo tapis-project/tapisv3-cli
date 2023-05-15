@@ -7,7 +7,7 @@ from packages.tapis.Authenticator import Authenticator as Auth
 
 
 class TapisController(BaseController):
-    client: type[Tapis]
+    client: Tapis
 
     def __init__(self):
         BaseController.__init__(self)

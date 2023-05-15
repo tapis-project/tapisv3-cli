@@ -165,7 +165,7 @@ class Router:
         if has_category or bool(aliased_category):
             # Import the current package controller
             module = import_module(f"packages.{package}.controllers.{cmd_to_class(category)}", "./" )
-            controller_class: type[BaseController] = getattr(module, f"{cmd_to_class(category)}")
+            controller_class: BaseController = getattr(module, f"{cmd_to_class(category)}")
                 
             # The controller class has a method by the command name.
             # Instantiate the controller class

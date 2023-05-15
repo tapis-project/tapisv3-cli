@@ -36,9 +36,11 @@ if [ $os == mac ]; then
 fi
 
 # Source code directory
-libDir='/usr/local/lib/tapis'
+# libDir='/usr/local/lib/tapis'
+libDir=~/tapis/v3
 # Configs directory
-configDir='/usr/local/etc/tapis'
+# configDir='/usr/local/etc/tapis'
+configDir=~/tapis/v3/configs
 
 # Create directories that will house the source code and config files
 oneline "Creating directories:"

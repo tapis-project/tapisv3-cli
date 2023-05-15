@@ -21,11 +21,11 @@ class ConfigManager:
         self.logger = Logger()
         self.package = None
 
-         # If the configs.ini specified in the settings does not exist,
-        # create it.
-        if not os.path.isfile(settings.CONFIG_FILE):
-            self.logger.log(f"Creating config file '{settings.CONFIG_FILE}'\n")
-            self.create_config_file()
+        #  # If the configs.ini specified in the settings does not exist,
+        # # create it.
+        # if not os.path.isfile(settings.CONFIG_FILE):
+        #     self.logger.log(f"Creating config file '{settings.CONFIG_FILE}'\n")
+        #     self.create_config_file()
 
     def create_config_file(self):
         head, _ = os.path.split(settings.CONFIG_FILE)

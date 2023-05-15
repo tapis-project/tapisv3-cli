@@ -29,6 +29,10 @@ LOG_LEVEL_DEBUG = 3
 
 LOG_LEVEL = LOG_LEVEL_DEBUG
 
-CONFIG_FILE = f"/usr/local/etc/tapis/config.json"
+CONFIG_FILE = os.path.join(
+    os.path.expanduser("~"),
+    "tapis/v3/configs/config.json"
+)
+
 DEFAULT_CONFIG_FILE = CONFIG_FILE
 

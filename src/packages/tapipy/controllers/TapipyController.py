@@ -192,7 +192,7 @@ class TapipyController(BaseController):
             op_map[operation_name] = getattr(self.resource, operation_name)
 
         # Prompt the user to select a cmd(operation) to perform
-        cmd = prompt.select("Perform action", [ op for op, _ in op_map.items() ], sort=True)
+        cmd = prompt.select("Select an operation", [ op for op, _ in op_map.items() ], sort=True)
 
         # Prompt user to provide values for the path parameters. The key and 
         # value of these will be used as keyword arguments

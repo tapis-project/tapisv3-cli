@@ -8,7 +8,7 @@ class Index(TapipyController):
 
     def invoke(self, *_, **__):
         # Prompt the user to select resource to perform
-        resource_name = prompt.select("Perform action", self.client.resource_dicts.keys(), sort=True)
+        resource_name = prompt.select("Select an API", self.client.resource_dicts.keys(), sort=True)
         self.set_resource(resource_name)
         (cmd, kw_args, args) = self.index()
 

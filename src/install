@@ -4,6 +4,12 @@ function oneline() {
     echo -ne "\033[2K" ; printf "\r$1"
 }
 
+function sync() {
+    echo $0
+    echo $1
+    rsync -a $0 $1
+}
+
 echo "Installing TapisV3 CLI"
 
 # Detect if patch install or full install
@@ -54,14 +60,14 @@ done
 oneline "Copying source code to '$libDir'"
 projectDir="$(pwd)"
 
-rsync -a "${projectDir}/src" $libDir
-rsync -a "${projectDir}/requirements.txt" "${libDir}/src"
+sync "${projectDir}/src" $libDir
+sync "${projectDir}/requirements.txt" "${libDir}/src"
 
 # Create the config.json that will house the cli configurations
 oneline "Generating config in '$configDir'"
 if [ $installType == "complete" ]; then
     touch "${configDir}/config.json"
-    rsync "${projectDir}/config.json" "${configDir}/config.json"
+    sync "${projectDir}/config.json" "${configDir}/config.json"
 fi
 
 tapisEntrypoint="${libDir}/src/tapis.sh"

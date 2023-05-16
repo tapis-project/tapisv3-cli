@@ -5,7 +5,7 @@ from importlib import import_module
 from typing import List, Tuple, Dict
 
 from core.BaseController import BaseController
-from packages.tapipy.controllers.TapipyController import TapipyController
+from packages.tapis.controllers.TapipyController import TapipyController
 from utils.Logger import logger
 from utils.cmd_to_class import cmd_to_class
 from utils.str_to_cmd import str_to_cmd
@@ -73,11 +73,11 @@ class Router:
         - Check the 'utils' package for a controller with a method 
         that corresponds to the provded args. Dispatch if found.
 
-        - If a utils controller is not found, check the 'tapipy' 
+        - If a utils controller is not found, check the 'tapis' 
         package for a resource with an operation that corresponds to 
         the provided args
         
-        - If 'tapipy' is not the current package, check the current package
+        - If 'tapis' is not the current package, check the current package
         (found in the configs) for a controller with method that corresponds
         to the provided args
         """
@@ -113,20 +113,18 @@ class Router:
             # Return the controller with command and options set
             return (controller, args)
 
-        # If tapipy is the current package and category is not index, invoke the 
+        # If tapis is the current package and category is not index, invoke the 
         # operation on the resource.
         # NOTE Tapipy is a special package the breaks the pattern of other packages.
         # As a consequence, the 'category' and 'cmd' do not correlate to a controller 
         # and method respectively. The category is the 
         # resource(for which an alias may exist) and the cmd is the operation
-        if package == "tapipy" and category != "index":
+        if package == "tapis" and category != "index":
             controller = TapipyController()
-            # TODO resolve aliases for tapipy package resource. Should be done
-            # within the TapipyController itself
             controller.set_resource(category)
             
             # NOTE Some magic here.
-            # Calling the index method on the tapipy controller determines the operation,
+            # Calling the index method on the tapis controller determines the operation,
             # args, kwargs, and options itself
             if cmd == "index":
                 (cmd, kw_args, args) = controller.index()
@@ -137,7 +135,7 @@ class Router:
 
             return (controller, args)
 
-        # No utils controller is found, nor is tapipy the current package.
+        # No utils controller is found, nor is tapis the current package.
         # Find a controller in the current package.
         package_ns = f"packages.{package}.controllers"
 

@@ -1,12 +1,15 @@
 import sys, time
 
 from conf import settings
+from packages.tapis.settings import BASE_URL
 from utils.ConfigManager import config_manager
 from utils.Logger import Logger
 
 
 class Authenticator:
-    def __init__(self):
+    def __init__(self, base_url=BASE_URL):
+        self.base_url: str = base_url
+        self.auth_methods = settings.AUTH_METHODS
         self.logger = Logger()
 
     def authenticate(self):

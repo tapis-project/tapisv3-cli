@@ -1,10 +1,10 @@
 import json
 import sys
 
-from packages.tapis.TapisController import TapisController
 from tapipy.errors import InvalidInputError, ServerDownError
 
-from packages.tapis.TapisController import TapisController
+from packages.tapiscustom.TapisController import TapisController
+
 
 
 class Apps(TapisController):

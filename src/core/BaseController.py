@@ -280,12 +280,6 @@ class BaseController:
 
     def get_package(self):
         return self.config_manager.get("current", "package")
-    
-    def get_config(self, key):
-        return self.config_manager.get(f"package.{self.get_package()}", key)
-
-    def set_config(self, key, value):
-        self.config_manager.add(f"package.{self.get_package()}", key, value)
 
 
 

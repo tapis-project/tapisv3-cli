@@ -1,9 +1,8 @@
 import os
 
-from packages.tapis.TapisController import TapisController
 from tapipy.errors import InvalidInputError
 
-from packages.tapis.TapisController import TapisController
+from packages.tapiscustom.TapisController import TapisController
 
 
 class Files(TapisController):

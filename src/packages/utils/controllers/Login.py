@@ -2,7 +2,6 @@ from tapipy.tapis import Tapis
 
 from core.BaseController import BaseController
 from utils.Prompt import prompt
-from utils.Styles import styler as s
 from utils.ConfigManager import config_manager
 
 class Login(BaseController):
@@ -10,8 +9,14 @@ class Login(BaseController):
         BaseController.__init__(self)
 
     def index(self):
-        base_url = prompt.text("Tapis baseurl")
-        username = prompt.text("Username")
+        current_user = config_manager.get_current_user()
+        profile = config_manager.get_profile(current_user)
+        current_base_url = None
+        if profile != None:
+            current_base_url = profile.get("base_url", None)
+        
+        base_url = prompt.text("Tapis baseurl", default=current_base_url)
+        username = prompt.text("Username", default=current_user)
         password = prompt.text("Password 🔒", secret=True)
 
         self.logger.log(f"Authenticating with Tapis at {base_url} for user {username}")

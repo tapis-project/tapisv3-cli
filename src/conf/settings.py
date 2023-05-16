@@ -3,13 +3,9 @@ from re import VERBOSE
 
 ACTION_FILTER_SUFFIX = "_Action"
 
-PACKAGES = [
-    "tapis",
-    "tapipy",
-    "jupyterscinco"
-]
+PACKAGES = ["tapis", "tapiscustom"]
 
-DEFAULT_PACKAGE = "tapipy"
+DEFAULT_PACKAGE = "tapis"
 
 PACKAGES_DIR = "packages/"
 

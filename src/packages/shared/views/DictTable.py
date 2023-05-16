@@ -15,9 +15,4 @@ class DictTable(AbstractView):
         self.headers = headers
 
     def render(self):
-        # if type(self.data) == list:
-        #     for entry in self.data:
-        #         print(tabulate(entry.items(), tablefmt="fancy_grid"))
-        #     return
-
         print(tabulate(self.data, headers=self.headers, tablefmt="fancy_grid"))

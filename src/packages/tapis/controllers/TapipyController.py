@@ -6,9 +6,12 @@ import packages.shared.options.handlers
 
 from conf import settings
 from core.BaseController import BaseController
+from core.enums import OutputEnum
 from packages.tapis.Authenticator import Authenticator as Auth
+from packages.tapis.utils import serialize_result
 from helpers.help_formatter import help_formatter as formatter
 from utils.Prompt import prompt
+from utils.ConfigManager import config_manager
 from utils.open_api.type_transformer import TRANSFORMS, transform
 
 
@@ -76,13 +79,35 @@ class TapipyController(BaseController):
 
             for handler in handlers["result"]:
                 result = handler(self, result)
+            
+            # Get the output type from the config
+            config = config_manager.load()
 
-            if self.view is None:
-                self.set_view("TapisResultTableView", result)
+            if config["output_type"] == OutputEnum.JSONFile.value:
+                result = serialize_result(result)
+                self.set_view(
+                    "JSONFileView",
+                    result,
+                    config["output_dir"],
+                    filename_prefix = self.resource.resource_name + "." + self.operation.operation_id,
+                    logger=self.logger
+                )
+            elif config["output_type"] == OutputEnum.File.value:
+                self.set_view(
+                    "FileView",
+                    result,
+                    config["output_dir"],
+                    filename_prefix = self.resource.resource_name + "." + self.operation.operation_id,
+                    logger=self.logger)
+            elif config["output_type"] == OutputEnum.Raw.value:
+                self.set_view("TapisResultRawView", result)
+            elif config["output_type"] == OutputEnum.Table.value:
+                serialized_result = serialize_result(result)
+                self.set_view("TapisResultTableView", serialized_result, logger=self.logger)
+            else:
+                self.set_view("TapisResultRawView", result)
 
             self.view.render()
-
-            return
 
         except Exception as e:
             self.logger.error(e)
@@ -306,6 +331,11 @@ class TapipyController(BaseController):
             # Transform the open api schema type into the correct
             # python type
             return transform(desc.type.value, value)
+
+    
+
+
+    
 
 
 

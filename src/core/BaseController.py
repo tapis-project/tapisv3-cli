@@ -279,7 +279,4 @@ class BaseController:
         return ( arg_vals, kwarg_vals )
 
     def get_package(self):
-        return self.config_manager.get("current", "package")
-
-
-
+        return self.config_manager.get_current_package()

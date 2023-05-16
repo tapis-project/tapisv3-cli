@@ -1,11 +1,5 @@
-import os
-
-from shutil import copyfile
-from importlib.util import find_spec
-from importlib import import_module
-
 from core.BaseController import BaseController
-from conf.settings import PACKAGES, PACKAGES_DIR, TEMPLATES_DIR
+from conf.settings import PACKAGES
 from utils.Prompt import prompt
 from utils.Styles import styler as s 
 from utils.Prompt import prompt

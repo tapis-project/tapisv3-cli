@@ -12,6 +12,8 @@ class Authenticator:
     def authenticate(self):
         # TODO NOTE FIXME BUG Import taking a long time. move to top when resolved
         from tapipy.tapis import Tapis
+        from tapipy.errors import UnauthorizedError
+
         current_user = config_manager.get_current_user()
 
         if current_user == None:
@@ -28,6 +30,6 @@ class Authenticator:
             )
             
             return client
-        except Exception as e:
-            self.logger.error(f"Authentication Error: {e}")
+        except Exception:
+            self.logger.warn("Authentication Error: Run the following: `tapis login`")
             sys.exit(1)

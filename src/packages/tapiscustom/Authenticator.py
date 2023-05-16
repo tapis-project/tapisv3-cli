@@ -1,4 +1,4 @@
-import sys, time
+import sys
 
 from conf import settings
 from packages.tapis.settings import BASE_URL
@@ -15,10 +15,12 @@ class Authenticator:
     def authenticate(self):
         # TODO NOTE FIXME BUG Import taking a long time. move to top when resolved
         from tapipy.tapis import Tapis
+        from tapipy.errors import AuthenticationError
+
         current_user = config_manager.get_current_user()
 
         if current_user == None:
-            self.logger.warn(f"No current active user. Run the following `tapis login`")
+            self.logger.warn(f"No current active user. Run the following: `tapis login`")
             return
 
         profile = config_manager.get_profile(current_user)
@@ -31,6 +33,6 @@ class Authenticator:
             )
             
             return client
-        except Exception as e:
-            self.logger.error(f"Authentication Error: {e}")
+        except Exception:
+            self.logger.warn("Authentication Error: Run the following: `tapis login`")
             sys.exit(1)

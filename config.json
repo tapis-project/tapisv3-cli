@@ -1,6 +1,8 @@
 {
     "current_user": null,
     "current_package": null,
+    "output_type": "table",
+    "output_dir": null,
     "profiles": [
     ]
 }

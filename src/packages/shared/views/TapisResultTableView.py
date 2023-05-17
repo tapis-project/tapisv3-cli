@@ -37,7 +37,6 @@ class TapisResultTableView(AbstractView):
         # truncate long strings and numbers
         truncated_values = False
         for i, _ in enumerate(self.data):
-            # num_of_columns = i
             for prop in self.data[i]:
                 if type(self.data[i][prop]) in [list, dict]:
                     self.data[i][prop] = "..."
@@ -47,13 +46,6 @@ class TapisResultTableView(AbstractView):
                 elif self.data[i][prop] == None:
                     self.data[i][prop] = "null"
 
-                # if num_of_columns >= 8:
-                #     truncated_columns = True
-                #     num_of_columns = 0
-                #     self.data[i] = dict(list(self.data[i].items())[0:8])
-                #     break
-                
-                # num_of_columns += 1
 
         if truncated_values and self.logger != None:
             self.logger.warn("Values in the table have been truncated to 13 chars for readability")

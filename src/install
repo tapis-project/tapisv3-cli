@@ -13,11 +13,11 @@ function sync() {
 echo "Installing TapisV3 CLI"
 
 # Detect if patch install or full install
-installType="complete"
+installType="new"
 if [ "$1" == "patch" ]; then
     installType="patch"
-elif [ "$1" == "fullpatch" ]; then
-    installType="fullpatch"
+elif [ "$1" == "update" ]; then
+    installType="update"
 fi
 
 # Detect the OS
@@ -65,7 +65,7 @@ sync "${projectDir}/requirements.txt" "${libDir}/src"
 
 # Create the config.json that will house the cli configurations
 oneline "Generating config in '$configDir'"
-if [ $installType == "complete" ]; then
+if [ $installType == "new" ]; then
     touch "${configDir}/config.json"
     sync "${projectDir}/config.json" "${configDir}/config.json"
 fi
@@ -74,7 +74,7 @@ tapisEntrypoint="${libDir}/src/tapis.sh"
 oneline "Making tapis.sh executable"
 chmod +x $tapisEntrypoint
 
-if [ $installType == "fullpatch" ] || [ $installType == "complete" ]; then
+if [ $installType == "update" ] || [ $installType == "new" ]; then
     oneline "Creating virtual envrionment"
     cd "${libDir}/src"
     python3 -m venv env
@@ -86,7 +86,7 @@ if [ $installType == "fullpatch" ] || [ $installType == "complete" ]; then
     deactivate
 fi
 
-if [ $installType == "complete" ]; then
+if [ $installType == "new" ]; then
     echo "Adding alias for 'tapis': $rcfile"
     echo "alias tapis='${tapisEntrypoint}'" >> $rcfile
 fi

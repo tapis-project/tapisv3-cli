@@ -16,12 +16,6 @@ from utils.open_api.type_transformer import TRANSFORMS, transform
 
 
 class TapipyController(BaseController):
-    """
-    Handles the parsing and execution of commands specified in the OpenAPI specs.
-
-    Different tools, such as Tapipy, may inherit from this to specify their own
-    specific categories and commands.
-    """
     def __init__(self):
         BaseController.__init__(self)
         self.cmd = None
@@ -34,8 +28,8 @@ class TapipyController(BaseController):
                 self.exit(1)
         except SystemExit:
             self.exit(1)
-        except:
-            raise ValueError(f"Unable to authenticate user using AUTH_METHOD {settings.AUTH_METHOD}\n")
+        except Exception as e:
+            raise ValueError(f"Unable to authenticate user: {e}")
 
     def index(self):
         return self._select_Action()

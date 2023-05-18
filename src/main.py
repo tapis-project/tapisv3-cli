@@ -15,7 +15,7 @@ def main():
     if len(sys.argv[1:]) > 0 and sys.argv[1:][0] == "shell":
         try:
             while True:
-                string = input("tapis> ")
+                string = input("t>>> ")
                 args = string.split(" ") if string != "" else []
                 run(args)
         except KeyboardInterrupt:

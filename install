@@ -4,15 +4,20 @@ function oneline() {
     echo -ne "\033[2K" ; printf "\r$1"
 }
 
-echo "Installing TapisV3 CLI"
 
 # Detect if patch install or full install
-installType="complete"
 if [ "$1" == "patch" ]; then
     installType="patch"
-elif [ "$1" == "fullpatch" ]; then
-    installType="fullpatch"
+elif [ "$1" == "update" ]; then
+    installType="update"
+elif [ -z "$1" ]; then
+    installType="new"
+else
+    echo "Invalid argument for install."
+    exit 1
 fi
+
+echo "testInstalling TapisV3 CLI"
 
 # Detect the OS
 unameOut="$(uname -s)"
@@ -54,21 +59,21 @@ done
 oneline "Copying source code to '$libDir'"
 projectDir="$(pwd)"
 
-rsync -a "${projectDir}/src" $libDir
-rsync -a "${projectDir}/requirements.txt" "${libDir}/src"
+sync "${projectDir}/src" $libDir
+sync "${projectDir}/requirements.txt" "${libDir}/src"
 
 # Create the config.json that will house the cli configurations
 oneline "Generating config in '$configDir'"
-if [ $installType == "complete" ]; then
+if [ $installType == "new" ]; then
     touch "${configDir}/config.json"
-    rsync "${projectDir}/config.json" "${configDir}/config.json"
+    sync "${projectDir}/config.json" "${configDir}/config.json"
 fi
 
 tapisEntrypoint="${libDir}/src/tapis.sh"
 oneline "Making tapis.sh executable"
 chmod +x $tapisEntrypoint
 
-if [ $installType == "fullpatch" ] || [ $installType == "complete" ]; then
+if [ $installType == "update" ] || [ $installType == "new" ]; then
     oneline "Creating virtual envrionment"
     cd "${libDir}/src"
     python3 -m venv env
@@ -80,7 +85,7 @@ if [ $installType == "fullpatch" ] || [ $installType == "complete" ]; then
     deactivate
 fi
 
-if [ $installType == "complete" ]; then
+if [ $installType == "new" ]; then
     echo "Adding alias for 'tapis': $rcfile"
     echo "alias tapis='${tapisEntrypoint}'" >> $rcfile
 fi

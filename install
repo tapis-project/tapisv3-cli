@@ -17,7 +17,7 @@ else
     exit 1
 fi
 
-echo "testInstalling TapisV3 CLI"
+echo "Installing TapisV3 CLI"
 
 # Detect the OS
 unameOut="$(uname -s)"

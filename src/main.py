@@ -1,5 +1,5 @@
 """The front-controller the TAPIS command line tool."""
-import sys
+import sys, readline
 
 from core.Router import Router
 from utils.Logger import logger

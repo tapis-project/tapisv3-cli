@@ -59,14 +59,14 @@ done
 oneline "Copying source code to '$libDir'"
 projectDir="$(pwd)"
 
-sync "${projectDir}/src" $libDir
-sync "${projectDir}/requirements.txt" "${libDir}/src"
+rsync -a "${projectDir}/src" $libDir
+rsync -a "${projectDir}/requirements.txt" "${libDir}/src"
 
 # Create the config.json that will house the cli configurations
 oneline "Generating config in '$configDir'"
 if [ $installType == "new" ]; then
     touch "${configDir}/config.json"
-    sync "${projectDir}/config.json" "${configDir}/config.json"
+    rsync -a "${projectDir}/config.json" "${configDir}/config.json"
 fi
 
 tapisEntrypoint="${libDir}/src/tapis.sh"

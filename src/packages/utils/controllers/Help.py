@@ -22,9 +22,12 @@ class Help(BaseController):
 
         # Get current package
         package = config_manager.get_current_package()
-        
+
         self.logger.info(f"Generating help info...")
         self.logger.log(s.underline(f"\nPackage Specific Commands for the '{package}' package"))
+        if package == None:
+            self.logger.warn("No package has been selected yet. Run `tapis package use`, select a package, then run `tapis help` again")
+            sys.exit()
         try:
             # Import the current package's settings module
             settings_module = import_module(f"packages.{package}.settings", "./" )
@@ -38,6 +41,7 @@ class Help(BaseController):
 
         if help_controller == None or help_method == None:
             self.logger.warn(f"Package '{package}' has not implemented help functionality")
+            sys.exit()
 
         try:
             # Import the current package's settings module

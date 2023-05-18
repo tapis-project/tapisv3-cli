@@ -1,3 +1,5 @@
+# NOTE FIXME This belongs in the tapis package
+
 from tapipy.tapis import Tapis
 
 from core.BaseController import BaseController

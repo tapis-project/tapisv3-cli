@@ -27,6 +27,9 @@ class Styler:
     def danger(self, string):
         return self.apply(Styles.ERROR, string)
 
+    def blue(self, string):
+        return self.apply(Styles.BLUE, string)
+
     
 
 styler = Styler()

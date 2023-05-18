@@ -4,7 +4,6 @@ from json.decoder import JSONDecodeError
 
 import packages.shared.options.handlers
 
-from conf import settings
 from core.BaseController import BaseController
 from core.enums import OutputEnum
 from packages.tapis.Authenticator import Authenticator as Auth
@@ -13,6 +12,7 @@ from helpers.help_formatter import help_formatter as formatter
 from utils.Prompt import prompt
 from utils.ConfigManager import config_manager
 from utils.open_api.type_transformer import TRANSFORMS, transform
+from utils.Styles import styler as s
 
 
 class TapipyController(BaseController):
@@ -130,6 +130,17 @@ class TapipyController(BaseController):
         
         return formatter.build()
 
+    def _resources_help(self):
+        from tapipy.tapis import RESOURCES
+        self.logger.log(f"{s.underline('Interactive mode')}")
+        self.logger.log("Run `$tapis` in a shell (or when in a tapis shell, just press the `enter/return` key) and you will be prompted to choose an api and operation to run")
+        self.logger.log(f"\n{s.underline('Manual mode')}")
+        self.logger.log(f"{s.underline('Usage')} $tapis [api] [operation_id]")
+        self.logger.log(f"{s.underline('Example')} $tapis system getSystems --systemId my-system-id")
+        self.logger.log("\n")
+        for resource_name in RESOURCES["tapipy"]:
+            self.logger.log(f"{s.blue(resource_name)} - run operations on the Tapis {resource_name.capitalize()} API ")
+        self.logger.log("\n")
     def set_resource(self, resource_name: str) -> None:
         """Gets the resource for the OpenAPI command."""
         try:

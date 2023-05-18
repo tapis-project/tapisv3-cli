@@ -7,9 +7,6 @@ class Profiles(BaseController):
     def __init__(self):
         BaseController.__init__(self)
 
-    def index(self):
-        self.list()
-
     def use(self):
         current_user = self.config_manager.get_current_user()
         profiles = self.config_manager.list_profiles()

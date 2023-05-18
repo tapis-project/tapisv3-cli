@@ -100,7 +100,11 @@ class Router:
         # Import the controller and set the method(cmd) to be invoked
         if has_category or bool(aliased_category):
             module = import_module(f"{utils_ns}.{cmd_to_class(category)}", "./" )
-            controller_class = getattr(module, f"{cmd_to_class(category)}")
+            try:
+                controller_class = getattr(module, f"{cmd_to_class(category)}")
+            except Exception as e:
+                logger.error(f"Package Error: {e}")
+                sys.exit(1)
             
             # Instantiate the controller class
             controller = controller_class()
@@ -163,7 +167,11 @@ class Router:
         if has_category or bool(aliased_category):
             # Import the current package controller
             module = import_module(f"packages.{package}.controllers.{cmd_to_class(category)}", "./" )
-            controller_class: BaseController = getattr(module, f"{cmd_to_class(category)}")
+            try:
+                controller_class = getattr(module, f"{cmd_to_class(category)}")
+            except Exception as e:
+                logger.error(f"Package Error: {e}")
+                sys.exit(1)
                 
             # The controller class has a method by the command name.
             # Instantiate the controller class

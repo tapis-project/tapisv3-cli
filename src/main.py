@@ -16,10 +16,12 @@ def main():
         try:
             while True:
                 string = input("\nt>>> ")
+                if string == "exit":
+                    raise KeyboardInterrupt
                 args = string.split(" ") if string != "" else []
                 run(args)
         except KeyboardInterrupt:
-            print("Closing tapis shell")
+            print("Exiting tapis shell")
             return
         except SystemExit:
             main()

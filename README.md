@@ -172,8 +172,89 @@ Your result will then be displayed as a table in the shell:
     │  6 │ testuser2.execution    │ LINUX        │ nathandf │ 129.114.35.53 │ testuser2         │ PKI_KEYS             │ true      │ null       │
     ╘════╧════════════════════════╧══════════════╧══════════╧═══════════════╧═══════════════════╧══════════════════════╧═══════════╧════════════╛
 
+### Step 5 (Optional): Change the display settings to show more columns in a table
 
+Notice that there is a warning at the top of the table.
 
+    Warning: Only showing the first 8 columns
+
+To ensure that tables are displayed correctly in the shell, only 8 columns will be shown by default. You can change these settings by running the `set` command and choosing `display_settings`. You will then be prompted to input values for all avalable display properties. To keep defaults, just press enter for each prompt.
+
+    t>>> set
+    [?] Perform action: display_settings
+    > display_settings
+    jwt
+    output_dir
+    output_type
+    username
+
+    *Maximum # of columns to display in table view (int) [8]: 
+    *Maximum # of characters per column (int) [16]: 
+    *List of properties exempt from trunction (comma-seperated list of strings) [id,uuid]: 
+    *Column name to show first tables: Ex: 'id', 'uuid', 'jobUuid' [id]: 
+    ✓ Display settings updated
+
+### Step 6: Change the output type so that results are saved to a JSON file
+
+Type the `set` command, Hit 'Enter' then choose `output_type` and hit 'Enter'. You will be displayed with a list of options for output. Choose `json_file`. You will then be prompted for a directory to which the output files will be saved.
+
+    t>>> set
+    [?] Perform action: output_type
+    display_settings
+    jwt
+    output_dir
+    > output_type
+    username
+
+    [?] Set output type: json_file
+    raw
+    table
+    file
+    > json_file
+
+    ✓ Output type set to 'json_file'
+    *Choose a directory for output files: ~/results
+    ✓ Output directoy set to '~/results'
+
+### Step 7: Run the 'getSystems' operation on the 'systems' api once again
+
+Since we know we want to work with the Systems API, we can skip the first prompt by typing `systems` and hitting 'Enter' to get the list of operations for that API.
+
+Follow the same steps as before to complete the call:
+
+    t>>> systems
+    [?] Select an operation: getSystems
+    getGlobusAuthUrl
+    getHistory
+    getSchedulerProfile
+    getSchedulerProfiles
+    getShareInfo
+    getSystem
+    > getSystems
+    getUserCredential
+    getUserPerms
+    grantUserPerms
+    healthCheck
+    isEnabled
+    matchConstraints
+
+    Query parameters:
+    search: 
+    listType: 
+    limit: 
+    orderBy: 
+    skip: 
+    startAfter: 
+    computeTotal: 
+    select: 
+    showDeleted: 
+    ✓ Results saved to file: ~/results/1684788941328911.systems.getSystems.json
+
+The filename for the file that contains the results for this operation will be displayed on the screen once completed.
+
+    ✓ Results saved to file: ~/results/1684788941328911.systems.getSystems.json
+
+The first part of the filename is a timestamp. The second and third part of the name are the API and operation id, respectively
 
 
 

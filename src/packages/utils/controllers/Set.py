@@ -51,8 +51,7 @@ class Set(BaseController):
         config = config_manager.load()
         config["output"]["type"] = prompt.select(
             "Set output type",
-            [enum.value for enum in OutputEnum],
-            default=config["output"]["type"]
+            [enum.value for enum in OutputEnum]
         )
         config_manager.write(config)
 

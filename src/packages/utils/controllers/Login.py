@@ -34,7 +34,7 @@ class Login(BaseController):
             self.logger.error(f"Failed to authenticate: {e}")
             return
 
-        self.logger.log("Successfully authenticated")
+        self.logger.complete("Successfully authenticated")
         
         jwt = t.get_access_jwt()
         
@@ -44,7 +44,7 @@ class Login(BaseController):
             profile = {"username": username, "base_url": base_url, "jwt": jwt}
             config_manager.create_profile(**profile)
             config_manager.set_current_user(username)
-            self.logger.log(f"Created profile for user {username}")
+            self.logger.complete(f"Created profile for user {username}")
             return
 
         config_manager.set_current_user(username)

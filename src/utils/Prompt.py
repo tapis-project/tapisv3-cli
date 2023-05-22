@@ -71,7 +71,7 @@ class Prompt:
 
         # Reprompt user if they provide a value of the incorrect type
         if value_type is not None and self._validate_type(value_type, value) == False:
-            print("Incorrect type provided")
+            print(f"Incorrect type provided. Value must be of type {value_type.__name__}")
             return self.text(
                 message,
                 secret=secret,

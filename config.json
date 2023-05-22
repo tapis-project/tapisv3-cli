@@ -1,8 +1,16 @@
 {
     "current_user": null,
     "current_package": null,
-    "output_type": "table",
-    "output_dir": null,
+    "output": {
+        "type": "table",
+        "dir": null,
+        "settings": {
+            "max_columns": 8,
+            "max_chars_per_column": 16,
+            "never_truncate": [ "id", "uuid" ],
+            "first_column": "id"
+        }
+    },
     "profiles": [
     ]
 }

@@ -47,24 +47,67 @@ class Set(BaseController):
         self.logger.complete(f"JWT updated")
         
 
-    def outputType(self):
+    def output_type(self):
         config = config_manager.load()
-        config["output_type"] = prompt.select("Set output type", [enum.value for enum in OutputEnum])
+        config["output"]["type"] = prompt.select(
+            "Set output type",
+            [enum.value for enum in OutputEnum],
+            default=config["output"]["type"]
+        )
         config_manager.write(config)
 
-        self.logger.complete(f"Output type set to '{config['output_type']}'")
+        self.logger.complete(f"Output type set to '{config['output']['type']}'")
         
-        if config["output_type"] in [OutputEnum.File.value, OutputEnum.JSONFile.value]:
-            self.outputDir()
+        if config['output']['type'] in [OutputEnum.File.value, OutputEnum.JSONFile.value]:
+            self.output_dir()
 
-    def outputDir(self):
+    def output_dir(self):
         config = config_manager.load()
         output_dir = prompt.text(
             "Choose a directory for output files",
             required=True,
-            default=config.get("output_dir", None)
+            default=config.get("output").get("dir", None)
         )
-        config["output_dir"] = os.path.expanduser(output_dir)
+        config["output"]["dir"] = os.path.expanduser(output_dir)
         config_manager.write(config)
 
-        self.logger.complete(f"Output directoy set to '{config['output_dir']}'")
+        self.logger.complete(f"Output directoy set to '{config['output']['dir']}'")
+
+    def display_settings(self):
+        config = config_manager.load()
+
+        max_columns = prompt.text(
+            "Maximum # of columns to display in table view (int)",
+            default=config.get("output").get("settings").get("max_columns"),
+            value_type=int
+        )
+
+        max_chars_per_column = prompt.text(
+            "Maximum # of characters per column (int)",
+            default=config.get("output").get("settings").get("max_chars_per_column"),
+            value_type=int
+        )
+
+        default_never_truncate = ",".join(config.get("output").get("settings").get("never_truncate"))
+        never_truncate = prompt.text(
+            "List of properties exempt from trunction (comma-seperated list of strings)",
+            default=default_never_truncate,
+        )
+        never_truncate = never_truncate.replace(" ", "").split(",")
+
+        first_column = prompt.text(
+            "Column name to show first tables: Ex: 'id', 'uuid', 'jobUuid'",
+            default=config.get("output").get("settings").get("first_column"),
+            value_type=str
+        )
+
+        config["output"]["settings"] = {
+            "max_columns": max_columns,
+            "max_chars_per_column": max_chars_per_column,
+            "never_truncate": never_truncate,
+            "first_column": first_column
+        }
+
+        config_manager.write(config)
+
+        self.logger.complete(f"Display settings updated")

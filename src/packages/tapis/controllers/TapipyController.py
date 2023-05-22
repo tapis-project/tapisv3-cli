@@ -77,25 +77,25 @@ class TapipyController(BaseController):
             # Get the output type from the config
             config = config_manager.load()
 
-            if config["output_type"] == OutputEnum.JSONFile.value:
+            if config["output"]["type"] == OutputEnum.JSONFile.value:
                 result = serialize_result(result)
                 self.set_view(
                     "JSONFileView",
                     result,
-                    config["output_dir"],
+                    config["output"]["dir"],
                     filename_prefix = self.resource.resource_name + "." + self.operation.operation_id,
                     logger=self.logger
                 )
-            elif config["output_type"] == OutputEnum.File.value:
+            elif config["output"]["type"] == OutputEnum.File.value:
                 self.set_view(
                     "FileView",
                     result,
-                    config["output_dir"],
+                    config["output"]["dir"],
                     filename_prefix = self.resource.resource_name + "." + self.operation.operation_id,
                     logger=self.logger)
-            elif config["output_type"] == OutputEnum.Raw.value:
+            elif config["output"]["type"] == OutputEnum.Raw.value:
                 self.set_view("TapisResultRawView", result)
-            elif config["output_type"] == OutputEnum.Table.value:
+            elif config["output"]["type"] == OutputEnum.Table.value:
                 serialized_result = serialize_result(result)
                 self.set_view("TapisResultTableView", serialized_result, logger=self.logger)
             else:

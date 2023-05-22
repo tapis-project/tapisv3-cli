@@ -98,7 +98,84 @@ Type 'help' and press enter to view commands. You will see a list of core comman
 
 ### Step 4: Run the 'getSystems' operation on the Systems API
 
-This step will produce a list of systems available to you for a given tenant formatted as a table.
+This step will produce a list of systems available to you for a given tenant formatted as a table. **Note** the default view for results is `table`. We will modify the display settings later to change the format of the table as well as change to output type so we can retrieve the JSON data returned from a Tapis call.
+
+From the Tapis shell, simply hit enter to choose the API you want to run operations for:
+
+    t>>> 
+
+Select `systems` from the dropdow list:
+
+    [?] Select an API: actors
+    actors
+    apps
+    authenticator
+    files
+    jobs
+    meta
+    notifications
+    pgrest
+    pods
+    sk
+    streams
+    > systems
+    tenants
+
+Then select the `getSystems` operation:
+
+    [?] Select an operation: getSystems
+    getGlobusAuthUrl
+    getHistory
+    getSchedulerProfile
+    getSchedulerProfiles
+    getShareInfo
+    getSystem
+    > getSystems
+    getUserCredential
+    getUserPerms
+    grantUserPerms
+    healthCheck
+    isEnabled
+    matchConstraints
+
+You will then be prompted to input values for optional query params. Skip through all of them by pressing 'Enter' when prompted for each parameter:
+
+    Query parameters:
+    search: 
+    listType: 
+    limit: 
+    orderBy: 
+    skip: 
+    startAfter: 
+    computeTotal: 
+    select: 
+    showDeleted: 
+
+Your result will then be displayed as a table in the shell:
+
+    Warning: Only showing the first 8 columns
+    ╒════╤════════════════════════╤══════════════╤══════════╤═══════════════╤═══════════════════╤══════════════════════╤═══════════╤════════════╕
+    │    │ id                     │ systemType   │ owner    │ host          │ effectiveUserId   │ defaultAuthnMethod   │ canExec   │ parentId   │
+    ╞════╪════════════════════════╪══════════════╪══════════╪═══════════════╪═══════════════════╪══════════════════════╪═══════════╪════════════╡
+    │  0 │ test-1                 │ LINUX        │ nathandf │ 129.114.35.53 │ testuser2         │ PKI_KEYS             │ true      │ null       │
+    ├────┼────────────────────────┼──────────────┼──────────┼───────────────┼───────────────────┼──────────────────────┼───────────┼────────────┤
+    │  1 │ newsystem              │ LINUX        │ nathandf │ 129.114.35.53 │ testuser2         │ PKI_KEYS             │ true      │ null       │
+    ├────┼────────────────────────┼──────────────┼──────────┼───────────────┼───────────────────┼──────────────────────┼───────────┼────────────┤
+    │  2 │ presentation           │ LINUX        │ nathandf │ 129.114.35.53 │ testuser2         │ PKI_KEYS             │ true      │ null       │
+    ├────┼────────────────────────┼──────────────┼──────────┼───────────────┼───────────────────┼──────────────────────┼───────────┼────────────┤
+    │  3 │ tapisv3-exec-nathandf2 │ LINUX        │ nathandf │ 129.114.35.53 │ nathandf          │ PASSWORD             │ true      │ null       │
+    ├────┼────────────────────────┼──────────────┼──────────┼───────────────┼───────────────────┼──────────────────────┼───────────┼────────────┤
+    │  4 │ tapisv3-exec-nathandf3 │ LINUX        │ nathandf │ 129.114.35.53 │ nathandf          │ PASSWORD             │ true      │ null       │
+    ├────┼────────────────────────┼──────────────┼──────────┼───────────────┼───────────────────┼──────────────────────┼───────────┼────────────┤
+    │  5 │ tapisv3-exec-nathandf  │ LINUX        │ nathandf │ 129.114.35.53 │ nathandf          │ PASSWORD             │ true      │ null       │
+    ├────┼────────────────────────┼──────────────┼──────────┼───────────────┼───────────────────┼──────────────────────┼───────────┼────────────┤
+    │  6 │ testuser2.execution    │ LINUX        │ nathandf │ 129.114.35.53 │ testuser2         │ PKI_KEYS             │ true      │ null       │
+    ╘════╧════════════════════════╧══════════════╧══════════╧═══════════════╧═══════════════════╧══════════════════════╧═══════════╧════════════╛
+
+
+
+
+
 
 
 

@@ -40,7 +40,7 @@ class TapisResultTableView(AbstractView):
             for prop in self.data[i]:
                 if type(self.data[i][prop]) in [list, dict]:
                     self.data[i][prop] = "..."
-                elif type(self.data[i][prop]) in [str, int, float, bytes] and len(self.data[i][prop]) >= 16:
+                elif type(self.data[i][prop]) in [str, bytes] and len(self.data[i][prop]) >= 16:
                     self.data[i][prop] = self.data[i][prop][-13:] + "..."
                     truncated_values = True
                 elif self.data[i][prop] == None:

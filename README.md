@@ -7,7 +7,7 @@ TapisV3 CLI is a command line interface tool written in python that wraps the ta
 
 `git clone https://github.com/tapis-project/tapisv3-cli.git`
 
-### Step 3: Run the install script located in the project root directory
+### Step 2: Run the install script located in the project root directory
 
 `cd tapisv3-cli`
 
@@ -15,7 +15,7 @@ TapisV3 CLI is a command line interface tool written in python that wraps the ta
 
 `./install`
 
-### Step 4: Source your .bashrc/.zshrc
+### Step 3: Source your .bashrc/.zshrc
 
 **Linux:**
 

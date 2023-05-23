@@ -61,7 +61,7 @@ class TapisResultTableView(AbstractView):
 
 
         if truncated_values and self.logger != None:
-            self.logger.warn(f"Values in the table have been truncated to {settings.get('max_chars_per_column')} charactersß")
+            self.logger.warn(f"Values in the table have been truncated to {settings.get('max_chars_per_column')} characters")
 
         if truncated_columns and self.logger != None:
             self.logger.warn(f"Only showing the first {settings.get('max_columns')} columns")

@@ -53,9 +53,14 @@ class Prompt:
         except:
             sys.exit(1)
 
+        # # If no value is provided, set the value to the default value
+        # if bool(value) == False and default != None:
+        #     value = default
+
         # If no value is provided, set the value to the default value
-        if bool(value) == False and default is not None:
+        if bool(value) == False:
             value = default
+
 
         # Reprompt if required and user provides null value
         if required and bool(value) == False:

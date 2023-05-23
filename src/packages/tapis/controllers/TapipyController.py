@@ -235,8 +235,13 @@ class TapipyController(BaseController):
         # Prompt user to provide values for the query parameters
         qps = [ qp for qp in op_map[cmd].query_parameters ]
         len(qps) > 0 and self.logger.log("Query parameters:")
+
         for qp in qps:
-            kw_args[qp.name] = prompt.text(f"{qp.name}", required=qp.required)
+            qp_value = prompt.text(f"{qp.name}", required=qp.required)
+
+            # Only add the query parameters as keyword args to tapipy if there is a value provided
+            if qp_value != None:
+                kw_args[qp.name] = qp_value
 
         # If the current operation requires a request body, prompt the user
         # to choose a method to satisfy that request body

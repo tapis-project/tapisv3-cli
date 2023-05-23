@@ -1,0 +1,14 @@
+#!/bin/bash
+echo "Uninstalling TapisV3 CLI"
+echo "This will run the following command: rm -rf ~/tapis/v3"
+echo -n "Do you wish to proceed? [y/n]: "
+read -r -n 1 proceed
+
+if [ $proceed == "y" ]; then
+    echo ""
+    echo "Removing all files in ~/tapis/v3"
+    rm -rf ~/tapis/v3
+    echo "Successfull uninstalled TapisV3 CLI"
+else
+    echo "Cancelling uninstall for TapisV3 CLI"
+fi

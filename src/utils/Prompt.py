@@ -61,7 +61,6 @@ class Prompt:
         if bool(value) == False:
             value = default
 
-
         # Reprompt if required and user provides null value
         if required and bool(value) == False:
             print("Input required")

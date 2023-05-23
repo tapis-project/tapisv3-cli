@@ -85,14 +85,31 @@ if [ $installType == "update" ] || [ $installType == "new" ]; then
     deactivate
 fi
 
+allowRCFileModification=n
 if [ $installType == "new" ]; then
-    echo "Adding alias for 'tapis': $rcfile"
-    echo "alias tapis='${tapisEntrypoint}'" >> $rcfile
+    echo -n "Do you want to allow the TapisV3 CLI install to modify your $rcfile? [y/n]: "
+    read -r -n 1 allowRCFileModification
 fi
 
-echo ""
-echo "################## IMPORTANT #########################################"
-echo "To complete installation, source your rcfile by running the following:"
-echo "source $rcfile"
-echo "######################################################################"
-echo ""
+if [ $allowRCFileModification == "y" ]; then
+    echo "Adding alias for 'tapis': $rcfile"
+    echo "alias tapis='${tapisEntrypoint}'" >> $rcfile
+
+    echo ""
+    echo "################## FINAL STEP #########################################"
+    echo "To complete installation, source your rcfile by running the following:"
+    echo "source $rcfile"
+    echo "#######################################################################"
+    echo ""
+else
+    echo ""
+    echo "################## FINAL STEP #########################################"
+    echo "To complete installation, add an alias to the tapis script in $rcfile"
+    echo "alias tapis='${tapisEntrypoint}'"
+    echo ""
+    echo "then run the following command:"
+    echo "source $rcfile"
+    echo "#######################################################################"
+    echo ""
+fi
+

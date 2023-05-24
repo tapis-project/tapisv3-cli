@@ -18,5 +18,5 @@ class TapisResultJSONView(AbstractView):
         if type(self.data) == bytes:
             self.logger.warn("Result is of type 'bytes'. Cannot show result")
             return
-
+        
         print(json.dumps(self.data, indent=2))

@@ -98,6 +98,9 @@ class TapipyController(BaseController):
             elif config["output"]["type"] == OutputEnum.Table.value:
                 serialized_result = serialize_result(result)
                 self.set_view("TapisResultTableView", serialized_result, logger=self.logger)
+            elif config["output"]["type"] == OutputEnum.JSON.value:
+                serialized_result = serialize_result(result)
+                self.set_view("TapisResultJSONView", serialized_result, logger=self.logger)
             else:
                 self.set_view("TapisResultRawView", result)
 

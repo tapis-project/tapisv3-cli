@@ -21,6 +21,7 @@ class Help(BaseController):
         self.logger.log(f"{s.blue('set')} - Modify CLI configurations")
         self.logger.log(f"{s.blue('info')} - Show current user, packages, and auth info")
         self.logger.log(f"{s.blue('packages')} - List and switch between packages")
+        self.logger.log(f"{s.blue('exit')} - Exit a tapis shell")
 
         # Get current package
         package = config_manager.get_current_package()

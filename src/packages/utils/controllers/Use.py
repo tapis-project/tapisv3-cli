@@ -17,6 +17,10 @@ class Use(BaseController):
 
     def profile(self):
         profile_controller = Profiles()
-        profile_controller.use()
+        profile_controller.switch()
+
+    def auth(self):
+        profile_controller = Profiles()
+        profile_controller.use_auth()
 
     

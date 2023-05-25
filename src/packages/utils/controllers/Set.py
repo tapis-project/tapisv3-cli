@@ -15,6 +15,7 @@ class Set(BaseController):
     def username(self):
         # Prompt for the new username
         current_user = config_manager.get_current_user()
+        self.logger.warn(f"Changing the username for '{current_user}'")
         new_username = prompt.text("New username", default=current_user, required=True)
         
         # Create the modified profile
@@ -42,11 +43,27 @@ class Set(BaseController):
 
     def jwt(self):
         current_user = config_manager.get_current_user()
-        jwt = prompt.text("New JWT", required=True)
+        current_profile = config_manager.get_profile(current_user)
+        base_urls = [ auth["base_url"] for auth in current_profile["auths"] ]
 
-        config_manager.update_profile(current_user, jwt=jwt)
+        base_url = prompt.select(
+            f"Choose a base url: {current_profile['current_base_url']}",
+            [ base_url for base_url in base_urls ]
+        )
 
-        self.logger.complete(f"JWT updated")
+        new_jwt = prompt.text("New JWT", required=True)
+
+        modified_auths = []
+        for auth in current_profile["auths"]:
+            if auth["base_url"] == base_url:
+                auth["jwt"] = new_jwt
+            modified_auths.append(auth)
+
+        current_profile["auths"] = modified_auths
+        
+        config_manager.update_profile(current_profile)
+
+        self.logger.complete(f"JWT updated for '{base_url}'")
         
 
     def output_settings(self):

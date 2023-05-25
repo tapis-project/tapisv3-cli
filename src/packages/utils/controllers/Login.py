@@ -15,7 +15,7 @@ class Login(BaseController):
         profile = config_manager.get_profile(current_user)
         current_base_url = None
         if profile != None:
-            current_base_url = profile.get("base_url", None)
+            current_base_url = profile.get("current_base_url", None)
         
         base_url = prompt.text("Tapis baseurl", default=current_base_url)
         username = prompt.text("Username", default=current_user)
@@ -41,14 +41,31 @@ class Login(BaseController):
         # Update the users profile in the config or create a new one
         profile = config_manager.get_profile(username)
         if profile == None:
-            profile = {"username": username, "base_url": base_url, "jwt": jwt}
-            config_manager.create_profile(**profile)
+            config_manager.create_profile({
+                "username": username,
+                "current_base_url": base_url,
+                "auths": [
+                    {
+                        "base_url": base_url,
+                        "jwt": jwt
+                    }
+                ],
+            })
             config_manager.set_current_user(username)
             self.logger.complete(f"Created profile for user {username}")
             return
 
         config_manager.set_current_user(username)
-        config_manager.update_profile(username, base_url=base_url, jwt=jwt)
+        modified_auths = [
+            auth for auth in profile["auths"]
+            if auth["base_url"] != base_url
+        ]
+        modified_auths.append({"base_url": base_url, "jwt": jwt})
+        config_manager.update_profile({
+            "username": username,
+            "current_base_url": base_url,
+            "auths": modified_auths
+        })
 
 
     

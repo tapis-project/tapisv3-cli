@@ -1,7 +1,5 @@
 import json
 
-from pprint import pprint
-
 from core.AbstractView import AbstractView
 
 

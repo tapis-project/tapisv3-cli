@@ -7,7 +7,7 @@ class Profiles(BaseController):
     def __init__(self):
         BaseController.__init__(self)
 
-    def use(self):
+    def switch(self):
         current_user = self.config_manager.get_current_user()
         profiles = self.config_manager.list_profiles()
         if len(profiles) == 0:
@@ -25,6 +25,32 @@ class Profiles(BaseController):
         self.config_manager.set_current_user(new_current_user)
 
         self.logger.complete(f"Using profile for user '{new_current_user}'")
+
+        self.use_auth()
+
+    def use_auth(self):
+        profile = self.config_manager.get_profile(self.config_manager.get_current_user())
+        if profile == None:
+            self.logger.warn(f"No profile found. Run `tapis login`")
+            return
+
+
+        if len(profile["auths"]) == 0:
+            self.logger.warn(f"No auths found for user '{profile['username']}'. Run `tapis login`")
+            return
+
+        new_current_base_url = prompt.select(
+            f"Choose a base_url: {profile['current_base_url']}",
+            [ auth["base_url"] for auth in profile["auths"] ]
+        )
+
+        self.config_manager.update_profile({
+            **profile,
+            "current_base_url": new_current_base_url
+        })
+
+        self.logger.complete(f"Using profile for user '{new_current_base_url}'")
+
 
     def remove(self):
         profiles = self.config_manager.list_profiles()
@@ -52,11 +78,14 @@ class Profiles(BaseController):
 
         self.set_view("DictTable", [
                 {
-                    **profile,
-                    "jwt": "..." + profile["jwt"][-16:]
+                    "username": profile["username"],
+                    "current_base_url": profile["current_base_url"] or "",
+                    "auths": "\n".join([
+                        auth.get('base_url', '') for auth in profile["auths"]
+                    ])   
                 } for profile in profiles
             ],
-            headers={"username": "username", "base_url": "base_url", "jwt": "jwt"}
+            headers={"username": "username", "auths": "auths"}
         )
 
         self.view.render()

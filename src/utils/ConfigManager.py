@@ -25,9 +25,6 @@ class ConfigManager:
     def get_current_user(self):
         return self.load()["current_user"]
 
-    def get_current_base_url(self):
-        return self.load()["current_base_url"]
-
     def set_current_user(self, username):
         config = self.load()
         config["current_user"] = username

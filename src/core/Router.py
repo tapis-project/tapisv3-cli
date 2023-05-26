@@ -86,7 +86,11 @@ class Router:
         utils_ns = "packages.utils.controllers"
 
         # Check if the package has a controller by the provided name
-        has_category = bool(find_spec(f"{utils_ns}.{cmd_to_class(category)}"))
+        try:
+            has_category = bool(find_spec(f"{utils_ns}.{cmd_to_class(category)}"))
+        except ModuleNotFoundError:
+            logger.error(f"Invalid command '{category}'")
+            sys.exit(1)
 
         # Check if an alias for a category is being used. Will return 'None'
         # if no alias is found

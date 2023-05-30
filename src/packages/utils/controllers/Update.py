@@ -29,5 +29,8 @@ class Update(BaseController):
         cmd = f"cd {TMP_DIR} && git clone {SOURCE_CODE_URL} . && ./install patch && cd ../ && rm -rf {TMP_DIR}"
         subprocess.run(cmd, shell=True)
 
+        self.logger.complete("TapisV3 CLI successfully updated")
+        self.logger.warn("If you are using a tapis shell, please exit and restart a new shell for the changes to take effect")
 
+        print("TESTING")
 

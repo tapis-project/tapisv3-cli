@@ -21,6 +21,7 @@ class Help(BaseController):
         self.logger.log(f"{s.blue('set')} - Modify CLI configurations")
         self.logger.log(f"{s.blue('info')} - Show current user, packages, and auth info")
         self.logger.log(f"{s.blue('packages')} - List and switch between packages")
+        self.logger.log(f"{s.blue('update')} - Updates TapisV3 CLI (requires a restart of the shell for the updates to take effect)")
         self.logger.log(f"{s.blue('exit')} - Exit a tapis shell")
 
         # Get current package

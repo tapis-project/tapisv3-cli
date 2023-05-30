@@ -30,7 +30,7 @@ class TapisResultTableView(AbstractView):
         truncated_columns = False
         if (
             len(self.data) > 0
-            and len(self.data[0]) >= int(settings.get("max_columns"))
+            and len(self.data[0]) > int(settings.get("max_columns"))
             and int(settings.get("max_columns")) > 0
         ):
             modified_data = []

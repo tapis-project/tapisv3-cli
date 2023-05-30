@@ -32,5 +32,3 @@ class Update(BaseController):
         self.logger.complete("TapisV3 CLI successfully updated")
         self.logger.warn("If you are using a tapis shell, please exit and restart a new shell for the changes to take effect")
 
-        print("TESTING")
-

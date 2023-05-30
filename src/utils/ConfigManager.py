@@ -9,14 +9,14 @@ class ConfigManager:
         self.logger = Logger()
 
     def load(self):
-        with open(settings.CONFIG_FILE, "r") as file:
+        with open(settings.CONFIG_FILE_PATH, "r") as file:
             try:
                 return json.loads(file.read())
             except json.JSONDecodeError as e:
-                self.logger.error(f"Bad configuation file: {settings.CONFIG_FILE} - {e}")
+                self.logger.error(f"Bad configuation file: {settings.CONFIG_FILE_PATH} - {e}")
 
     def write(self, config):
-         with open(settings.CONFIG_FILE, "w") as file:
+         with open(settings.CONFIG_FILE_PATH, "w") as file:
             try:
                 file.write(json.dumps(config, indent=2))
             except Exception as e:

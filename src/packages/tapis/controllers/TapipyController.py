@@ -114,19 +114,52 @@ class TapipyController(BaseController):
 
         for operation_id in self.operation_ids:
             op = getattr(self.resource, operation_id)
-            keyword_args = [param.name for param in op.path_parameters]
+            required_keyword_args = [param.name for param in op.path_parameters]
+            optional_keyword_args = []
             
+            # Populate required keyword args for request body
+            required_props = []
             if hasattr(op.request_body, "required"):
-                keyword_args.append("request_body")
+                for mime_type in op.request_body.content.keys():
+                    required_props += op.request_body.content.get(mime_type).schema.required
+
+                required_keyword_args = (
+                    required_keyword_args
+                    + [ prop for prop in required_props ]
+                )
+
+            # Populate optional keyword args from request body
+            content = getattr(op.request_body, "content", None)
+            if content != None:
+                optional_props = []
+                for mime_type in content.keys():
+                    props = getattr(content[mime_type].schema, "properties", {})
+                    optional_props += [
+                        prop for prop in props.keys()
+                        if prop not in required_props
+                    ]
+
+                optional_keyword_args = (
+                    optional_keyword_args
+                    + [ prop for prop in optional_props ]
+                )
 
             # List all query parameters as keyword arguments
             if hasattr(op, "query_parameters"):
-                keyword_args = (keyword_args + 
-                    [qp.name for qp in op.query_parameters if qp.required == True])
+                required_keyword_args = (
+                    required_keyword_args + 
+                    [qp.name for qp in op.query_parameters if qp.required == True]
+                )
+
+                optional_keyword_args = (
+                    optional_keyword_args + 
+                    [qp.name for qp in op.query_parameters if (qp.required == False or not hasattr(qp, "required"))]
+                )
 
             formatter.add_command(
                 operation_id,
-                keyword_args=keyword_args
+                required_keyword_args=required_keyword_args,
+                optional_keyword_args=optional_keyword_args
             )
 
         formatter.add_options(self.option_set.options)

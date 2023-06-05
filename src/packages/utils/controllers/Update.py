@@ -9,7 +9,10 @@ class Update(BaseController):
     def __init__(self):
         BaseController.__init__(self)
 
-    def patch(self):
+    def index(self):
+        self._update(scope="update")
+
+    def patch(self):    
         if not self._has_deps():
             return
             

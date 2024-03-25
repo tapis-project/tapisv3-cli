@@ -43,7 +43,8 @@ class BaseController:
         self.view = None
         self.is_action = False
         self.config_manager = config_manager
-        self.settings = self.init_settings()
+        self._settings = self.init_settings()
+        self._select_action_message = "Perform action"
 
     def before(self):
         pass
@@ -206,7 +207,7 @@ class BaseController:
 
         # Prompt the user to select an operation to perform over the system with
         # the selection system_id
-        action = prompt.select("Perform action", [ op for op, _ in op_map.items() ])
+        action = prompt.select(self._select_action_message, [ op for op, _ in op_map.items() ])
 
         # Set the cmd to be invoked by the controller
         self.set_cmd(action)

@@ -12,9 +12,8 @@ class Info(BaseController):
         self.set_view("DictTable", [{
                 "current_user": current_user,
                 "current_package": current_package,
-                "base_url": profile["base_url"],
-                "jwt": "..." + profile["jwt"][-16:]
+                "current_base_url": profile["current_base_url"]
             }], 
-            headers={"current_user": "current_user", "current_package": "current_package", "base_url": "base_url", "jwt": "jwt"}
+            headers={"current_user": "current user", "current_package": "current package", "current_base_url": "current base url"}
         )
         self.view.render()

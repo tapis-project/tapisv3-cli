@@ -3,6 +3,7 @@ import sys, readline
 
 from core.Router import Router
 from utils.Logger import logger
+from utils.generate_prompt_string import generate_prompt_string
 
 def run(args):
     (controller, args) = Router().resolve(args)
@@ -15,7 +16,9 @@ def main():
     if len(sys.argv[1:]) > 0 and sys.argv[1:][0] == "shell":
         try:
             while True:
-                string = input("\nt>>> ")
+                
+                prompt_string = generate_prompt_string()
+                string = input(f"\n{prompt_string}>>> ").strip(" ")
                 if string == "exit":
                     raise KeyboardInterrupt
                 args = string.split(" ") if string != "" else []

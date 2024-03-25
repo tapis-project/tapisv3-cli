@@ -9,16 +9,16 @@ class ConfigManager:
         self.logger = Logger()
 
     def load(self):
-        with open(settings.CONFIG_FILE, "r") as file:
+        with open(settings.CONFIG_FILE_PATH, "r") as file:
             try:
                 return json.loads(file.read())
             except json.JSONDecodeError as e:
-                self.logger.error(f"Bad configuation file: {settings.CONFIG_FILE} - {e}")
+                self.logger.error(f"Bad configuation file: {settings.CONFIG_FILE_PATH} - {e}")
 
     def write(self, config):
-         with open(settings.CONFIG_FILE, "w") as file:
+         with open(settings.CONFIG_FILE_PATH, "w") as file:
             try:
-                file.write(json.dumps(config))
+                file.write(json.dumps(config, indent=2))
             except Exception as e:
                 self.logger.error(f"Error writing to config file: {e}")
 
@@ -32,6 +32,18 @@ class ConfigManager:
 
     def get_current_package(self):
         return self.load()["current_package"]
+
+    def get_current_login(self, username):
+        profile = self.get_profile(username)
+
+        if profile == None:
+            return None
+
+        return {
+            "username": profile["username"],
+            "base_url": profile["current_base_url"],
+            "jwt": next(filter(lambda auth: auth["base_url"] == profile["current_base_url"], profile["auths"]), {}).get("jwt", None)
+        }
 
     def set_current_package(self, package):
         config = self.load()
@@ -47,27 +59,20 @@ class ConfigManager:
         config = self.load()
         return config["profiles"]
 
-    def create_profile(self, username, base_url, jwt=None):
+    def create_profile(self, profile):
         config = self.load()
-        config["current_user"] = username
+        config["current_user"] = profile.get("username")
         config["current_package"] = settings.DEFAULT_PACKAGE
-        config["profiles"].append({"username": username, "base_url": base_url, "jwt": jwt})
+        config["profiles"].append(profile)
         self.write(config)
 
-    def update_profile(self, username, base_url=None, jwt=None):
-        profile = self.get_profile(username)
-        profile = {
-            **profile,
-            "base_url": base_url if base_url != None else profile["base_url"],
-            "jwt": jwt if jwt != None else profile["jwt"]
-        }
-
-        # Get the config, insert the updated profile, and remove the old
+    def update_profile(self, profile):
+        # Get the config, insert the updated profile and remove the old
         config = self.load()
         modified_profiles = [profile]
-        for profile in config["profiles"]:
-            if profile["username"] != username:
-                modified_profiles.append(profile)
+        for existing_profile in config["profiles"]:
+            if existing_profile["username"] != profile["username"]:
+                modified_profiles.append(existing_profile)
 
         self.write({**config, "profiles": modified_profiles})
 

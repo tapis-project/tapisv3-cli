@@ -53,8 +53,12 @@ class Prompt:
         except:
             sys.exit(1)
 
+        # # If no value is provided, set the value to the default value
+        # if bool(value) == False and default != None:
+        #     value = default
+
         # If no value is provided, set the value to the default value
-        if bool(value) == False and default is not None:
+        if bool(value) == False:
             value = default
 
         # Reprompt if required and user provides null value
@@ -71,7 +75,7 @@ class Prompt:
 
         # Reprompt user if they provide a value of the incorrect type
         if value_type is not None and self._validate_type(value_type, value) == False:
-            print("Incorrect type provided")
+            print(f"Incorrect type provided. Value must be of type {value_type.__name__}")
             return self.text(
                 message,
                 secret=secret,

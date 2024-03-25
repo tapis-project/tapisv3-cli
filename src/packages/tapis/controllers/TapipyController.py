@@ -35,14 +35,13 @@ class TapipyController(BaseController):
         return self._select_Action()
 
     def invoke(self, args) -> None:
-        args = self.parse_args(args)
-        result = None
-
         if self.cmd == "help":
             self.set_view("TapisResultRawView", self.operation())
             self.view.render()
             return
 
+        args = self.parse_args(args)
+        result = None
         try:
             handlers = { "generic": [], "args": [], "result": [] }
             for option in self.option_set.options:
@@ -69,35 +68,46 @@ class TapipyController(BaseController):
             # present.
             self._validate_kw_args()
 
-            result = self.operation(*args, **self.kw_args)
+            # Pass all keyword arguments to the Tapipy operation as "request_body"
+            # instead of unpacking the keyword arguments in the operation call.
+            # NOTE If we unpack the keyword arguments directly in the operation call,
+            # none of the data will be passed to the API for all operations that have a
+            # request body that contains anyOf, allOf, or oneOf objects.
+            if self.resource.resource_name in ["workflows"]:
+                self.kw_args = { "request_body": self.kw_args }
 
+            result = self.operation(*args, **self.kw_args)
+            
             for handler in handlers["result"]:
                 result = handler(self, result)
             
             # Get the output type from the config
             config = config_manager.load()
 
-            if config["output_type"] == OutputEnum.JSONFile.value:
+            if config["output"]["type"] == OutputEnum.JSONFile.value:
                 result = serialize_result(result)
                 self.set_view(
                     "JSONFileView",
                     result,
-                    config["output_dir"],
+                    config["output"]["dir"],
                     filename_prefix = self.resource.resource_name + "." + self.operation.operation_id,
                     logger=self.logger
                 )
-            elif config["output_type"] == OutputEnum.File.value:
+            elif config["output"]["type"] == OutputEnum.File.value:
                 self.set_view(
                     "FileView",
                     result,
-                    config["output_dir"],
+                    config["output"]["dir"],
                     filename_prefix = self.resource.resource_name + "." + self.operation.operation_id,
                     logger=self.logger)
-            elif config["output_type"] == OutputEnum.Raw.value:
+            elif config["output"]["type"] == OutputEnum.Raw.value:
                 self.set_view("TapisResultRawView", result)
-            elif config["output_type"] == OutputEnum.Table.value:
+            elif config["output"]["type"] == OutputEnum.Table.value:
                 serialized_result = serialize_result(result)
                 self.set_view("TapisResultTableView", serialized_result, logger=self.logger)
+            elif config["output"]["type"] == OutputEnum.JSON.value:
+                serialized_result = serialize_result(result)
+                self.set_view("TapisResultJSONView", serialized_result, logger=self.logger)
             else:
                 self.set_view("TapisResultRawView", result)
 
@@ -111,19 +121,51 @@ class TapipyController(BaseController):
 
         for operation_id in self.operation_ids:
             op = getattr(self.resource, operation_id)
-            keyword_args = [param.name for param in op.path_parameters]
+            required_keyword_args = [ param["name"] for param in op.path_parameters ]
+            optional_keyword_args = []
             
-            if hasattr(op.request_body, "required"):
-                keyword_args.append("request_body")
+            # Populate required keyword args for request body
+            required_props = []
+            if op.request_body.get("required", False):
+                for mime_type in op.request_body.get("content").keys():
+                    required_props += op.request_body.get("content").get(mime_type).get("schema").get("required", [])
+                required_keyword_args = (
+                    required_keyword_args
+                    + [ prop for prop in required_props ]
+                )
+            
+            # Populate optional keyword args from request body
+            content = op.request_body.get("content", None)
+            if content != None:
+                optional_props = []
+                for mime_type in content.keys():
+                    props = content[mime_type].get("schema").get("properties", {})
+                    optional_props += [
+                        prop for prop in props.keys()
+                        if prop not in required_props
+                    ]
 
+                optional_keyword_args = (
+                    optional_keyword_args
+                    + [ prop for prop in optional_props ]
+                )
+                
             # List all query parameters as keyword arguments
             if hasattr(op, "query_parameters"):
-                keyword_args = (keyword_args + 
-                    [qp.name for qp in op.query_parameters if qp.required == True])
+                required_keyword_args = (
+                    required_keyword_args + 
+                    [ qp["name"] for qp in op.query_parameters if qp.get("required", False) ]
+                )
+
+                optional_keyword_args = (
+                    optional_keyword_args + 
+                    [ qp["name"] for qp in op.query_parameters if not qp.get("required", False) ]
+                )
 
             formatter.add_command(
                 operation_id,
-                keyword_args=keyword_args
+                required_keyword_args=required_keyword_args,
+                optional_keyword_args=optional_keyword_args
             )
 
         formatter.add_options(self.option_set.options)
@@ -155,8 +197,8 @@ class TapipyController(BaseController):
             self.exit(1)
 
         for _, path_desc in self.resource.resource_spec.items():
-            for _, op_desc in path_desc.operations.items():
-                self.operation_ids.append(op_desc.operation_id)
+            for _, op_desc in path_desc.items():
+                self.operation_ids.append(op_desc["operationId"])
 
     def set_operation(self, operation_name: str) -> None:
         """Sets the operation to be performed"""
@@ -184,14 +226,14 @@ class TapipyController(BaseController):
         # Path parameters
         if hasattr(self.operation, "path_parameters"):
             for param in self.operation.path_parameters:
-                if param.required:
-                    required_params.append(param.name)
+                if param.get("required", False):
+                    required_params.append(param["name"])
 
         # Query parameters
         if hasattr(self.operation, "query_parameters"):
             for param in self.operation.query_parameters:
-                if param.required:
-                    required_params.append(param.name)
+                if param.get("required", False):
+                    required_params.append(param["name"])
 
         kw_arg_keys = self.kw_args.keys()
         for param in required_params:
@@ -227,17 +269,22 @@ class TapipyController(BaseController):
         # Prompt user to provide values for the path parameters. The key and 
         # value of these will be used as keyword arguments
         kw_args = {}
-        params = [param for param in op_map[cmd].path_parameters]
+        params = [ param for param in op_map[cmd].path_parameters ]
         len(params) > 0 and self.logger.log("Path parameters:")
         for param in params:
-            kw_args[param.name] = prompt.text(f"{param.name}", required=param.required)
+            kw_args[param["name"]] = prompt.text(f"{param['name']}", required=param.get("required", False))
 
         # Prompt user to provide values for the query parameters
         qps = [ qp for qp in op_map[cmd].query_parameters ]
         len(qps) > 0 and self.logger.log("Query parameters:")
-        for qp in qps:
-            kw_args[qp.name] = prompt.text(f"{qp.name}", required=qp.required)
 
+        for qp in qps:
+            qp_value = prompt.text(f"{qp['name']}", required=qp.get("required", False))
+
+            # Only add the query parameters as keyword args to tapipy if there is a value provided
+            if qp_value != None:
+                kw_args[qp["name"]] = qp_value
+        
         # If the current operation requires a request body, prompt the user
         # to choose a method to satisfy that request body
         request_body = op_map[cmd].request_body
@@ -245,7 +292,7 @@ class TapipyController(BaseController):
         JSON_FILE = "provide a json file"
         # EACH = "prompt for each property"
         EDITOR = "build request body in an editor"
-        if hasattr(request_body, "required"):
+        if request_body.get("required", False):
             self.logger.log("This operation requires a request body")
             method = prompt.select(f"Choose a method",
                 [
@@ -265,7 +312,6 @@ class TapipyController(BaseController):
         #     # Prompt the user for each individual property 
         #     request_body_kw_args = self._prompt_request_body(request_body)
         #     kw_args = { **kw_args, **request_body_kw_args }
-           
 
         return (cmd, kw_args, args)
 

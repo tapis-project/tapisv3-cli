@@ -1,5 +1,4 @@
 import os
-from re import VERBOSE
 
 ACTION_FILTER_SUFFIX = "_Action"
 
@@ -25,10 +24,17 @@ LOG_LEVEL_DEBUG = 3
 
 LOG_LEVEL = LOG_LEVEL_DEBUG
 
-CONFIG_FILE = os.path.join(
+BASE_PATH = os.path.join(
     os.path.expanduser("~"),
-    "tapis/v3/configs/config.json"
+    "tapis/v3"
 )
 
-DEFAULT_CONFIG_FILE = CONFIG_FILE
+TMP_DIR = os.path.join(BASE_PATH, "tmp")
+CONFIG_DIR = os.path.join(BASE_PATH, "configs")
+
+CONFIG_FILENAME = "config.json"
+
+CONFIG_FILE_PATH = os.path.join(CONFIG_DIR, CONFIG_FILENAME)
+
+SOURCE_CODE_URL = "https://github.com/tapis-project/tapisv3-cli.git"
 

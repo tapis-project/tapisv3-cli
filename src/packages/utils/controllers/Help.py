@@ -16,9 +16,13 @@ class Help(BaseController):
         self.logger.log(f"{s.blue('shell')} - Starts a tapis shell that enables users to run multiple commands directly to the cli API in a single process (cannot run nested shells)")
         self.logger.log(f"{s.blue('login')} - Authenticates with a Tapis deployment and creates user profile")
         self.logger.log(f"{s.blue('profile')} - List, remove, and switch to different user profiles")
-        self.logger.log(f"{s.blue('packages')} - List and switch between packages")
-        self.logger.log(f"{s.blue('set')} - Modify cli output type and output directory for file output types")
+        self.logger.log(f"{s.blue('display')} - Modify CLI display settings")
+        self.logger.log(f"{s.blue('output')} - Change how and where CLI operation results get persisted")
+        self.logger.log(f"{s.blue('set')} - Modify CLI configurations")
         self.logger.log(f"{s.blue('info')} - Show current user, packages, and auth info")
+        self.logger.log(f"{s.blue('packages')} - List and switch between packages")
+        self.logger.log(f"{s.blue('update')} - Updates TapisV3 CLI (requires a restart of the shell for the updates to take effect)")
+        self.logger.log(f"{s.blue('exit')} - Exit a tapis shell")
 
         # Get current package
         package = config_manager.get_current_package()

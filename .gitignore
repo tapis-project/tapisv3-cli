@@ -1,4 +1,5 @@
-# Auth credentials
+**/*/dist
+
 src/conf/*
 !src/conf/settings.py
 !src/conf/options.py

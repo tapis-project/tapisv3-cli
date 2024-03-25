@@ -20,13 +20,13 @@ class Authenticator:
             self.logger.warn(f"No current active user. Run the following `tapis login`")
             return
 
-        profile = config_manager.get_profile(current_user)
+        login = config_manager.get_current_login(current_user)
 
         try:
             client = Tapis(
-                base_url=profile["base_url"],
-                username=current_user,
-                jwt=profile["jwt"]
+                base_url=login["base_url"],
+                username=login["username"],
+                jwt=login["jwt"]
             )
             
             return client

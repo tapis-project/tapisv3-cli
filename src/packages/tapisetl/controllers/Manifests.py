@@ -10,21 +10,13 @@ class Manifests(ETLController):
     """Contains all of the CRUD functions associated with applications."""
     def __init__(self):
         ETLController.__init__(self)
-
-    def before(self):
-        try:
-            self.client = Auth().authenticate()
-            if self.client is None:
-                self.exit(1)
-        except SystemExit:
-            self.exit(1)
-        except:
-            raise ValueError(f"Unable to authenticate user")
         
     def validateDataSystemId_Action(self, data_system_id):
         """data_system_id(remote outbox)"""
         try:
-            system= self.client.systems.isEnabled(systemId=data_system_id)
+            system = self.client.systems.isEnabled(systemId=data_system_id)
+            status = "enabled" if system.aBool else "disabled"
+            self.logger.info(f"This data system is not '{data_system_id}' '{status}'")
             print("hello world.")
         except:
             pass

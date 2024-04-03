@@ -1,1 +1,4 @@
-aliases = {}
+aliases = {
+    "files" : ["file"],
+    "systems" : ["system"]
+}

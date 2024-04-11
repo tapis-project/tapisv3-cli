@@ -72,20 +72,5 @@ class Manifests(ETLController):
             self.logger.complete(f"Created manifest '{manifest_file_name}' on system '{manifest_system_id}' | Path: {new_manifest_path}")
         except Exception as e:
             self.logger.error(f"Error writing: '{file}' to '{new_manifest_path}': {e}")
-       
-"""
-    def manifestPrompt(self, *_, **__):
-        #Prompt user for data ingress and egress
-        
-        data_system_id = prompt.text("Data system Id?")
-        localInbox = prompt.text("Where is the localInbox?")
-
-        self.directories = {'remoteOutbox': data_system_id, 
-                            'localInbox': localInbox, 
-                            }
-        
-        self.generate_Action(data_system_id=data_system_id)
-        return self.directories
-"""
 
 newManifest = Manifests()

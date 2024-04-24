@@ -19,4 +19,3 @@ class ETLController(BaseController):
             self.exit(1)
         except:
             raise ValueError(f"Unable to authenticate user")
-        

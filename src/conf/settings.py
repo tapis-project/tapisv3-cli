@@ -2,7 +2,7 @@ import os
 
 ACTION_FILTER_SUFFIX = "_Action"
 
-PACKAGES = ["tapis", "tapiscustom"]
+PACKAGES = ["tapis", "tapiscustom", "tapisetl"]
 
 DEFAULT_PACKAGE = "tapis"
 

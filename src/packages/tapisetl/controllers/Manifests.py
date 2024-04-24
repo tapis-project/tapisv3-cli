@@ -72,5 +72,3 @@ class Manifests(ETLController):
             self.logger.complete(f"Created manifest '{manifest_file_name}' on system '{manifest_system_id}' | Path: {new_manifest_path}")
         except Exception as e:
             self.logger.error(f"Error writing: '{file}' to '{new_manifest_path}': {e}")
-
-newManifest = Manifests()

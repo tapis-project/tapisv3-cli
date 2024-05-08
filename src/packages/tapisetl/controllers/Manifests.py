@@ -26,6 +26,7 @@ class Manifests(ETLController):
             all_data_files = self.client.files.listFiles(systemId=data_system_id, path=data_path)
         except Exception as e:
             self.logger.error(f"Error fetching files for '{data_system_id}': {e}\n")
+            return
         
         # Get the file objects that correspond to the names provided in
         # file_names_to_track

@@ -80,6 +80,7 @@ if [ $installType == "update" ] || [ $installType == "new" ]; then
     source env/bin/activate
 
     oneline "Install python dependencies in virtual env"
+    pip install --upgrade pip
     pip install -r requirements.txt
     pip list
     deactivate

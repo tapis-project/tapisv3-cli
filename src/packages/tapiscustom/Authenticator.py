@@ -34,5 +34,5 @@ class Authenticator:
             
             return client
         except Exception:
-            self.logger.warn("Authentication Error: Run the following: `tapis login`")
+            self.logger.warn("Authentication Error: Run the following: `tapis login` or `login` if in a tapis shell")
             sys.exit(1)

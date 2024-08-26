@@ -81,7 +81,7 @@ if [ $installType == "update" ] || [ $installType == "new" ]; then
 
     oneline "Install python dependencies in virtual env"
     pip install --upgrade pip
-    pip install -r requirements.txt
+    pip install --user -r requirements.txt
     pip list
     deactivate
 fi

@@ -16,12 +16,13 @@ def main():
     if len(sys.argv[1:]) > 0 and sys.argv[1:][0] == "shell":
         try:
             while True:
-                
                 prompt_string = generate_prompt_string()
                 string = input(f"\n{prompt_string}>>> ").strip(" ")
                 if string == "exit":
                     raise KeyboardInterrupt
                 args = string.split(" ") if string != "" else []
+                if len(args) > 0 and args[0] == "tapis":
+                    args.pop(0)
                 run(args)
         except KeyboardInterrupt:
             print("Exiting tapis shell")

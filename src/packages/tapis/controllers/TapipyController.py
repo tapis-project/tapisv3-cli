@@ -183,6 +183,7 @@ class TapipyController(BaseController):
         for resource_name in RESOURCES["tapipy"]:
             self.logger.log(f"{s.blue(resource_name)} - run operations on the Tapis {resource_name.capitalize()} API ")
         self.logger.log("\n")
+        
     def set_resource(self, resource_name: str) -> None:
         """Gets the resource for the OpenAPI command."""
         try:
@@ -334,24 +335,24 @@ class TapipyController(BaseController):
             self.logger.error("The request body contains invalid JSON")
             self._prompt_editor(message)
         
-    # Iterates through the request body and prompts the user for a value
-    # based on the type of value it expect. The prompt values are then transformed
-    # from a string to their correct type and stored in kw_args
-    def _prompt_request_body(self, request_body):
-        properties = request_body.content["application/json"].schema.properties
-        required_props = request_body.content["application/json"].schema.required
-        kw_args = {}
-        self.logger.debug(properties.values)
-        for prop, desc in properties.items():
-            # Prompt for primitive types
-            if desc.type.value in TRANSFORMS["primitives"]:
-                required = prop in required_props
-                kw_args[prop] = self._prompt_primitives(prop, desc, required=required)
-                continue
+    # # Iterates through the request body and prompts the user for a value
+    # # based on the type of value it expect. The prompt values are then transformed
+    # # from a string to their correct type and stored in kw_args
+    # def _prompt_request_body(self, request_body):
+    #     properties = request_body.content["application/json"].schema.properties
+    #     required_props = request_body.content["application/json"].schema.required
+    #     kw_args = {}
+    #     self.logger.debug(properties.values)
+    #     for prop, desc in properties.items():
+    #         # Prompt for primitive types
+    #         if desc.type.value in TRANSFORMS["primitives"]:
+    #             required = prop in required_props
+    #             kw_args[prop] = self._prompt_primitives(prop, desc, required=required)
+    #             continue
             
-            kw_args[prop] = self._prompt_editor(prop)
+    #         kw_args[prop] = self._prompt_editor(prop)
 
-        return kw_args
+    #     return kw_args
 
     def _prompt_primitives(self, prop, desc, required=False):
         # Handle booleans

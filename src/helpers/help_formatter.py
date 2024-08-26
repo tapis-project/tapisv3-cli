@@ -44,7 +44,7 @@ class HelpFormatter:
         help_message = (
             "\n" + f"{self.usage_message}"
             "\n\n" + f"{self.commands_message}"
-            "\n\n" + f"{self.options_message}"
+            # "\n\n" + f"{self.options_message}"
         )
 
         # NOTE Initial state needs to be reset on every call of 'build'

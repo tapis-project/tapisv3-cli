@@ -308,7 +308,7 @@ class TapipyController(BaseController):
             args = self._prompt_json_file()
         elif method == EDITOR:
             obj = self._prompt_editor("Create a request body")
-            kw_args = {**kw_args, **{ key:value for key, value in obj}}
+            kw_args = {**kw_args, **{ key: obj[key] for key in obj}}
         # elif method == EACH:
         #     # Prompt the user for each individual property 
         #     request_body_kw_args = self._prompt_request_body(request_body)
@@ -327,7 +327,7 @@ class TapipyController(BaseController):
     def _prompt_editor(self, message):
         try:
             contents = prompt.editor(message)
-            return json.loads(contents).items()
+            return json.loads(contents)
         except AttributeError:
             self.logger.error("Request body must be a valid JSON object")
             self._prompt_editor(message)
